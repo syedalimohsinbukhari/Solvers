@@ -1,23 +1,29 @@
 """Created on Oct 14 06:07:34 2023"""
-
-from Matrix import Matrix
+from typing import List
 
 
 class IterativeSolver:
-    def __init__(self, system_of_equations: Matrix, solution: Matrix, n_iter: int = 10, tol: float = 1e-5,
+    def __init__(self, system_of_equations: List[List], solution: List, n_iter: int = 500, tol: float = 1e-5,
                  initial_guess: tuple = (0, 0, 0)):
         self.tol = tol
         self.n_iter = n_iter
         self.solution = solution
         self.initial_guess = initial_guess
-        self.system_of_equations = system_of_equations.elements
-        self.arr1, self.arr2, self.arr3 = [], [], []
+        self.system_of_equations = system_of_equations
+        self.arr1, self.arr2, self.arr3 = [self.initial_guess[0]], [self.initial_guess[1]], [self.initial_guess[2]]
+
+    @property
+    def solution_set(self):
+        if not self.arr1 or len(self.arr1) == 1:
+            self.solve()
+
+        return self.arr1, self.arr2, self.arr3
 
     def _evaluate(self):
         iter1_ = self.solution[0]
         iter1_ -= self.system_of_equations[0][1] * self.initial_guess[1]
         iter1_ -= self.system_of_equations[0][2] * self.initial_guess[2]
-        iter1_ = iter1_[0] * self.system_of_equations[0][0]**-1
+        iter1_ = iter1_ * self.system_of_equations[0][0]**-1
 
         iter2_ = self.solution[1]
 
@@ -27,7 +33,7 @@ class IterativeSolver:
             iter2_ -= self.system_of_equations[1][0] * iter1_
 
         iter2_ -= self.system_of_equations[1][2] * self.initial_guess[2]
-        iter2_ = iter2_[0] * self.system_of_equations[1][1]**-1
+        iter2_ = iter2_ * self.system_of_equations[1][1]**-1
 
         iter3_ = self.solution[2]
 
@@ -38,7 +44,7 @@ class IterativeSolver:
             iter3_ -= self.system_of_equations[2][0] * iter1_
             iter3_ -= self.system_of_equations[2][1] * iter2_
 
-        iter3_ = iter3_[0] * self.system_of_equations[2][2]**-1
+        iter3_ = iter3_ * self.system_of_equations[2][2]**-1
 
         self.arr1.append(iter1_)
         self.arr2.append(iter2_)
@@ -81,9 +87,10 @@ class IterativeSolver:
     #
     #     ic(str3_, eval(str3_))
 
-    def solve(self):  # , in_string=False):
+    def solve(self):
         for iter_ in range(self.n_iter):
-            # if in_string:
-            #     self._string()
             self.initial_guess = self._evaluate()
-        return Matrix(self.initial_guess).transpose()
+
+        # self.initial_guess = [round(i) for i in self.initial_guess]
+
+        return self.initial_guess
