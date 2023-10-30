@@ -1,12 +1,6 @@
 """Created on Oct 19 03:46:05 2023"""
 
-
-class InterpolationException(Exception):
-    pass
-
-
-class AtLeastOneParameterRequired(InterpolationException):
-    pass
+from ERRORS_ import AtLeastOneParameterRequired
 
 
 class INTERPOLATION:
