@@ -1,20 +1,14 @@
 """Created on Nov 01 23:03:42 2023"""
 
-from newtonian.ERRORS_ import AtLeastOneParameterRequired
+from src.interpolators.interpolation.INTERPOLATION_ import INTERPOLATION
 
 
-class LinearSpline:
+class LinearSpline(INTERPOLATION):
 
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None):
-        self.given_values = given_values
-        self.value_to_approx = value_to_approximate
+        super().__init__(given_values, value_to_approximate, function, function_values)
 
-        if function is None and function_values is None:
-            raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
-
-        self.function_values = function_values if function_values else [function(value) for value in given_values]
-
-    def solve(self):
+    def interpolate(self):
         data_points = len(self.given_values)
         for i in range(data_points - 1):
             if self.given_values[i] <= self.value_to_approx <= self.given_values[i + 1]:
