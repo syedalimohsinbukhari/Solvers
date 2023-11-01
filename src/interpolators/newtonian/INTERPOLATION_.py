@@ -12,8 +12,7 @@ class INTERPOLATION:
         if function is None and function_values is None:
             raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
 
-        self.function = function if function else None
-        self.function_values = function_values if function_values else None
+        self.function_values = function_values if function_values else [function(value) for value in given_values]
 
     def _class(self):
         return 'Fwd' if self.__class__.__name__ == 'FwdInterpolation' else 'Bkw'

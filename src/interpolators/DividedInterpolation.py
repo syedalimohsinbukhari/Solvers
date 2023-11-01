@@ -42,8 +42,7 @@ class DividedInterpolation:
         if function is None and function_values is None:
             raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
 
-        self.function_values = function_values if function_values else [function(x) for x in
-                                                                        given_values] if function else None
+        self.function_values = function_values if function_values else [function(x) for x in given_values]
 
     def difference_table(self, complete_table=False):
         """
