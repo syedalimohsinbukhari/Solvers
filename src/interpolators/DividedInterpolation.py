@@ -42,7 +42,7 @@ class DividedInterpolation:
         if function is None and function_values is None:
             raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
 
-        self.function_values = function_values if function_values else [function(x) for x in given_values]
+        self.function_values = function_values if function_values else [function(value) for value in given_values]
 
     def difference_table(self, complete_table=False):
         """
@@ -53,6 +53,7 @@ class DividedInterpolation:
         np.ndarray
             The top row for the divided difference table.
         """
+
         n = len(self.function_values)
         difference_table = np.zeros((n, n))
         difference_table[:, 0] = self.function_values

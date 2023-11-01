@@ -14,14 +14,6 @@ class LagrangeInterpolation:
 
         self.function_values = function_values if function_values else [function(x) for x in given_values]
 
-    # @staticmethod
-    # def round_to_significant_digits(_value, threshold=1e-8):
-    #     if _value == 0.0:
-    #         return 0.0
-    #
-    #     rounded_x = threshold * round(_value / threshold)
-    #     return rounded_x
-
     def solve(self, give_values=False):
         answer = []
         given = self.given_values
