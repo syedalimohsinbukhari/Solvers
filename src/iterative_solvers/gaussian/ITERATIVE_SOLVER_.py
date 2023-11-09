@@ -10,14 +10,14 @@ class IterativeSolver:
         self.solution = solution
         self.initial_guess = initial_guess
         self.system_of_equations = system_of_equations
-        self.arr1, self.arr2, self.arr3 = [self.initial_guess[0]], [self.initial_guess[1]], [self.initial_guess[2]]
+        self._arr1, self._arr2, self._arr3 = [self.initial_guess[0]], [self.initial_guess[1]], [self.initial_guess[2]]
 
     @property
     def solution_set(self):
-        if not self.arr1 or len(self.arr1) == 1:
+        if not self._arr1 or len(self._arr1) == 1:
             self.solve()
 
-        return self.arr1, self.arr2, self.arr3
+        return self._arr1, self._arr2, self._arr3
 
     def _evaluate(self):
         iter1_ = self.solution[0]
@@ -46,9 +46,9 @@ class IterativeSolver:
 
         iter3_ = iter3_ * self.system_of_equations[2][2]**-1
 
-        self.arr1.append(iter1_)
-        self.arr2.append(iter2_)
-        self.arr3.append(iter3_)
+        self._arr1.append(iter1_)
+        self._arr2.append(iter2_)
+        self._arr3.append(iter3_)
 
         return [iter1_, iter2_, iter3_]
 
