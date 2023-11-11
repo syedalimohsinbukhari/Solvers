@@ -36,7 +36,7 @@ class QuadraticSpline(INTERPOLATION):
         n = len(self.given_values)
         return 3 * (n - 1)
 
-    def __matrix_solver(self):
+    def __matrix_solver(self, give_matrix=False):
         len_mat = self.matrix_dimensions
         n_given = len(self.given_values)
         matrix_a = [[0 for _ in range(len_mat)] for _ in range(len_mat)]
@@ -87,11 +87,10 @@ class QuadraticSpline(INTERPOLATION):
         # convert all very small values to 0
         solution[np.abs(solution) < 1e-10] = 0
 
-        return solution
+        return [matrix_a, solution] if give_matrix else solution
 
-    @property
-    def solution_set(self):
-        return self.__matrix_solver()
+    def solution_set(self, give_matrix=False):
+        return self.__matrix_solver(give_matrix=give_matrix)
 
     def interpolate(self, n_derivative=0):
         approximation = self.value_to_approx
@@ -102,7 +101,7 @@ class QuadraticSpline(INTERPOLATION):
         idx_ = self.given_values.index(self.value_to_approx) - 1
         del self.given_values[idx_ + 1]
 
-        req_solution = solution[idx_]
+        req_solution = solution()[idx_]
 
         if n_derivative == 0:
             return req_solution[0] * approximation**2 + req_solution[1] * approximation + req_solution[2]
@@ -111,40 +110,39 @@ class QuadraticSpline(INTERPOLATION):
         elif n_derivative == 2:
             return 2 * req_solution[0]
 
-    def show_splines(self) -> None:
-        solution = self.solution_set
+    def show_splines(self, full=False) -> None:
+        solution = self.solution_set()
 
         print('The splines are approximated to 4 decimal places for display purposes only.\n')
         for i in range(len(solution)):
-            print(f'Sp{i + 1}: {solution[i][0]:+.4f}x^2 {solution[i][1]:+.4f}x {solution[i][2]:+.4f} = 0')
+            if full:
+                print(f'Sp{i + 1}: {solution[i][0]}x^2 {solution[i][1]}x {solution[i][2]} = 0')
+            else:
+                print(f'Sp{i + 1}: {solution[i][0]:+.4f}x^2 {solution[i][1]:+.4f}x {solution[i][2]:+.4f} = 0')
 
         return None
 
-# x = [0, 10, 15, 20, 22.5, 30]
-# y = [0, 227.04, 362.78, 517.35, 602.97, 901.67]
-# value_to_approx = 16
-#
-#
-# def evaluate_spline(_x, solution_):
-#     return solution_[0] * _x**2 + solution_[1] * _x + solution_[2]
-#
-#
-# c1 = QuadraticSpline(x, value_to_approx, function_values=y, last_equation='first')
-# ss = c1.solution_set
-#
-# x1 = np.linspace(x[0], x[1], 1000)
-# x2 = np.linspace(x[1], x[2], 1000)
-# x3 = np.linspace(x[2], x[3], 1000)
-# x4 = np.linspace(x[3], x[4], 1000)
-# x5 = np.linspace(x[4], x[5], 1000)
-#
-# plt.plot(x1, evaluate_spline(x1, ss[0]), 'b-')
-# plt.plot(x2, evaluate_spline(x2, ss[1]), 'g-')
-# plt.plot(x3, evaluate_spline(x3, ss[2]), 'r-')
-# plt.plot(x4, evaluate_spline(x4, ss[3]), 'm-')
-# plt.plot(x5, evaluate_spline(x5, ss[4]), 'y-')
-#
-# plt.plot(x, y, 'ko')
-#
-# plt.tight_layout()
-# plt.show()
+    def plot_splines(self):
+        from matplotlib import pyplot as plt
+
+        def get_splines(pars, _x):
+            return pars[0] * _x**2 + pars[1] * _x + pars[2]
+
+        def get_xs(st, ed, n=10):
+            return np.linspace(st, ed, n)
+
+        vals = self.given_values
+        ss = self.solution_set()
+
+        xs = [get_xs(i, j) for i, j in zip(vals[:-1], vals[1:])]
+        splines = [get_splines(i, j) for i, j in zip(ss, xs)]
+
+        plt.figure()
+        plt.plot(vals, self.function_values, 'k--')
+        [plt.plot(i, j) for i, j in zip(xs, splines)]
+        plt.plot(vals, self.function_values, 'ko')
+        plt.title('Quadratic Spline Approximation.')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.tight_layout()
+        plt.show()
