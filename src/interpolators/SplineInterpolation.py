@@ -1,7 +1,17 @@
 """Created on Nov 01 23:03:42 2023"""
 import numpy as np
+from matplotlib import pyplot as plt
 
 from src.interpolators.interpolation.INTERPOLATION_ import INTERPOLATION
+
+
+def get_solution(given_values, value_to_approximate, solution):
+    given_values.insert(0, value_to_approximate)
+    given_values.sort()
+    idx_ = given_values.index(value_to_approx) - 1
+    del given_values[idx_ + 1]
+
+    return solution[idx_]
 
 
 class LinearSpline(INTERPOLATION):
@@ -9,20 +19,62 @@ class LinearSpline(INTERPOLATION):
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None):
         super().__init__(given_values, value_to_approximate, function, function_values)
 
-    def interpolate(self):
+    def __spline_solver(self, give_splines=False):
+        x_to_approx = self.value_to_approx
         data_points = len(self.given_values)
-        for i in range(data_points - 1):
-            if self.given_values[i] <= self.value_to_approx <= self.given_values[i + 1]:
-                x0, x1 = self.given_values[i], self.given_values[i + 1]
-                y0, y1 = self.function_values[i], self.function_values[i + 1]
 
-                fraction1 = (self.value_to_approx - x1) / (x0 - x1)
-                fraction1 *= y0
+        xs = [[self.given_values[i], self.given_values[i + 1]] for i in range(data_points - 1)]
+        ys = [[self.function_values[i], self.function_values[i + 1]] for i in range(data_points - 1)]
 
-                fraction2 = (self.value_to_approx - x0) / (x1 - x0)
-                fraction2 *= y1
+        spline = [((x_to_approx - x2) * y1 - (x_to_approx - x1) * y2) / (x1 - x2) for (x1, x2), (y1, y2) in zip(xs, ys)]
 
-                return fraction1 + fraction2
+        return xs, ys, spline if give_splines else spline
+
+    def solution_set(self, give_splines=False):
+        return self.__spline_solver(give_splines=give_splines)
+
+    def interpolate(self):
+        return get_solution(self.given_values, self.value_to_approx, self.solution_set())
+
+    def show_splines(self, full=False) -> None:
+        xs, ys, spline = self.solution_set(give_splines=True)
+
+        print('The splines are approximated to 4 decimal places for display purposes only.\n')
+        for i in range(len(spline)):
+            den1 = xs[i][0] - xs[i][1]
+            den2 = -den1
+            if full:
+                print(f'Sp{i + 1}: {ys[i][0] / den1}(x - {xs[i][1]}) - {ys[i][1] / den2}(x - {xs[i][0]})')
+            else:
+                print(f'Sp{i + 1}: {ys[i][0] / den1:+.4f}(x - {xs[i][1]}) {ys[i][1] / den2:+.4f}(x - {xs[i][0]})')
+
+        return None
+
+    def plot_splines(self):
+        given = self.given_values
+        xs, ys, _ = self.solution_set(give_splines=True)
+
+        def get_spline(x_par, y_par, point):
+            num1, num2 = (point - x_par[1]) * y_par[0], (point - x_par[0]) * y_par[1]
+            denominator = x_par[0] - x_par[1]
+
+            return (num1 - num2) / denominator
+
+        def get_xs(st, ed, n=10):
+            return np.linspace(st, ed, n)
+
+        x_vals = [get_xs(i, j, 100) for i, j in zip(given[1:], given[:-1])]
+        y_vals = [get_spline(xs[i], ys[i], v) for i, v in enumerate(x_vals)]
+
+        plt.figure()
+        plt.plot(given, self.function_values, 'k--')
+        [plt.plot(i, j, ls='--') for i, j in zip(x_vals, y_vals)]
+        plt.plot(given, self.function_values, 'ko')
+        plt.title('Linear Spline Approximation.')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.tight_layout()
+        plt.show()
 
 
 class QuadraticSpline(INTERPOLATION):
@@ -94,14 +146,7 @@ class QuadraticSpline(INTERPOLATION):
 
     def interpolate(self, n_derivative=0):
         approximation = self.value_to_approx
-        solution = self.solution_set
-
-        self.given_values.insert(0, self.value_to_approx)
-        self.given_values.sort()
-        idx_ = self.given_values.index(self.value_to_approx) - 1
-        del self.given_values[idx_ + 1]
-
-        req_solution = solution()[idx_]
+        req_solution = get_solution(self.given_values, self.value_to_approx, self.solution_set())
 
         if n_derivative == 0:
             return req_solution[0] * approximation**2 + req_solution[1] * approximation + req_solution[2]
@@ -123,7 +168,6 @@ class QuadraticSpline(INTERPOLATION):
         return None
 
     def plot_splines(self):
-        from matplotlib import pyplot as plt
 
         def get_splines(pars, _x):
             return pars[0] * _x**2 + pars[1] * _x + pars[2]
@@ -146,3 +190,49 @@ class QuadraticSpline(INTERPOLATION):
         plt.ylabel('Y')
         plt.tight_layout()
         plt.show()
+
+
+def f_of_x(_x):
+    return _x**2 - (np.tan(_x**5) / _x)**-1
+
+
+# x1 = [2.2, 8.2, 12.2, 20.2, 21.5, 28.9, 35, 45]
+# y1 = [f_of_x(i) for i in x1]
+
+x1 = [0, 10, 15, 20, 22.5, 30]
+y1 = [0, 227.04, 362.78, 517.35, 602.97, 901.67]
+value_to_approx = 16
+c1 = LinearSpline(x1, value_to_approx, function_values=y1)
+ssc1 = c1.solution_set()
+
+c2 = QuadraticSpline(x1, value_to_approx, function_values=y1, last_equation='last')
+ssc2 = c2.solution_set()
+
+
+def resolve_x(start, end, num=100):
+    return np.linspace(start, end, num)
+
+
+def quad_spline(pars, _x):
+    return pars[0] * _x**2 + pars[1] * _x + pars[2]
+
+
+def linear_spline(x_par, y_par, point):
+    num1, num2 = (point - x_par[1]) * y_par[0], (point - x_par[0]) * y_par[1]
+    denominator = x_par[0] - x_par[1]
+
+    return (num1 - num2) / denominator
+
+
+# x_resolved = [resolve_x(i, j, 100) for i, j in zip(x1[1:], x1[:-1])]
+# lin_ = [linear_spline(ssc1[0][i], ssc1[1][i], v) for i, v in enumerate(x_resolved)]
+# quad_ = [quad_spline(i, j) for i, j in zip(ssc2, x_resolved)]
+#
+# plt.plot(x1, y1, 'k--')
+# [plt.plot(i, j, color='b') for i, j in zip(x_resolved, lin_)]
+# [plt.plot(i, j, color='r') for i, j in zip(x_resolved, quad_)]
+# plt.plot(x1, y1, 'ko')
+# plt.show()
+
+c1.show_splines()
+c1.plot_splines()
