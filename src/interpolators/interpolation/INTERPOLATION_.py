@@ -7,7 +7,7 @@ class INTERPOLATION:
 
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None):
         self.given_values = given_values
-        self.value_to_approx = value_to_approximate
+        self.value_to_approximate = value_to_approximate
 
         if function is None and function_values is None:
             raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")

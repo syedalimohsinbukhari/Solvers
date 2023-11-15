@@ -27,7 +27,7 @@ class _BaseInterpolation(INTERPOLATION):
 
     def interpolate(self):
         def find_p():
-            approx, given = self.value_to_approx, self.given_values
+            approx, given = self.value_to_approximate, self.given_values
             num_ = approx - given[0] if self._class_check() == 'Fwd' else approx - given[-1]
             den_ = given[1] - given[0]
 
@@ -89,7 +89,7 @@ class DividedInterpolation(_BaseInterpolation):
 
         product, all_products = 1, [1]
         for i in range(1, n):
-            product *= self.value_to_approx - self.given_values[i - 1]
+            product *= self.value_to_approximate - self.given_values[i - 1]
             all_products.append(product)
 
         difference_table = self.difference_table()

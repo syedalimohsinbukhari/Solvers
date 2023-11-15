@@ -16,7 +16,7 @@ class LagrangeInterpolation(INTERPOLATION):
             numerator = 1
             denominator = 1
             for value in modified_array:
-                numerator *= (self.value_to_approx - value)
+                numerator *= (self.value_to_approximate - value)
                 denominator *= (given[i] - value)
             answer.append((numerator / denominator) * self.function_values[i])
 
