@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 
 from src.interpolators.interpolation.INTERPOLATION_ import INTERPOLATION
 
+
 # TODO: Clean up the spline code and see if it can be generalized
 
 class SPLINE(INTERPOLATION):
@@ -40,7 +41,7 @@ class SPLINE(INTERPOLATION):
 def get_solution(given_values, value_to_approximate, solution):
     given_values.insert(0, value_to_approximate)
     given_values.sort()
-    idx_ = given_values.index(value_to_approx) - 1
+    idx_ = given_values.index(value_to_approximate) - 1
     del given_values[idx_ + 1]
 
     return solution[idx_]
@@ -243,15 +244,15 @@ class NaturalCubicSpline(SPLINE):
 
         given_values = self.given_values[1:-1]
         a_ = [[3 * j * i**2 for i in given_values] for j in [1, -1]]
-        a_der = [[6 * j * i for i in given_values] for j in [1, -1]]
         b_ = [[2 * j * _ for _ in given_values] for j in [1, -1]]
-        b_der = [[2 * j for _ in given_values] for j in [1, -1]]
         c_ = [[j for _ in given_values] for j in [1, -1]]
-        c_der = [[0] * len(given_values) for _ in range(2)]
         d_ = [[0] * len(given_values) for _ in range(2)]
-        d_der = c_der
-
         combined = [[[*p] for p in zip(w1, x1, y1, z1)] for w1, x1, y1, z1 in zip(a_, b_, c_, d_)]
+
+        a_der = [[6 * j * i for i in given_values] for j in [1, -1]]
+        b_der = [[2 * j for _ in given_values] for j in [1, -1]]
+        c_der = [[0] * len(given_values) for _ in range(2)]
+        d_der = c_der
         combined_der = [[[*p] for p in zip(w2, x2, y2, z2)] for w2, x2, y2, z2 in zip(a_der, b_der, c_der, d_der)]
 
         j_index, k_index = 0, 0

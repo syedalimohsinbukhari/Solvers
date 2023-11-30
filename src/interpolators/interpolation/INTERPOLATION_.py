@@ -5,7 +5,7 @@ from .ERRORS_ import AtLeastOneParameterRequired
 
 class INTERPOLATION:
 
-    def __init__(self, given_values, value_to_approximate, function=None, function_values=None):
+    def __init__(self, given_values, value_to_approximate, function=None, function_values=None, use_full_table=True):
         self.given_values = given_values
         self.value_to_approximate = value_to_approximate
 
@@ -13,6 +13,7 @@ class INTERPOLATION:
             raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
 
         self.function_values = function_values if function_values else [function(value) for value in given_values]
+        self.use_full_table = use_full_table
 
     def difference_table(self):
         pass
