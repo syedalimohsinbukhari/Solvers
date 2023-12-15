@@ -1,6 +1,6 @@
 """Created on Nov 29 14:48:53 2023"""
 
-from src.iterative_solvers.gaussian.NEWTON_COTES import Iterators, _DataTable
+from src.iterative_solvers.gaussian.NEWTON_COTES import DataTable, Iterators
 
 
 def newton_raphson_solver(function, func_derivative, x_0, tol=1e-14):
@@ -62,10 +62,14 @@ class NewtonCotesIterators:
 
     def value_table(self, precision=100):
         vals = self._value_table()
-        _DataTable(vals['x'], vals['y']).print_table(precision=precision)
+        DataTable(vals['x'], vals['y']).print_table(precision=precision)
 
-    def solve(self):
+    def solve(self, rounded=False, decimal_places=3):
         fs = self._value_table()['y']
+
+        if rounded:
+            fs = [round(i, decimal_places) for i in fs]
+
         f_0 = [self.outer_multiplier_value * i for i in [fs[0], fs[-1]]]
 
         f_list = []
@@ -75,6 +79,10 @@ class NewtonCotesIterators:
             else:
                 f_list.extend(multiplier * i for i in fs[start:-1:self.n_points])
 
-        f_list[0:0] = reversed(f_0)
+        f_list[0:0] = f_0
 
         return self.norm_value * sum(f_list)
+
+
+c = NewtonCotesIterators(lambda x: x**2 - 3 * x + 5, -6.5, 6.5, composites=6, solver='weddle')
+print(c.solve())
