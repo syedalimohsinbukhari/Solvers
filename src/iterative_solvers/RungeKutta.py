@@ -1,6 +1,7 @@
 """Created on Dec 16 03:28:44 2023"""
 from typing import Callable, List
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 NdArray2 = [np.ndarray, np.ndarray]
@@ -133,6 +134,8 @@ def rk4_solver(ode: Callable, x_0: float, y_0: float, h: float = 0.1, x_max: flo
         y_n[i] = y_i + (1 / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
         x_n[i] = x_i + h
 
+    print(x_n, y_n)
+
     return x_n, y_n
 
 
@@ -168,7 +171,6 @@ def rk4_multi_ode(odes: List[Callable], initial_conditions: List[float], h: floa
     result[0] = initial_conditions
 
     for i in range(1, num_steps):
-
         quantities = result[i - 1]
         m = np.zeros((4, num_odes - 1))
 
@@ -176,32 +178,23 @@ def rk4_multi_ode(odes: List[Callable], initial_conditions: List[float], h: floa
             qty1 = quantities
             m[0][j] = h * odes[j](*qty1)
 
-        for j in range(num_odes - 1):
-            qty2 = [quantities[0] + h / 2]
-            qty2.extend(list(quantities[1:] + (m[0][:] / 2)))
+        for k in range(1, 3):
+            qty = [quantities[0] + h / 2] + list(quantities[1:] + m[k - 1, :] / 2)
+            m[k, :] = h * np.array([odes[j](*qty) for j in range(num_odes - 1)])
 
-            m[1][j] = h * odes[j](*qty2)
-
-        for j in range(num_odes - 1):
-            qty3 = [quantities[0] + h / 2]
-            qty3.extend(list(quantities[1:] + m[1][:] / 2))
-
-            m[2][j] = h * odes[j](*qty3)
-
-        for j in range(num_odes - 1):
-            qty4 = [quantities[0] + h]
-            qty4.extend(list(quantities[1:] + m[2][:]))
-
-            m[3][j] = h * odes[j](*qty4)
+        qty = [quantities[0] + h] + list(quantities[1:] + m[2, :])
+        m[3, :] = h * np.array([odes[j](*qty) for j in range(num_odes - 1)])
 
         for j in range(num_odes):
             if j == 0:
-                result[i][j] = quantities[j] + h
+                result[i, j] = quantities[j] + h
             else:
                 qty5 = m[:, j - 1]
-                result[i][j] = np.round(quantities[j] + (1 / 6) * (qty5[0] + 2 * np.sum(qty5[1:3]) + qty5[3]), n_round)
+                result[i, j] = quantities[j] + (1 / 6) * (qty5[0] + 2 * np.sum(qty5[1:3]) + qty5[3])
+                result[i, j] = np.round(result[i, j], n_round)
 
     return [result[:, i] for i in range(num_odes)]
+
 
 #######################################################################################################################
 # Example
