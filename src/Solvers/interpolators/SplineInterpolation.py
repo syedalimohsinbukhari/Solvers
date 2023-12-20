@@ -1,8 +1,8 @@
 """Created on Nov 01 23:03:42 2023"""
-import numpy as np
-from matplotlib import pyplot as plt
 
-from src.interpolators.interpolation.INTERPOLATION_ import INTERPOLATION
+import numpy as np
+
+from .interpolation.INTERPOLATION_ import INTERPOLATION
 
 
 # TODO: Clean up the spline code and see if it can be generalized
@@ -16,9 +16,6 @@ class SPLINE(INTERPOLATION):
         pass
 
     def show_splines(self):
-        pass
-
-    def plot_splines(self):
         pass
 
     @staticmethod
@@ -82,23 +79,6 @@ class LinearSpline(SPLINE):
                 print(f'Sp{i + 1}: {ys[i][0] / den1:+.4f}(x - {xs[i][1]}) {ys[i][1] / den2:+.4f}(x - {xs[i][0]})')
 
         return None
-
-    def plot_splines(self):
-        given = self.given_values
-        xs, ys, _ = self.solution_set(give_splines=True)
-
-        x_vals = [super().x_values(i, j, 100) for i, j in zip(given[1:], given[:-1])]
-        y_vals = [super().get_splines(xs[i], ys[i], v) for i, v in enumerate(x_vals)]
-
-        plt.figure()
-        plt.plot(given, self.function_values, 'k--')
-        [plt.plot(i, j, ls='--') for i, j in zip(x_vals, y_vals)]
-        plt.plot(given, self.function_values, 'ko')
-        plt.title('Linear Spline Approximation.')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.tight_layout()
-        plt.show()
 
 
 class QuadraticSpline(SPLINE):
@@ -191,23 +171,6 @@ class QuadraticSpline(SPLINE):
                 print(f'Sp{i + 1}: {solution[i][0]:+.4f}x^2 {solution[i][1]:+.4f}x {solution[i][2]:+.4f} = 0')
 
         return None
-
-    def plot_splines(self):
-        vals = self.given_values
-        solution_set = self.solution_set()
-
-        x_vals = [SPLINE.x_values(i, j) for i, j in zip(vals[:-1], vals[1:])]
-        splines = [SPLINE.get_splines(i, j, spline_type='quad') for i, j in zip(x_vals, solution_set)]
-
-        plt.figure()
-        plt.plot(vals, self.function_values, 'k--')
-        [plt.plot(i, j) for i, j in zip(x_vals, splines)]
-        plt.plot(vals, self.function_values, 'ko')
-        plt.title('Quadratic Spline Approximation.')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.tight_layout()
-        plt.show()
 
 
 class NaturalCubicSpline(SPLINE):
@@ -306,81 +269,3 @@ class NaturalCubicSpline(SPLINE):
                       f'{solution[i][3]:+.4f} = 0')
 
         return None
-
-    def plot_splines(self):
-        vals = self.given_values
-        solution_set = self.solution_set()
-
-        x_vals = [SPLINE.x_values(i, j) for i, j in zip(vals[:-1], vals[1:])]
-        splines = [SPLINE.get_splines(i, j, spline_type='cubic') for i, j in zip(x_vals, solution_set)]
-
-        plt.figure()
-        plt.plot(vals, self.function_values, 'k--')
-        [plt.plot(i, j) for i, j in zip(x_vals, splines)]
-        plt.plot(vals, self.function_values, 'ko')
-        plt.title('Cubic Spline Approximation.')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.tight_layout()
-        plt.show()
-
-
-# def f_of_x(_x):
-#     return _x**2 - (np.tan(_x**5) / _x)**-1
-
-
-# x1 = [2.2, 8.2, 12.2, 20.2, 21.5, 28.9, 35, 45]
-# y1 = [f_of_x(i) for i in x1]
-
-# x1 = [0, 10, 15, 20, 22.5, 30]
-# y1 = [0, 227.04, 362.78, 517.35, 602.97, 901.67]
-
-def f_of_x(_x):
-    return _x * (np.sin(_x)) * np.cos(_x)
-
-
-x_ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-y_ = [f_of_x(i) for i in x_]
-value_to_approx = 2.2
-
-c1 = NaturalCubicSpline(x_, value_to_approx, function_values=y_)
-# c1.plot_splines()
-# c1.show_splines()
-
-
-# c2 = QuadraticSpline(x1, value_to_approx, function_values=y1, last_equation='first')
-# ssc2 = c2.solution_set()
-#
-# c3 = QuadraticSpline(x1, value_to_approx, function_values=y1, last_equation='last')
-# ssc3 = c3.solution_set()
-
-
-# def resolve_x(start, end, num=100):
-#     return np.linspace(start, end, num)
-#
-#
-# def quad_spline(pars, _x):
-#     return pars[0] * _x**2 + pars[1] * _x + pars[2]
-#
-#
-# def linear_spline(x_par, y_par, point):
-#     num1, num2 = (point - x_par[1]) * y_par[0], (point - x_par[0]) * y_par[1]
-#     denominator = x_par[0] - x_par[1]
-#
-#     return (num1 - num2) / denominator
-#
-#
-# x_resolved = [resolve_x(i, j, 100) for i, j in zip(x1[1:], x1[:-1])]
-# lin_ = [linear_spline(ssc1[0][i], ssc1[1][i], v) for i, v in enumerate(x_resolved)]
-# quad1_ = [quad_spline(i, j) for i, j in zip(ssc2, x_resolved)]
-# quad2_ = [quad_spline(i, j) for i, j in zip(ssc3, x_resolved)]
-#
-# plt.plot(x1, y1, 'k--')
-# [plt.plot(i, j, color='b') for i, j in zip(x_resolved, lin_)]
-# [plt.plot(i, j, color='r') for i, j in zip(x_resolved, quad1_)]
-# [plt.plot(i, j, color='g') for i, j in zip(x_resolved, quad2_)]
-# plt.plot(x1, y1, 'ko')
-# plt.show()
-
-# c1.show_splines()
-# c1.plot_splines()

@@ -1,15 +1,48 @@
-"""Created on Nov 29 14:48:53 2023"""
+"""Created on Nov 30 16:37:17 2023"""
 
-from src.iterative_solvers.gaussian.NEWTON_COTES import DataTable, Iterators
+import enum
 
 
-def newton_raphson_solver(function, func_derivative, x_0, tol=1e-14):
-    f, df = function, func_derivative
+class DataTable:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-    if abs(f(x_0)) < tol:
-        return x_0
-    else:
-        return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tol)
+    def print_table(self, precision=100):
+        # Find the maximum length of strings in x and y
+        n_len = 6
+        max_len_x = max(len(str(element)) for element in self.x)
+        max_len_y = max(len(str(element)) for element in self.y)
+
+        # Add extra space for padding
+        max_len_x += 4
+        max_len_y += 4
+        n_len += 2
+
+        print('-' * (n_len + max_len_x + max_len_y + 4))
+        # Print the table header
+        print(f"|{'n':^{n_len}}|{'x':^{max_len_x}}|{'y':^{max_len_y}}|")
+
+        # Print the table border
+        print('-' * (n_len + max_len_x + max_len_y + 4))
+
+        # Print the table rows
+        for i in range(len(self.x)):
+            print(f"|{str(i + 1):^{n_len}}|{str(self.x[i]):^{max_len_x}}|"
+                  f"{str(round(self.y[i], precision)):^{max_len_y}}|")
+
+        # Print the table border
+        print('-' * (n_len + max_len_x + max_len_y + 4))
+
+
+@enum.unique
+class Iterators(enum.Enum):
+    TRAPEZOID = 1
+    SIMPSON_13 = 2
+    SIMPSON_38 = 3
+    BOOLE = 4
+    WEDDLE_3H10 = 5.1
+    WEDDLE_41H140 = 5.2
 
 
 class NewtonCotesIterators:
@@ -20,8 +53,8 @@ class NewtonCotesIterators:
                  'simpson_13': _I.SIMPSON_13,
                  'simpson_38': _I.SIMPSON_38,
                  'boole': _I.BOOLE,
-                 'weddle': _I.WEDDLE_3H10,
-                 'weddle_long': _I.WEDDLE_41H140}
+                 'weddle_3h10': _I.WEDDLE_3H10,
+                 'weddle_41h140': _I.WEDDLE_41H140}
 
     nodes = {_I.TRAPEZOID: 2, _I.SIMPSON_13: 2, _I.SIMPSON_38: 3, _I.BOOLE: 4, _I.WEDDLE_3H10: 6, _I.WEDDLE_41H140: 6}
 
@@ -82,7 +115,3 @@ class NewtonCotesIterators:
         f_list[0:0] = f_0
 
         return self.norm_value * sum(f_list)
-
-
-c = NewtonCotesIterators(lambda x: x**2 - 3 * x + 5, -6.5, 6.5, composites=6, solver='weddle')
-print(c.solve())

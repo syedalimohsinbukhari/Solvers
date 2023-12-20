@@ -1,9 +1,28 @@
-"""Created on Nov 02 00:25:14 2023"""
+"""Created on Oct 19 03:46:05 2023"""
 
-from src.interpolators.interpolation.INTERPOLATION_ import INTERPOLATION
+from . import ERRORS_
 
 
-class _BaseInterpolation(INTERPOLATION):
+class INTERPOLATION:
+
+    def __init__(self, given_values, value_to_approximate, function=None, function_values=None, use_full_table=True):
+        self.given_values = given_values
+        self.value_to_approximate = value_to_approximate
+
+        if function is None and function_values is None:
+            raise ERRORS_.AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
+
+        self.function_values = function_values if function_values else [function(value) for value in given_values]
+        self.use_full_table = use_full_table
+
+    def difference_table(self):
+        pass
+
+    def interpolate(self):
+        pass
+
+
+class BaseInterpolation(INTERPOLATION):
 
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, use_full_table=True):
         super().__init__(given_values, value_to_approximate, function, function_values, use_full_table)
@@ -89,38 +108,18 @@ class _BaseInterpolation(INTERPOLATION):
             else:
                 result.append((difference_table[i] * p_value[i]) / factorial(i + 1))
 
-        return result, sum(result)
+        return {'step_values': result, 'result': sum(result)}
 
 
-class FwdInterpolation(_BaseInterpolation):
+class FwdInterpolation(BaseInterpolation):
     pass
 
 
-class BkwInterpolation(_BaseInterpolation):
+class BkwInterpolation(BaseInterpolation):
     pass
 
 
-# x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-# val = 1.5
-#
-#
-# def f_of_x(_x):
-#     if isinstance(_x, float):
-#         return _x**3 - 5 * np.sqrt(_x)
-#     else:
-#         return [(i**3 - 5 * np.sqrt(i)) for i in _x]
-#
-#
-# c1 = FwdInterpolation(x, val, function_values=f_of_x(x), use_full_table=True)
-# c2 = FwdInterpolation(x, val, function_values=f_of_x(x), use_full_table=False)
-# ic(f_of_x(val))
-# ic(c1.interpolate()[1])
-# ic(c2.interpolate()[1])
-#
-# ic((f_of_x(val) - c2.interpolate()[1]) / f_of_x(val))
-
-
-class DividedInterpolation(_BaseInterpolation):
+class DividedInterpolation(BaseInterpolation):
     def difference_table(self, complete_table=False):
 
         n = len(self.function_values)
@@ -152,13 +151,3 @@ class DividedInterpolation(_BaseInterpolation):
         n_polynomial = [i * j for i, j in zip(difference_table, all_products)]
 
         return sum(n_polynomial)
-
-# x = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
-# y = [0, 4, 7.94, 11.68, 14.97, 17.39, 18.25, 16.08, 0]
-# val = 0.8
-#
-# c = DividedInterpolation(x, val, function_values=y)
-# p = c.difference_table(True)
-# for i in p:
-#     print(i)
-# print(c.interpolate())
