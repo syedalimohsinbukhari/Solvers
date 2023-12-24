@@ -45,7 +45,7 @@ class Iterators(enum.Enum):
     WEDDLE_41H140 = 5.2
 
 
-class NewtonCotesIterators:
+class SingleVariableNewtonCotesIntegrators:
 
     _I = Iterators
 
@@ -75,11 +75,11 @@ class NewtonCotesIterators:
                          _I.WEDDLE_3H10: [5, 1, 6, 1, 5, 2 * 1],
                          _I.WEDDLE_41H140: [216, 27, 272, 27, 216, 2 * 41]}
 
-    def __init__(self, function, x_0, x_n, composites=1, solver='weddle'):
+    def __init__(self, function, x_0, x_n, composites=1, integration_method='weddle'):
         self.function = function
         self.x_0 = x_0
         self.x_n = x_n
-        self.solver = self.str_iters[solver] if isinstance(solver, str) else solver
+        self.solver = self.str_iters[integration_method] if isinstance(integration_method, str) else integration_method
 
         self.composites = composites * self.nodes[self.solver]
         self.dx = (x_n - x_0) / self.composites

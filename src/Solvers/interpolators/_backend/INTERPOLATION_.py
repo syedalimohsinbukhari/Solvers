@@ -1,11 +1,37 @@
 """Created on Oct 19 03:46:05 2023"""
 
+from typing import List, Optional
+
 from . import ERRORS_
 
 
 class INTERPOLATION:
 
-    def __init__(self, given_values, value_to_approximate, function=None, function_values=None, use_full_table=True):
+    def __init__(self, given_values: List[float], value_to_approximate: float,
+                 function: Optional[callable] = None, function_values: Optional[List[float]] = None,
+                 use_full_table: bool = True):
+        """
+        Initialize the INTERPOLATION object.
+
+        Parameters
+        ----------
+        given_values : List[float]
+            List of x-values.
+        value_to_approximate : float
+            The x-value to interpolate the corresponding y-value.
+        function : callable, optional
+            The function to use for calculating y-values if ``function_values`` is not provided.
+        function_values : List[float], optional
+            List of y-values corresponding to ``given_values``. If not provided, ``function`` will be used to calculate
+            these values.
+        use_full_table : bool, optional
+            If True, use the full difference table; if False, use only the necessary parts for interpolation.
+
+        Raises
+        ------
+        ERRORS_.AtLeastOneParameterRequired
+            If neither ``function`` nor ``function_values`` is provided.
+        """
         self.given_values = given_values
         self.value_to_approximate = value_to_approximate
 
@@ -16,21 +42,60 @@ class INTERPOLATION:
         self.use_full_table = use_full_table
 
     def difference_table(self):
+        """
+        Calculate the divided difference table.
+        """
         pass
 
     def interpolate(self):
+        """
+        Interpolate the y-value corresponding to the given x-value.
+        """
         pass
 
 
 class BaseInterpolation(INTERPOLATION):
 
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, use_full_table=True):
+        """
+        Initialize the BaseInterpolation object.
+
+        Parameters
+        ----------
+        given_values : List[float]
+            List of x-values.
+        value_to_approximate : float
+            The x-value to interpolate the corresponding y-value.
+        function : callable, optional
+            The function to use for calculating y-values if `function_values` is not provided.
+        function_values : List[float], optional
+            List of y-values corresponding to `given_values`. If not provided, `function` will be used to calculate
+            these values.
+        use_full_table : bool, optional
+            If True, use the full difference table; if False, use only the necessary parts for interpolation.
+        """
         super().__init__(given_values, value_to_approximate, function, function_values, use_full_table)
 
-    def _class_check(self):
+    def _class_check(self) -> str:
+        """
+        Check the class type.
+
+        Returns
+        -------
+        str
+            'Fwd' if the class is FwdInterpolation, 'Bkw' if the class is BkwInterpolation.
+        """
         return 'Fwd' if self.__class__.__name__ == 'FwdInterpolation' else 'Bkw'
 
-    def _get_index(self):
+    def _get_index(self) -> int:
+        """
+        Get the index of the value to approximate in the sorted given values.
+
+        Returns
+        -------
+        int
+            The index of the value to approximate in the sorted given values.
+        """
         temp = self.given_values
         temp.insert(0, self.value_to_approximate)
         temp.sort()
@@ -39,8 +104,15 @@ class BaseInterpolation(INTERPOLATION):
         del temp[temp_idx]
         return temp_idx
 
-    def difference_table(self):
+    def difference_table(self) -> List[List[float]]:
+        """
+        Calculate the divided difference table.
 
+        Returns
+        -------
+        List[float]
+            The divided difference table.
+        """
         idx_ = self._get_index()
 
         table_limit = len(self.given_values) - 1
@@ -71,7 +143,17 @@ class BaseInterpolation(INTERPOLATION):
 
         return t
 
-    def interpolate(self):
+    def interpolate(self) -> dict:
+        """
+        Interpolate the y-value corresponding to the given x-value.
+
+        Returns
+        -------
+        dict
+            Dictionary with ``step_values`` (list of interpolated values for each step) and ``result``
+            (sum of the interpolated values).
+        """
+
         def find_p():
             if self.use_full_table:
                 approx, given = self.value_to_approximate, self.given_values
@@ -112,10 +194,26 @@ class BaseInterpolation(INTERPOLATION):
 
 
 class FwdInterpolation(BaseInterpolation):
+    """
+    Forward Interpolation class, inheriting from BaseInterpolation.
+
+    This class specializes in implementing the forward interpolation method.
+    It utilizes the BaseInterpolation class for shared functionality.
+
+    Parameters and methods are inherited from BaseInterpolation.
+    """
     pass
 
 
 class BkwInterpolation(BaseInterpolation):
+    """
+    Backward Interpolation class, inheriting from BaseInterpolation.
+
+    This class specializes in implementing the backward interpolation method.
+    It utilizes the BaseInterpolation class for shared functionality.
+
+    Parameters and methods are inherited from BaseInterpolation.
+    """
     pass
 
 

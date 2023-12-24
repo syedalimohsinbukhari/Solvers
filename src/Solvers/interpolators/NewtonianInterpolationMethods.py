@@ -2,7 +2,7 @@
 
 from typing import Callable, List, Optional
 
-from .interpolation.INTERPOLATION_ import BkwInterpolation, DividedInterpolation, FwdInterpolation
+from ._backend.INTERPOLATION_ import BkwInterpolation, DividedInterpolation, FwdInterpolation
 
 
 class InvalidMethodError(Exception):

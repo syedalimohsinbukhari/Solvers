@@ -1,6 +1,6 @@
 """Created on Nov 01 16:47:03 2023"""
 
-from .interpolation.INTERPOLATION_ import INTERPOLATION
+from ._backend.INTERPOLATION_ import INTERPOLATION
 
 
 class LagrangeInterpolation(INTERPOLATION):

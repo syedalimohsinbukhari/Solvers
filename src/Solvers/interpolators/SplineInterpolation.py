@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from .interpolation.INTERPOLATION_ import INTERPOLATION
+from ._backend.INTERPOLATION_ import INTERPOLATION
 
 
 # TODO: Clean up the spline code and see if it can be generalized
