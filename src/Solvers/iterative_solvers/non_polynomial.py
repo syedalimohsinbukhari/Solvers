@@ -163,8 +163,8 @@ def ridder_method(function: Callable, x_0: float, x_1: float, tolerance: float =
 
     Returns
     -------
-    List[float]
-        List of roots found during the iterations if `get_full_result` is True, else returns the final root.
+    Union[float, List]
+        List of roots found during the iterations if ``get_full_result`` is True, else returns the final root.
     """
 
     def sign_function(functions_to_evaluate, value):
@@ -174,9 +174,7 @@ def ridder_method(function: Callable, x_0: float, x_1: float, tolerance: float =
     def is_sane():
         return True if f(x_0) * f(x_1) < 0 else False
 
-    f = function
-
-    root_ = [x_0, x_1, (x_0 + x_1) / 2]
+    f, root_ = function, [x_0, x_1, (x_0 + x_1) / 2]
 
     while is_sane():
         x_mid = (x_0 + x_1) / 2
@@ -196,5 +194,54 @@ def ridder_method(function: Callable, x_0: float, x_1: float, tolerance: float =
             x_0 = x_new
 
         root_.append(x_new)
+
+    return root_ if get_full_result else root_[-1]
+
+
+def steffensen_method(function: Callable, x_0: float, x_1: float, tolerance: float = TOLERANCE,
+                      get_full_result: bool = True) -> Union[float, List]:
+    """
+    Find the root of a function using Steffensen method.
+
+    Parameters
+    ----------
+    function : Callable
+        The target function for root finding.
+    x_0 : float
+        The lower bound of the initial bracket.
+    x_1 : float
+        The upper bound of the initial bracket.
+    tolerance : float, optional
+        Tolerance for the convergence criterion. Default is 1e-6.
+    get_full_result : bool, optional
+        If True, returns the list of all intermediate roots. If False, returns only the final root.
+        Default is True.
+
+    Returns
+    -------
+    Union[float, List]
+        List of roots found during the iterations if ``get_full_result`` is True, else returns the final root.
+    """
+
+    def is_sane():
+        return True if f(x_0) * f(x_1) < 0 else False
+
+    f, root_ = function, [x_0, x_1, (x_0 + x_1) / 2]
+
+    solve = True if is_sane() else False
+
+    while solve:
+        f_mid = f(root_[-1])
+        f_mid2 = f(root_[-1] + f_mid)
+
+        num_ = f_mid**2
+        den_ = f_mid2 - f_mid
+
+        x_new = root_[-1] - (num_ / den_)
+
+        root_.append(x_new)
+
+        if f(x_new) == 0 or abs(f(x_new)) < tolerance:
+            break
 
     return root_ if get_full_result else root_[-1]
