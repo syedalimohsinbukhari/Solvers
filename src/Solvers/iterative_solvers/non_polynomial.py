@@ -1,6 +1,6 @@
 """Created on Dec 24 12:56:39 2023"""
 
-from cmath import sqrt
+from math import sqrt
 from typing import Callable, List, Union
 
 Num = Union[float, complex]
@@ -94,8 +94,8 @@ def div_diff(f_: Func, xs_: list[Num]):
         return (div_diff(f_, xs_[1:]) - div_diff(f_, xs_[0:-1])) / (xs_[-1] - xs_[0])
 
 
-def mullers_method(function: Func, x0: Num, x1: Num, x2: Num, iterations: int,
-                   get_full_result: bool = True) -> FLOAT_LIST:
+def muller_method(function: Func, x0: Num, x1: Num, x2: Num, iterations: int,
+                  get_full_result: bool = True) -> FLOAT_LIST:
     """Return the root calculated using Muller's method."""
 
     root_ = [x0, x1, x2]
@@ -140,3 +140,61 @@ def generalized_secant_method(function, x_0, x_1, tolerance: float = TOLERANCE,
 
 def sidi_method(function: Callable, x_0, x_1, tolerance=TOLERANCE, get_full_result: bool = True) -> FLOAT_LIST:
     return generalized_secant_method(function, x_0, x_1, tolerance, get_full_result)
+
+
+def ridder_method(function: Callable, x_0: float, x_1: float, tolerance: float = TOLERANCE,
+                  get_full_result: bool = True) -> Union[float, List]:
+    """
+    Find the root of a function using Ridder's method.
+
+    Parameters
+    ----------
+    function : Callable
+        The target function for root finding.
+    x_0 : float
+        The lower bound of the initial bracket.
+    x_1 : float
+        The upper bound of the initial bracket.
+    tolerance : float, optional
+        Tolerance for the convergence criterion. Default is 1e-6.
+    get_full_result : bool, optional
+        If True, returns the list of all intermediate roots. If False, returns only the final root.
+        Default is True.
+
+    Returns
+    -------
+    List[float]
+        List of roots found during the iterations if `get_full_result` is True, else returns the final root.
+    """
+
+    def sign_function(functions_to_evaluate, value):
+        f1, f2 = functions_to_evaluate
+        return value if f1 - f2 > 0 else -value if f2 - f1 > 0 else 0
+
+    def is_sane():
+        return True if f(x_0) * f(x_1) < 0 else False
+
+    f = function
+
+    root_ = [x_0, x_1, (x_0 + x_1) / 2]
+
+    while is_sane():
+        x_mid = (x_0 + x_1) / 2
+
+        num_ = f(x_mid) * (x_mid - x_0)
+        den_ = sqrt(f(x_mid)**2 - f(x_0) * f(x_1))
+        f_ = num_ / den_
+
+        x_new = x_mid + sign_function([f(x_0), f(x_1)], f_)
+
+        if abs(f(x_new)) < tolerance or f_ == 0:
+            break
+
+        if f(x_mid) * f(x_new) < 0:
+            x_0, x_1 = x_mid, x_new
+        else:
+            x_0 = x_new
+
+        root_.append(x_new)
+
+    return root_ if get_full_result else root_[-1]
