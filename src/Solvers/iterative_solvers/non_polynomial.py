@@ -3,14 +3,11 @@
 from math import sqrt
 from typing import Callable, List, Union
 
-Num = Union[float, complex]
-Func = Callable[[Num], Num]
-TOLERANCE = 1e-8
-
-FLOAT_LIST = Union[List, float]
+from . import FLOAT_LIST, TOLERANCE
 
 
-def bisection_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=False):
+def bisection_method(function: Callable, x_0: float, x_n: float, tolerance: float = TOLERANCE,
+                     get_all_values: bool = False) -> FLOAT_LIST:
     f, root = function, []
 
     def is_sane():
@@ -32,7 +29,8 @@ def bisection_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=Fal
     return root if get_all_values else root[-1]
 
 
-def false_position_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=False):
+def false_position_method(function: Callable, x_0: float, x_n: float, tolerance: float = TOLERANCE,
+                          get_all_values: bool = False) -> FLOAT_LIST:
     f, root = function, []
 
     def is_sane():
@@ -60,11 +58,13 @@ def false_position_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_value
     return root if get_all_values else root[-1]
 
 
-def regula_falsi_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=False):
+def regula_falsi_method(function: Callable, x_0: float, x_n: float, tolerance: float = TOLERANCE,
+                        get_all_values: bool = False) -> FLOAT_LIST:
     return false_position_method(function, x_0, x_n, tolerance, get_all_values)
 
 
-def secant_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=False):
+def secant_method(function: Callable, x_0: float, x_n: float, tolerance: float = TOLERANCE,
+                  get_all_values: bool = False) -> FLOAT_LIST:
     f, root = function, []
 
     while True:
@@ -85,7 +85,7 @@ def secant_method(function, x_0, x_n, tolerance=TOLERANCE, get_all_values=False)
 
 # Taken form https://en.wikipedia.org/wiki/Muller%27s_method#Computational_example
 # minor tweaking applied on variable namings for consistency
-def div_diff(f_: Func, xs_: list[Num]):
+def div_diff(f_: Callable, xs_: list[float]):
     """Calculate the divided difference f[x0, x1, ...]."""
     if len(xs_) == 2:
         a, b = xs_
@@ -94,7 +94,7 @@ def div_diff(f_: Func, xs_: list[Num]):
         return (div_diff(f_, xs_[1:]) - div_diff(f_, xs_[0:-1])) / (xs_[-1] - xs_[0])
 
 
-def muller_method(function: Func, x0: Num, x1: Num, x2: Num, iterations: int,
+def muller_method(function: Callable, x0: float, x1: float, x2: float, iterations: int,
                   get_full_result: bool = True) -> FLOAT_LIST:
     """Return the root calculated using Muller's method."""
 
@@ -114,7 +114,7 @@ def muller_method(function: Func, x0: Num, x1: Num, x2: Num, iterations: int,
     return root_ if get_full_result else root_[-1]
 
 
-def generalized_secant_method(function, x_0, x_1, tolerance: float = TOLERANCE,
+def generalized_secant_method(function: Callable, x_0: float, x_1: float, tolerance: float = TOLERANCE,
                               get_full_result: bool = True) -> FLOAT_LIST:
     x_2 = x_1 - function(x_1) / div_diff(function, [x_0, x_1])
 
@@ -138,14 +138,15 @@ def generalized_secant_method(function, x_0, x_1, tolerance: float = TOLERANCE,
     return root_ if get_full_result else root_[-1]
 
 
-def sidi_method(function: Callable, x_0, x_1, tolerance=TOLERANCE, get_full_result: bool = True) -> FLOAT_LIST:
+def sidi_method(function: Callable, x_0: float, x_1: float, tolerance: float = TOLERANCE,
+                get_full_result: bool = True) -> FLOAT_LIST:
     return generalized_secant_method(function, x_0, x_1, tolerance, get_full_result)
 
 
 def ridder_method(function: Callable, x_0: float, x_1: float, tolerance: float = TOLERANCE,
                   get_full_result: bool = True) -> Union[float, List]:
     """
-    Find the root of a function using Ridder's method.
+    Find the root of a function using Ridder method.
 
     Parameters
     ----------
