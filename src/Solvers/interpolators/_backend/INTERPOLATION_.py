@@ -5,6 +5,10 @@ from typing import List, Optional
 from . import ERRORS_
 
 
+# TODO: Correct the divided interpolation method according to fwd and bkw
+# TODO: Remove ``use_full_table`` option and corresponding code
+
+
 class INTERPOLATION:
 
     def __init__(self, given_values: List[float], value_to_approximate: float,
@@ -248,4 +252,12 @@ class DividedInterpolation(BaseInterpolation):
         difference_table = self.difference_table()
         n_polynomial = [i * j for i, j in zip(difference_table, all_products)]
 
-        return sum(n_polynomial)
+        return {'step_values': n_polynomial, 'result': sum(n_polynomial)}
+
+
+def get_result(interpolation, difference_table):
+    result = interpolation.interpolate()
+    if difference_table:
+        result['difference_table'] = interpolation.difference_table()
+
+    return result
