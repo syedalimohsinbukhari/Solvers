@@ -47,7 +47,7 @@ class INTERPOLATION:
 
     def difference_table(self):
         """
-        Calculate the divided difference table.
+        Calculate the difference table.
         """
         pass
 
