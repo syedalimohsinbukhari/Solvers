@@ -7,8 +7,7 @@ from ._backend.INTERPOLATION_ import BkwInterpolation, DividedInterpolation, Fwd
 
 
 def forward_interpolation(given_values: L_FLOAT, value_to_approximate: float, function: Optional[Callable] = None,
-                          function_values: Optional[L_FLOAT] = None, use_full_table: bool = False,
-                          get_difference_table: bool = False):
+                          function_values: Optional[L_FLOAT] = None, get_difference_table: bool = False):
     """
     Perform forward Newton Interpolation.
 
@@ -22,8 +21,6 @@ def forward_interpolation(given_values: L_FLOAT, value_to_approximate: float, fu
         The function to use for interpolation.
     function_values: Optional[L_FLOAT]
         List of function values corresponding to given_values.
-    use_full_table: bool
-        Flag indicating whether to use the full difference table.
     get_difference_table: bool
         Flag indicating whether to return the difference table.
 
@@ -41,13 +38,12 @@ def forward_interpolation(given_values: L_FLOAT, value_to_approximate: float, fu
         Either ``function`` or ``function_values`` must be specified.
     """
 
-    interpolation = FwdInterpolation(given_values, value_to_approximate, function, function_values, use_full_table)
+    interpolation = FwdInterpolation(given_values, value_to_approximate, function, function_values)
     return get_result(interpolation, get_difference_table)
 
 
 def backward_interpolation(given_values: L_FLOAT, value_to_approximate: float, function: Optional[Callable] = None,
-                           function_values: Optional[L_FLOAT] = None, use_full_table: bool = False,
-                           get_difference_table: bool = False):
+                           function_values: Optional[L_FLOAT] = None, get_difference_table: bool = False):
     """
     Perform backwards Newton Interpolation.
 
@@ -61,8 +57,6 @@ def backward_interpolation(given_values: L_FLOAT, value_to_approximate: float, f
         The function to use for interpolation.
     function_values: Optional[L_FLOAT]
         List of function values corresponding to given_values.
-    use_full_table: bool
-        Flag indicating whether to use the full difference table.
     get_difference_table: bool
         Flag indicating whether to return the difference table.
 
@@ -80,13 +74,12 @@ def backward_interpolation(given_values: L_FLOAT, value_to_approximate: float, f
         Either ``function`` or ``function_values`` must be specified.
     """
 
-    interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values, use_full_table)
+    interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values)
     return get_result(interpolation, get_difference_table)
 
 
 def divided_interpolation(given_values: L_FLOAT, value_to_approximate: float, function: Optional[Callable] = None,
-                          function_values: Optional[L_FLOAT] = None, use_full_table: bool = False,
-                          get_difference_table: bool = False):
+                          function_values: Optional[L_FLOAT] = None, get_difference_table: bool = False):
     """
     Perform divided Newton Interpolation.
 
@@ -100,8 +93,6 @@ def divided_interpolation(given_values: L_FLOAT, value_to_approximate: float, fu
         The function to use for interpolation.
     function_values: Optional[L_FLOAT]
         List of function values corresponding to given_values.
-    use_full_table: bool
-        Flag indicating whether to use the full difference table.
     get_difference_table: bool
         Flag indicating whether to return the difference table.
 
@@ -119,5 +110,5 @@ def divided_interpolation(given_values: L_FLOAT, value_to_approximate: float, fu
         Either ``function`` or ``function_values`` must be specified.
     """
 
-    interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values, use_full_table)
+    interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values)
     return get_result(interpolation, get_difference_table)
