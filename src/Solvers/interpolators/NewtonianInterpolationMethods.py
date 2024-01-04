@@ -1,9 +1,10 @@
 """Created on Nov 02 00:25:14 2023"""
 
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
-from . import L_FLOAT
 from ._backend.INTERPOLATION_ import BkwInterpolation, DividedInterpolation, FwdInterpolation, get_result
+
+L_FLOAT = List[float]
 
 
 def forward_interpolation(given_values: L_FLOAT, value_to_approximate: float, function: Optional[Callable] = None,
