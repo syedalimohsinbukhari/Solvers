@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 
-TOLERANCE = 1e-8
+from .. import Func, IFloat, TOLERANCE
 
 
 def generate_random_polynomial(degree: int, low: int = -10, high: int = 10) -> List[float]:
@@ -33,6 +33,35 @@ def generate_random_polynomial(degree: int, low: int = -10, high: int = 10) -> L
         coefficients[0] = np.random.uniform(low, high)
 
     return list(coefficients)
+
+
+def newton_raphson_solver(function: Func, derivative_of_function: Func, initial_guess: IFloat,
+                          tolerance: IFloat = TOLERANCE) -> IFloat:
+    """
+    Find the root of a function using the Newton-Raphson method.
+
+    Parameters
+    ----------
+    function : callable
+        The function for which the root is being sought.
+    derivative_of_function : callable
+        The derivative of the target function.
+    initial_guess : float
+        The initial guess for the root.
+    tolerance : float, optional
+        Tolerance for convergence. Default is 1e-14.
+
+    Returns
+    -------
+    float
+        The approximate root of the function.
+    """
+    f, df, x_0 = function, derivative_of_function, initial_guess
+
+    if abs(f(x_0)) < tolerance:
+        return x_0
+    else:
+        return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tolerance)
 
 
 def laguerre_method(polynomial: List, x_0: float, degree_of_polynomial: int, tolerance: float = TOLERANCE,
