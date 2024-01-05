@@ -21,4 +21,5 @@ IFloatOrFList = Union[IFloat, FList]
 OptFunc = Optional[Callable]
 LFunc = list[Callable]
 
-NdArray2 = tuple[NDArray, NDArray]
+NdArray = NDArray
+NdArray2 = tuple[NdArray, NdArray]
