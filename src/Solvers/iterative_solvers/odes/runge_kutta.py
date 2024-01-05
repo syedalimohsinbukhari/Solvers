@@ -12,6 +12,8 @@ This module implements runge-kutta methods for single ODEs. The RK methods imple
 Created on Dec 16 03:28:44 2023
 """
 
+__all__ = ['rk2_solver', 'rk3_solver', 'rk4_solver']
+
 from typing import Callable
 
 import numpy as np
