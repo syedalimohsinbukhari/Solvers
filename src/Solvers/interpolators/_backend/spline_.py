@@ -25,8 +25,7 @@ import numpy as np
 from custom_inherit import doc_inherit
 
 from .ERRORS_ import AtLeastOneParameterRequired, WrongBoundaryEquation
-from ... import (DOC_STYLE, FLINT_OR_FLIST, FLIST_OR_LLIST, FLOAT_OR_INT, F_LIST, L_LIST, L_L_LIST, O_CALLABLE, O_LIST,
-                 TOLERANCE)
+from ... import DOC_STYLE, FList, FListOrLList, IFloat, IFloatOrFList, LLList, LList, OptFunc, OptList, TOLERANCE
 
 
 class SPLINE:
@@ -45,8 +44,8 @@ class SPLINE:
     Either ``function`` or ``function_values`` must be specified.
     """
 
-    def __init__(self, given_values: F_LIST, value_to_approximate: FLOAT_OR_INT, function: O_CALLABLE = None,
-                 function_values: O_LIST = None):
+    def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                 function_values: OptList = None):
         """
 
         Parameters
@@ -71,7 +70,7 @@ class SPLINE:
         if function is None and function_values is None:
             raise AtLeastOneParameterRequired("One of ``function`` or ``function_values`` parameter is required.")
 
-        if value_to_approximate not in given_values:
+        if value_to_approximate < any(x for x in given_values) < value_to_approximate:
             raise ValueError("The given value to approximate is out of bounds from the given values.")
 
         self.given_values = given_values
@@ -83,9 +82,9 @@ class SPLINE:
 
     def show_splines(self):
         """Prints the spline equations."""
-        pass
 
     def interpolate(self):
+        """Interpolates the spline equations."""
         pass
 
 
@@ -96,12 +95,12 @@ class LinearSpline(SPLINE):
     """
 
     @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
-    def __init__(self, given_values: F_LIST, value_to_approximate: FLOAT_OR_INT, function: O_CALLABLE = None,
-                 function_values: O_LIST = None):
+    def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                 function_values: OptList = None):
         """Initializes the linear spline interpolation class."""
         super().__init__(given_values, value_to_approximate, function, function_values)
 
-    def _solve(self, give_values: bool = False):
+    def _solve(self, give_values: bool = False) -> IFloatOrFList:
         """
         Solver method for linear interpolation.
 
@@ -113,32 +112,32 @@ class LinearSpline(SPLINE):
         given_values, func_vals = self.given_values, self.function_values
         x_to_approx, number_of_points = self.value_to_approximate, len(self.given_values) - 1
 
-        xs = [(given_values[i], given_values[i + 1]) for i in range(number_of_points)]
-        ys = [(func_vals[i], func_vals[i + 1]) for i in range(number_of_points)]
+        x_values = [(given_values[i], given_values[i + 1]) for i in range(number_of_points)]
+        y_values = [(func_vals[i], func_vals[i + 1]) for i in range(number_of_points)]
 
-        spline = [((x_to_approx - x2) * y1 - (x_to_approx - x1) * y2) / (x1 - x2) for (x1, x2), (y1, y2) in zip(xs, ys)]
+        spline = [((x_to_approx - x2) * y1 - (x_to_approx - x1) * y2) / (x1 - x2)
+                  for (x1, x2), (y1, y2) in zip(x_values, y_values)]
 
-        return spline
+        return [x_values, y_values, spline] if give_values else spline
 
     def show_splines(self) -> None:
-        xs, ys, spline = self._solve(give_values=True)
+        x_values, y_values, spline = self._solve(give_values=True)
 
         print('The splines are approximated to 4 decimal places for display purposes only.')
         for i in range(len(spline)):
-            den1 = xs[i][0] - xs[i][1]
+            den1 = x_values[i][0] - x_values[i][1]
             den2 = -den1
 
-            f1 = ys[i][0] / den1
-            f1 += ys[i][1] / den2
+            temp1_ = (y_values[i][0] / den1) + (y_values[i][1] / den2)
 
-            f2 = (ys[i][0] * xs[i][1]) / den1
-            f2 += (ys[i][1] * xs[i][0]) / den2
-            f2 *= -1
+            temp2_ = (y_values[i][0] * x_values[i][1]) / den1
+            temp2_ += (y_values[i][1] * x_values[i][0]) / den2
+            temp2_ *= -1
 
-            print(f'Sp{i + 1}: {f1:+08.4f}x {f2:+08.4f}'
+            print(f'Sp{i + 1}: {temp1_:+08.4f}x {temp2_:+08.4f}'
                   f'\t; x ∈ {"[" if i == 0 else "("}{self.given_values[i]:+}, {self.given_values[i + 1]:+}]')
 
-    def interpolate(self) -> FLOAT_OR_INT:
+    def interpolate(self) -> IFloat:
         """
         Performs the linear spline interpolations and return the interpolated value.
 
@@ -196,7 +195,7 @@ class QuadraticSpline(SPLINE):
             print(f'Sp{i + 1}: {solution[i][0]:+08.4f}x^2 {solution[i][1]:+08.4f}x {solution[i][2]:+08.4f}'
                   f'\t; x ∈ {"[" if i == 0 else "("}{self.given_values[i]:+}, {self.given_values[i + 1]:+}]')
 
-    def interpolate(self, n_derivative: FLOAT_OR_INT = 0) -> FLOAT_OR_INT:
+    def interpolate(self, n_derivative: IFloat = 0) -> IFloat:
         """
         Performs the quadratic spline interpolation and return the interpolated value.
 
@@ -265,7 +264,7 @@ class NaturalCubicSpline(SPLINE):
                   f'{solution[i][3]:+08.4f}\t; x ∈ {"[" if i == 0 else "("}{self.given_values[i]:+}, '
                   f'{self.given_values[i + 1]:+}]')
 
-    def interpolate(self, n_derivative: FLOAT_OR_INT = 0) -> FLOAT_OR_INT:
+    def interpolate(self, n_derivative: IFloat = 0) -> IFloat:
         """
         Performs the natural cubic spline interpolations and return the interpolated value.
 
@@ -293,8 +292,8 @@ class NaturalCubicSpline(SPLINE):
             return 0
 
 
-def _fill_initial_splines(given_values: F_LIST, function_values: F_LIST, matrix_a: L_LIST, matrix_b: F_LIST,
-                          i_index: FLOAT_OR_INT, deg_spline: FLOAT_OR_INT) -> FLOAT_OR_INT:
+def _fill_initial_splines(given_values: FList, function_values: FList, matrix_a: LList, matrix_b: FList,
+                          i_index: IFloat, deg_spline: IFloat) -> IFloat:
     """
     Fills in the initial spline equations in the matrix.
 
@@ -341,7 +340,7 @@ def _fill_initial_splines(given_values: F_LIST, function_values: F_LIST, matrix_
     return i_index
 
 
-def _generate_middle_point_equations(given_values: F_LIST, deg_spline: FLOAT_OR_INT) -> L_L_LIST:
+def _generate_middle_point_equations(given_values: FList, deg_spline: IFloat) -> LLList:
     """
     Creates the middle spline equation for quadratic and cubic splines.
 
@@ -382,8 +381,8 @@ def _generate_middle_point_equations(given_values: F_LIST, deg_spline: FLOAT_OR_
     return [[[*p] for p in zip(*_)] for _ in zip(*res)]
 
 
-def _fill_middle_splines(combined_values: L_L_LIST, i_index1: FLOAT_OR_INT, matrix_a: L_LIST, n_given: FLOAT_OR_INT,
-                         deg_spline: FLOAT_OR_INT) -> FLOAT_OR_INT:
+def _fill_middle_splines(combined_values: LLList, i_index1: IFloat, matrix_a: LList, n_given: IFloat,
+                         deg_spline: IFloat) -> IFloat:
     """
     Fills in the middle splines equations in the matrix.
 
@@ -419,7 +418,7 @@ def _fill_middle_splines(combined_values: L_L_LIST, i_index1: FLOAT_OR_INT, matr
     return i_index1
 
 
-def _matrix_solver(matrix_a: L_LIST, matrix_b: F_LIST, n_given: FLOAT_OR_INT, deg_spline: FLOAT_OR_INT):
+def _matrix_solver(matrix_a: LList, matrix_b: FList, n_given: IFloat, deg_spline: IFloat):
     """
     Solves the matrix for the interpolation method.
 
@@ -448,7 +447,7 @@ def _matrix_solver(matrix_a: L_LIST, matrix_b: F_LIST, n_given: FLOAT_OR_INT, de
     return solution.tolist()
 
 
-def _get_solution(given_values: F_LIST, value_to_approximate: FLOAT_OR_INT, solution: FLIST_OR_LLIST) -> FLINT_OR_FLIST:
+def _get_solution(given_values: FList, value_to_approximate: IFloat, solution: FListOrLList) -> IFloatOrFList:
     """
     Get the interpolated/approximated value for the specified ``value_to_approximate`` using the given solution.
 

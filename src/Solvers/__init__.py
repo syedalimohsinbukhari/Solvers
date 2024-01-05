@@ -6,15 +6,14 @@ TOLERANCE = 1e-10
 
 DOC_STYLE = 'numpy_napoleon_with_merge'
 
-FLOAT_OR_INT = Union[float, int]
-LIST = List
+IFloat = Union[float, int]
 
-F_LIST = LIST[FLOAT_OR_INT]
-L_LIST = LIST[F_LIST]
-L_L_LIST = List[L_LIST]
-O_LIST = Optional[F_LIST]
+FList = List[IFloat]
+LList = List[FList]
+LLList = List[LList]
+OptList = Optional[FList]
 
-FLIST_OR_LLIST = Union[F_LIST, L_LIST]
-FLINT_OR_FLIST = Union[FLOAT_OR_INT, F_LIST]
+FListOrLList = Union[FList, LList]
+IFloatOrFList = Union[IFloat, FList]
 
-O_CALLABLE = Optional[Callable]
+OptFunc = Optional[Callable]

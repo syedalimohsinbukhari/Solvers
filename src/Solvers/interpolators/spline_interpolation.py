@@ -14,13 +14,13 @@ __all__ = ['linear_spline_interpolation', 'quadratic_spline_interpolation', 'nat
 
 from custom_inherit import doc_inherit
 
-from ._backend.SPLINE_ import LinearSpline, NaturalCubicSpline, QuadraticSpline, SPLINE
-from .. import DOC_STYLE, FLOAT_OR_INT, F_LIST, O_CALLABLE, O_LIST
+from ._backend.spline_ import LinearSpline, NaturalCubicSpline, QuadraticSpline, SPLINE
+from .. import DOC_STYLE, FList, IFloat, OptFunc, OptList
 
 
 @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
-def linear_spline_interpolation(given_values: F_LIST, value_to_approximate: FLOAT_OR_INT, function: O_CALLABLE = None,
-                                function_values: O_LIST = None, show_splines: bool = False) -> FLOAT_OR_INT:
+def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                                function_values: OptList = None, show_splines: bool = False) -> IFloat:
     """
     Method to perform linear spline interpolation.
 
@@ -57,9 +57,9 @@ def linear_spline_interpolation(given_values: F_LIST, value_to_approximate: FLOA
 
 
 @doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
-def quadratic_spline_interpolation(given_values: F_LIST, value_to_approximate: FLOAT_OR_INT,
-                                   function: O_CALLABLE = None, function_values: O_LIST = None,
-                                   show_splines: bool = False) -> FLOAT_OR_INT:
+def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
+                                   function: OptFunc = None, function_values: OptList = None,
+                                   show_splines: bool = False) -> IFloat:
     """
     Perform quadratic spline interpolation.
 
@@ -86,9 +86,9 @@ def quadratic_spline_interpolation(given_values: F_LIST, value_to_approximate: F
 
 
 @doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
-def natural_cubic_spline_interpolation(given_values: F_LIST, value_to_approximate: FLOAT_OR_INT,
-                                       function: O_CALLABLE = None, function_values: O_LIST = None,
-                                       show_splines: bool = False) -> FLOAT_OR_INT:
+def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
+                                       function: OptFunc = None, function_values: OptList = None,
+                                       show_splines: bool = False) -> IFloat:
     """
     Perform natural cubic spline interpolation.
 
@@ -100,7 +100,7 @@ def natural_cubic_spline_interpolation(given_values: F_LIST, value_to_approximat
                                            value_to_approximate=2.2,
                                            function=lambda x: x**2)
 
-    2. Perform the natural cubic spline interpolation on x = [1, 2, 3, 4, 5], and y = [4, 6, 2, 4, 8, 10], approximate 3.3.
+    2. Perform the natural cubic spline interpolation on x = [1, 2, 3, 4], and y = [4, 6, 2, 4, 8], approximate 3.3.
 
     >>> natural_cubic_spline_interpolation(given_values=[1, 2, 3, 4, 5],
                                            value_to_approximate=3.3,
