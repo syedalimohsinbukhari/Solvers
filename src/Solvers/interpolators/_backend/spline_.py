@@ -85,19 +85,17 @@ class SPLINE:
 
     def interpolate(self):
         """Interpolates the spline equations."""
-        pass
 
 
 @doc_inherit(SPLINE, style=DOC_STYLE)
 class LinearSpline(SPLINE):
-    """
-    Implements the linear spline interpolation.
-    """
+    """Implements the linear spline interpolation."""
 
     @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                  function_values: OptList = None):
         """Initializes the linear spline interpolation class."""
+
         super().__init__(given_values, value_to_approximate, function, function_values)
 
     def _solve(self, give_values: bool = False) -> IFloatOrFList:
@@ -109,11 +107,12 @@ class LinearSpline(SPLINE):
         give_values:
             Whether to return only the spline value or with the x/y values.
         """
-        given_values, func_vals = self.given_values, self.function_values
-        x_to_approx, number_of_points = self.value_to_approximate, len(self.given_values) - 1
 
-        x_values = [(given_values[i], given_values[i + 1]) for i in range(number_of_points)]
-        y_values = [(func_vals[i], func_vals[i + 1]) for i in range(number_of_points)]
+        given, func_vals = self.given_values, self.function_values
+        x_to_approx, n_points = self.value_to_approximate, len(self.given_values) - 1
+
+        x_values = [(given[i], given[i + 1]) for i in range(n_points)]
+        y_values = [(func_vals[i], func_vals[i + 1]) for i in range(n_points)]
 
         spline = [((x_to_approx - x2) * y1 - (x_to_approx - x1) * y2) / (x1 - x2)
                   for (x1, x2), (y1, y2) in zip(x_values, y_values)]
@@ -145,6 +144,7 @@ class LinearSpline(SPLINE):
         -------
             The interpolated value.
         """
+
         return _get_solution(self.given_values, self.value_to_approximate, self._solve())
 
 
@@ -154,13 +154,8 @@ class QuadraticSpline(SPLINE):
 
     @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, last_equation='first'):
-        """
-        Initializes the quadratic spline interpolation class.
+        """Initializes the quadratic spline interpolation class."""
 
-        Raises
-        ------
-        Va
-        """
         super().__init__(given_values, value_to_approximate, function, function_values)
         self.last_equation = last_equation
 
@@ -188,12 +183,12 @@ class QuadraticSpline(SPLINE):
         return solution
 
     def show_splines(self):
-        solution = self._solve()
+        given, solution = self.given_values, self._solve()
 
         print('The splines are approximated to 4 decimal places for display purposes only.')
-        for i in range(len(solution)):
-            print(f'Sp{i + 1}: {solution[i][0]:+08.4f}x^2 {solution[i][1]:+08.4f}x {solution[i][2]:+08.4f}'
-                  f'\t; x ∈ {"[" if i == 0 else "("}{self.given_values[i]:+}, {self.given_values[i + 1]:+}]')
+        for index, value in enumerate(solution):
+            print(f'Sp{index + 1}: {value[0]:+08.4f}x^2 {value[1]:+08.4f}x {value[2]:+08.4f}'
+                  f'\t; x ∈ {"[" if index == 0 else "("}{given[index]:+}, {given[index + 1]:+}]')
 
     def interpolate(self, n_derivative: IFloat = 0) -> IFloat:
         """
@@ -208,6 +203,7 @@ class QuadraticSpline(SPLINE):
         -------
             The interpolated value.
         """
+
         approx = self.value_to_approximate
         solution = _get_solution(self.given_values, approx, self._solve())
 
@@ -228,6 +224,7 @@ class NaturalCubicSpline(SPLINE):
     @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, last_equation='first'):
         """Initializes the natural cubic spline interpolation class."""
+
         super().__init__(given_values, value_to_approximate, function, function_values)
         self.last_equation = last_equation
 
@@ -256,13 +253,12 @@ class NaturalCubicSpline(SPLINE):
         return solution
 
     def show_splines(self):
-        solution = self._solve()
+        given, solution = self.given_values, self._solve()
 
         print('The splines are approximated to 4 decimal places for display purposes only.')
-        for i in range(len(solution)):
-            print(f'Sp{i + 1}: {solution[i][0]:+08.4f}x^3 {solution[i][1]:+08.4f}x^2 {solution[i][2]:+08.4f}x '
-                  f'{solution[i][3]:+08.4f}\t; x ∈ {"[" if i == 0 else "("}{self.given_values[i]:+}, '
-                  f'{self.given_values[i + 1]:+}]')
+        for index, value in enumerate(solution):
+            print(f'Sp{index + 1}: {value[0]:+08.4f}x^3 {value[1]:+08.4f}x^2 {value[2]:+08.4f}x '
+                  f'{value[3]:+08.4f}\t; x ∈ {"[" if index == 0 else "("}{given[index]:+}, {given[index + 1]:+}]')
 
     def interpolate(self, n_derivative: IFloat = 0) -> IFloat:
         """
@@ -277,6 +273,7 @@ class NaturalCubicSpline(SPLINE):
         -------
             The interpolated value.
         """
+
         approx = self.value_to_approximate
         solution = _get_solution(self.given_values, approx, self._solve())
 
@@ -316,6 +313,7 @@ def _fill_initial_splines(given_values: FList, function_values: FList, matrix_a:
     -------
         Updated value of i_index1.
     """
+
     condition, deg_spline = 2 * (len(given_values) - 1), deg_spline + 1
     j_index, k_index = 0, 0
 
@@ -355,28 +353,29 @@ def _generate_middle_point_equations(given_values: FList, deg_spline: IFloat) ->
     -------
         A list containing all the second (or third, for cubic spline) derivative values of quadratic and cubic splines.
     """
-    values, deg_spline = given_values[1:-1], deg_spline + 1
+
+    given, deg_spline = given_values[1:-1], deg_spline + 1
 
     if deg_spline == 3:
-        a_ = [[2 * j * i for i in values] for j in [1, -1]]
-        b_ = [[j for _ in values] for j in [1, -1]]
-        c_ = [[0] * len(values) for _ in range(2)]
+        a_coefficients = [[2 * j * i for i in given] for j in [1, -1]]
+        b_coefficients = [[j for _ in given] for j in [1, -1]]
+        c_coefficients = [[0] * len(given) for _ in range(2)]
 
-        res = [a_, b_, c_]
+        res = [a_coefficients, b_coefficients, c_coefficients]
     elif deg_spline == 4:
-        a_ = [[3 * j * i**2 for i in values] for j in [1, -1]]
-        b_ = [[2 * j * _ for _ in values] for j in [1, -1]]
-        c_ = [[j for _ in values] for j in [1, -1]]
-        d_ = [[0] * len(values) for _ in range(2)]
+        a_coefficients = [[3 * j * i**2 for i in given] for j in [1, -1]]
+        b_coefficients = [[2 * j * _ for _ in given] for j in [1, -1]]
+        c_coefficients = [[j for _ in given] for j in [1, -1]]
+        d_coefficients = [[0] * len(given) for _ in range(2)]
 
-        res = [a_, b_, c_, d_]
+        res = [a_coefficients, b_coefficients, c_coefficients, d_coefficients]
     else:
-        a_ = [[6 * j * i for i in values] for j in [1, -1]]
-        b_ = [[2 * j for _ in values] for j in [1, -1]]
-        c_ = [[0] * len(values) for _ in range(2)]
-        d_ = c_
+        a_coefficients = [[6 * j * i for i in given] for j in [1, -1]]
+        b_coefficients = [[2 * j for _ in given] for j in [1, -1]]
+        c_coefficients = [[0] * len(given) for _ in range(2)]
+        d_coefficients = c_coefficients
 
-        res = [a_, b_, c_, d_]
+        res = [a_coefficients, b_coefficients, c_coefficients, d_coefficients]
 
     return [[[*p] for p in zip(*_)] for _ in zip(*res)]
 
@@ -403,6 +402,7 @@ def _fill_middle_splines(combined_values: LLList, i_index1: IFloat, matrix_a: LL
     -------
         Updated value of i_index1.
     """
+
     deg_spline, j_index, k_index = deg_spline + 1, 0, 0
     i_temp = i_index1
 
@@ -437,6 +437,7 @@ def _matrix_solver(matrix_a: LList, matrix_b: FList, n_given: IFloat, deg_spline
     -------
         A list of values containing the result of matrix equation Ax=B.
     """
+
     # solve using numpy solver
     solution = np.linalg.solve(np.array(matrix_a), np.array(matrix_b))
     # reshape according to the data

@@ -48,6 +48,7 @@ def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloa
                                     value_to_approximate=3.3,
                                     function_values=[4, 6, 2, 4, 8, 10])
     """
+
     linear_spline = LinearSpline(given_values, value_to_approximate, function, function_values)
 
     if show_splines:
@@ -77,6 +78,7 @@ def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IF
                                        value_to_approximate=3.3,
                                        function_values=[4, 6, 2, 4, 8, 10])
     """
+
     quadratic_spline = QuadraticSpline(given_values, value_to_approximate, function, function_values)
 
     if show_splines:
@@ -106,6 +108,7 @@ def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate
                                            value_to_approximate=3.3,
                                            function_values=[4, 6, 2, 4, 8, 10])
     """
+
     natural_cubic_spline = NaturalCubicSpline(given_values, value_to_approximate, function, function_values)
 
     if show_splines:
