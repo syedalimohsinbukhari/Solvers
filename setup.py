@@ -16,7 +16,7 @@ setup(
         long_description=readme,
         long_description_content_type="text/markdown",
         python_requires=">=3.9",
-        install_requires=["numpy~=1.26.0", "setuptools~=68.0.0"],
+        install_requires=["numpy~=1.26.0", "setuptools~=68.0.0", "custom-inherit~=2.4.1"],
         include_package_data=True,
         classifiers=[
             "License :: OSI Approved :: MIT License",
