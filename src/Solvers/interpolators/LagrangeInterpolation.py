@@ -1,9 +1,9 @@
 """Created on Nov 01 16:47:03 2023"""
 
-from ._backend.INTERPOLATION_ import INTERPOLATION
+from ._backend.interpolation_ import Interpolation
 
 
-class LagrangeInterpolation(INTERPOLATION):
+class LagrangeInterpolation(Interpolation):
 
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None):
         super().__init__(given_values, value_to_approximate, function, function_values)
