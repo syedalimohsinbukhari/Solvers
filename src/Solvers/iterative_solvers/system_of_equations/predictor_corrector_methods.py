@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
 
-from ...__backend.PREDICTOR_CORRECTOR import get_x, trapezoidal_rule
+from ...__backend.predictor_corrector_ import get_x, trapezoidal_rule
 
 FLOAT = Union[float, np.float32]
 EULER_OUTPUT = Union[Tuple[np.ndarray, np.ndarray], float]
