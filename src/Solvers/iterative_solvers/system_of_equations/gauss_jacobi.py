@@ -1,23 +1,23 @@
-"""Created on Oct 14 05:46:04 2023"""
+"""Created on Oct 13 11:37:27 2023"""
 
 from typing import List, Tuple, Union
 
 import numpy as np
 
-from ._backend.ITERATIVE_SOLVER_ import GaussSeidel
+from ...__backend.iterative_solvers_ import GaussJacobi
 
-GS_OUTPUT = Union[np.ndarray, Tuple[np.ndarray, List[np.ndarray]]]
+GJ_OUTPUT = Union[np.ndarray, Tuple[np.ndarray, List[np.ndarray]]]
 INITIAL_GUESS = Tuple[float, float, float]
 
 
-def gauss_seidel(system_of_equations: List[List[float]],
+def gauss_jacobi(system_of_equations: List[List[float]],
                  solution: List[float],
                  n_iter: int = 500,
                  tol: float = 1e-5,
                  initial_guess: INITIAL_GUESS = (0, 0, 0),
-                 get_solution_set: bool = False) -> GS_OUTPUT:
+                 get_solution_set: bool = False) -> GJ_OUTPUT:
     """
-    Solve a system of linear equations using the Gauss-Seidel method.
+    Solve a system of linear equations using the Gauss-Jacobi method.
 
     Parameters
     ----------
@@ -36,7 +36,7 @@ def gauss_seidel(system_of_equations: List[List[float]],
 
     Returns
     -------
-    GS_OUTPUT
+    GJ_Output
         If ``get_solution_set`` is ``False``, returns the solution as a NumPy array.
         If ``get_solution_set`` is ``True``, returns a tuple containing the solution and a list of solution sets for
         each iteration.
@@ -45,8 +45,8 @@ def gauss_seidel(system_of_equations: List[List[float]],
     --------
     >>> equations = [[2, 1, 1], [3, 10, 2], [2, 1, 4]]
     >>> solutions = [5, 10, 9]
-    >>> GS_Solver = gauss_seidel(equations, solutions)
+    >>> GJ_Solver = gauss_jacobi(equations, solutions)
     """
-    gs = GaussSeidel(system_of_equations, solution, n_iter, tol, initial_guess)
+    gj = GaussJacobi(system_of_equations, solution, n_iter, tol, initial_guess)
 
-    return gs.solve() if not get_solution_set else (gs.solve(), gs.solution_set)
+    return gj.solve() if not get_solution_set else (gj.solve(), gj.solution_set)

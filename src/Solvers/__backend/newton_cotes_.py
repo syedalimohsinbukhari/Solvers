@@ -1,4 +1,4 @@
-"""Newton-Cotes Integrator base module.
+"""Newton-Cotes integration base module.
 
 This module provides basic integration functionality of various Newton-Cotes integrators. Along with that, the module
 provides a class for pretty-printing the integrator tables. The classes used in this module are,
@@ -20,7 +20,7 @@ import enum
 
 from custom_inherit import doc_inherit
 
-from ... import DOC_STYLE, FList, Func, IFloat
+from .. import DOC_STYLE, FList, Func, IFloat
 
 
 class DataTable:

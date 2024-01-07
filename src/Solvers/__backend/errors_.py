@@ -1,4 +1,4 @@
-"""ERRORS_
+"""Custom errors module
 
 This module contains custom error classes for interpolation methods. The error classes include,
 - InterpolationException: The base exception class for interpolation methods.
@@ -6,7 +6,7 @@ This module contains custom error classes for interpolation methods. The error c
   supplied in an interpolation class.
 - WrongBoundaryEquation: This error is raised when the user provides wrong string for boundary equation.
 
-Created on Oct 29 18:21:27 2023
+Created on Jan 07 16:05:26 2024
 """
 
 __all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation']
