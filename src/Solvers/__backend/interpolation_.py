@@ -1,12 +1,21 @@
-"""Created on Oct 19 03:46:05 2023"""
+"""Interpolation base module
+
+This module provides the basic class structure for various interpolation methods, such as,
+
+- FwdInterpolation: A class to perform Newton's forwards interpolation.
+- BkwInterpolation: A class to perform Newton's backwards interpolation.
+- DividedInterpolation: A class to perform Newton's divided difference interpolation.
+- LagrangeInterpolation: A class to perform the Lagrange interpolation method.
+
+Created on Oct 19 03:46:05 2023
+"""
+
+__all__ = ['Interpolation', 'FwdInterpolation', 'BkwInterpolation', 'DividedInterpolation', 'LagrangeInterpolation']
 
 from custom_inherit import doc_inherit
 
-from . import ERRORS_
-from ... import DOC_STYLE, FList, IFloat, LList, OptFunc, OptList
-
-
-# TODO: Add module level docstrings
+from .. import DOC_STYLE, FList, IFloat, LList, OptFunc, OptList
+from ..__backend.errors_ import AtLeastOneParameterRequired
 
 
 class Interpolation:
@@ -18,7 +27,7 @@ class Interpolation:
     difference_table:
         To calculate the difference table for the interpolation method.
     interpolate:
-        Interpolates the ``value_to_approximate``.
+        To interpolate the y-value corresponding to the given x-value.
     """
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
@@ -50,7 +59,7 @@ class Interpolation:
         self.value_to_approximate = value_to_approximate
 
         if function is None and function_values is None:
-            raise ERRORS_.AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
+            raise AtLeastOneParameterRequired("One of `function` or `function_values` parameter is required.")
 
         self.function_values = function_values if function_values else [function(value) for value in given_values]
         self.step_size = given_values[1] - given_values[0]
@@ -91,7 +100,7 @@ class Interpolation:
 
         Returns
         -------
-            The divided difference table.
+            The difference table.
         """
 
         idx_ = self._get_index()
@@ -122,12 +131,11 @@ class Interpolation:
 
     def interpolate(self) -> IFloat:
         """
-        Interpolate the y-value corresponding to the given x-value.
+        To interpolate the y-value corresponding to the given x-value.
 
         Returns
         -------
-            Dictionary with ``step_values`` (list of interpolated values for each step) and ``result``
-            (sum of the interpolated values).
+            The interpolated value.
         """
 
         def find_p():
@@ -167,11 +175,10 @@ class BkwInterpolation(Interpolation):
     """Backward Interpolation class specializes in implementing the backward difference method."""
 
 
-@doc_inherit(Interpolation.__doc__, style=DOC_STYLE)
+@doc_inherit(Interpolation, style=DOC_STYLE)
 class DividedInterpolation(Interpolation):
     """Divided Interpolation class specializes in implementing the divided difference method."""
 
-    @doc_inherit(Interpolation.__init__, style=DOC_STYLE)
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                  function_values: OptList = None, n_decimal: int = 8):
         super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
@@ -206,3 +213,39 @@ class DividedInterpolation(Interpolation):
         result = round(sum(i * j for i, j in zip(difference_table, all_products)), round_to)
 
         return result
+
+
+@doc_inherit(Interpolation, style=DOC_STYLE)
+class LagrangeInterpolation(Interpolation):
+    """Class to implement Lagrange interpolation technique.
+
+    Methods
+    -------
+
+    difference_table:
+        None
+    """
+
+    def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                 function_values: OptList = None, n_decimal: int = 8):
+        super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
+
+    def difference_table(self) -> None:
+        """Difference table not implemented for Lagrange Interpolation Method."""
+
+    def interpolate(self) -> IFloat:
+        answer, given = [], self.given_values
+        approx, func_values = self.value_to_approximate, self.function_values
+
+        for index, value_ in enumerate(given):
+            modified_array = given[:index] + given[index + 1:]
+            numerator, denominator = 1, 1
+
+            for value in modified_array:
+                numerator *= (approx - value)
+                denominator *= (value_ - value)
+
+            answer_ = (numerator / denominator) * func_values[index]
+            answer.append(round(answer_, self.round_))
+
+        return sum(answer)

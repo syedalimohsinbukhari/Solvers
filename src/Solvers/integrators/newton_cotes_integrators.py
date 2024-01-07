@@ -22,8 +22,8 @@ __all__ = ['trapezoid_rule', 'simpson_13', 'simpson_38', 'boole', 'weddle_41h140
 
 from custom_inherit import doc_inherit
 
-from ._backend.newton_cotes import solve_helper
 from .. import DOC_STYLE, Func, IFloat
+from ..__backend.newton_cotes import solve_helper
 
 
 def trapezoid_rule(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:

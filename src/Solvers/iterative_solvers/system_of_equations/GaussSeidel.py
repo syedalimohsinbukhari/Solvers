@@ -4,7 +4,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 
-from ._backend.ITERATIVE_SOLVER_ import GaussSeidel
+from ...__backend.ITERATIVE_SOLVER_ import GaussSeidel
 
 GS_OUTPUT = Union[np.ndarray, Tuple[np.ndarray, List[np.ndarray]]]
 INITIAL_GUESS = Tuple[float, float, float]
