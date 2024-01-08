@@ -5,10 +5,10 @@ from typing import List
 
 import numpy as np
 
-from .. import Func, IFloat, TOLERANCE
+from .. import FList, Func, IFloat, TOLERANCE
 
 
-def generate_random_polynomial(degree: int, low: int = -10, high: int = 10) -> List[float]:
+def generate_random_polynomial(degree: int, low: int = -10, high: int = 10) -> FList:
     """
     Generate random coefficients for a polynomial.
 
@@ -64,7 +64,7 @@ def newton_raphson_solver(function: Func, derivative_of_function: Func, initial_
         return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tolerance)
 
 
-def laguerre_method(polynomial: List, x_0: float, degree_of_polynomial: int, tolerance: float = TOLERANCE,
+def laguerre_method(polynomial: FList, x_0: IFloat, degree_of_polynomial: int, tolerance: IFloat = TOLERANCE,
                     get_full_result: bool = False):
     p_val, p_der = np.polyval, np.polyder
     root_ = [x_0]
