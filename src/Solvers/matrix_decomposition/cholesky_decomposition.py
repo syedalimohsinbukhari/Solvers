@@ -46,11 +46,11 @@ def cholesky_decomposition(matrix_a: LList, n_decimal: int = 4) -> LLList:
     matrix_l = [[0] * len(matrix_a) for _ in range(len(matrix_a))]
     matrix_l[0][0] = sqrt(matrix_a[0][0])
 
-    n_dim = len(matrix_a)
+    n_dimensions = len(matrix_a)
 
     f1_ = []
-    for i in range(1, n_dim):
-        for k in range(n_dim):
+    for i in range(1, n_dimensions):
+        for k in range(n_dimensions):
             if k == 0:
                 matrix_l[i][k] = matrix_a[k][i] / matrix_l[0][0]
             elif k < i:
@@ -59,14 +59,14 @@ def cholesky_decomposition(matrix_a: LList, n_decimal: int = 4) -> LLList:
                     f1_.append(matrix_l[i][j] * matrix_l[k][j])
                 matrix_l[i][k] = (f1 - sum(f1_)) / matrix_l[k][k]
             elif k == i:
-                f4 = sum([i**2 for i in matrix_l[i]])
+                f4 = sum((i**2 for i in matrix_l[i]))
                 matrix_l[i][k] = sqrt(matrix_a[i][i] - f4)
             else:
                 matrix_l[i][k] = 0
             f1_ = []
 
     matrix_l = [[round(element, n_decimal) for element in row] for row in matrix_l]
-    matrix_l_star = [[matrix_l[row][col] for row in range(n_dim)] for col in range(n_dim)]
+    matrix_l_star = [[matrix_l[row][col] for row in range(n_dimensions)] for col in range(n_dimensions)]
 
     return [matrix_l, matrix_l_star]
 
@@ -87,7 +87,7 @@ def __is_symmetric(matrix: LList) -> bool:
     n_dim = len(matrix)
     matrix_transpose = [[matrix[row][col] for row in range(n_dim)] for col in range(n_dim)]
 
-    return True if matrix == matrix_transpose else False
+    return matrix == matrix_transpose
 
 
 def __is_positive_definite(matrix: LList) -> bool:
@@ -104,7 +104,7 @@ def __is_positive_definite(matrix: LList) -> bool:
 
     """
 
-    n = len(matrix)
+    n_dimensions = len(matrix)
 
     # Check if the matrix is square
     if len(matrix) != len(matrix[0]):
@@ -115,9 +115,9 @@ def __is_positive_definite(matrix: LList) -> bool:
         return False
 
     # Check if all leading principal minors have positive determinants
-    for i in range(1, n + 1):
+    for i in range(1, n_dimensions + 1):
         minor = [row[:i] for row in matrix[:i]]
-        determinant = sum([minor[j][j] for j in range(i)])
+        determinant = sum((minor[j][j] for j in range(i)))
         if determinant <= 0:
             return False
 
