@@ -44,26 +44,23 @@ def cholesky_decomposition(matrix_a: LList, n_decimal: int = 4) -> LLList:
         raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
 
     matrix_l = [[0] * len(matrix_a) for _ in range(len(matrix_a))]
-    matrix_l[0][0] = sqrt(matrix_a[0][0])
 
     n_dimensions = len(matrix_a)
 
-    f1_ = []
+    matrix_l[0][0] = sqrt(matrix_a[0][0])
     for i in range(1, n_dimensions):
         for k in range(n_dimensions):
             if k == 0:
                 matrix_l[i][k] = matrix_a[k][i] / matrix_l[0][0]
             elif k < i:
                 f1 = matrix_a[i][k]
-                for j in range(i - 1):
-                    f1_.append(matrix_l[i][j] * matrix_l[k][j])
+                f1_ = [matrix_l[i][j] * matrix_l[k][j] for j in range(i - 1)]
                 matrix_l[i][k] = (f1 - sum(f1_)) / matrix_l[k][k]
             elif k == i:
                 f4 = sum((i**2 for i in matrix_l[i]))
                 matrix_l[i][k] = sqrt(matrix_a[i][i] - f4)
             else:
                 matrix_l[i][k] = 0
-            f1_ = []
 
     matrix_l = [[round(element, n_decimal) for element in row] for row in matrix_l]
     matrix_l_star = [[matrix_l[row][col] for row in range(n_dimensions)] for col in range(n_dimensions)]

@@ -16,6 +16,7 @@ For such uni-variable functions, the root finding methods include,
 - regula_falsi_method
 - generalized_secant_method
 - muller_method
+- newton_raphson_method
 - ridder_method
 - secant_method
 - sidi_method
@@ -24,7 +25,7 @@ For such uni-variable functions, the root finding methods include,
 Created on Dec 24 12:56:39 2023
 """
 
-__all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', 'secant_method',
+__all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', 'secant_method', 'newton_raphson_solver',
            'generalized_secant_method', 'sidi_method', 'ridder_method', 'steffensen_method', 'muller_method']
 
 from cmath import sqrt
@@ -34,6 +35,9 @@ from custom_inherit import doc_inherit
 
 from .. import DOC_STYLE, Func, IFloat, IFloatOrFList, TOLERANCE
 from ..__backend.root_finding_algorithms_ import div_diff
+
+
+# TODO: modify newton_raphson method out of recursive function
 
 
 def bisection_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
@@ -243,6 +247,35 @@ def steffensen_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance:
             break
 
     return root_ if get_full_result else root_[-1]
+
+
+def newton_raphson_method(function: Func, derivative_of_function: Func, initial_guess: IFloat,
+                          tolerance: IFloat = TOLERANCE) -> IFloat:
+    """
+    Find the root of a function using the Newton-Raphson method.
+
+    Parameters
+    ----------
+    function : callable
+        The function for which the root is being sought.
+    derivative_of_function : callable
+        The derivative of the target function.
+    initial_guess : float
+        The initial guess for the root.
+    tolerance : float, optional
+        Tolerance for convergence. Default is 1e-14.
+
+    Returns
+    -------
+    float
+        The approximate root of the function.
+    """
+    f, df, x_0 = function, derivative_of_function, initial_guess
+
+    if abs(f(x_0)) < tolerance:
+        return x_0
+    else:
+        return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tolerance)
 
 
 def muller_method(function: Func, x_0: IFloat, x_1: IFloat, x_2: IFloat, iterations: int,
