@@ -9,16 +9,28 @@ This module contains custom error classes for interpolation methods. The error c
 Created on Jan 07 16:05:26 2024
 """
 
-__all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation']
+__all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation', 'NonSymmetricMatrix', 'NotPositiveDefinite']
 
 
-class InterpolationException(BaseException):
+class SolversErrors(BaseException):
     pass
 
 
-class AtLeastOneParameterRequired(InterpolationException):
+class InterpolationException(SolversErrors):
     pass
 
 
-class WrongBoundaryEquation(InterpolationException):
+class AtLeastOneParameterRequired(SolversErrors):
+    pass
+
+
+class WrongBoundaryEquation(SolversErrors):
+    pass
+
+
+class NonSymmetricMatrix(SolversErrors):
+    pass
+
+
+class NotPositiveDefinite(SolversErrors):
     pass
