@@ -20,7 +20,8 @@ import enum
 
 from custom_inherit import doc_inherit
 
-from .. import DOC_STYLE, FList, Func, IFloat
+from .extra_ import round_list_
+from .. import DOC_STYLE, FList, Func, IFloat, N_DECIMAL
 
 
 class DataTable:
@@ -153,7 +154,7 @@ class SingleVariableNewtonCotesIntegrators:
 
         return x_values, y_values
 
-    def value_table(self, n_decimal: int = 8):
+    def value_table(self, n_decimal: int = N_DECIMAL):
         """
         Prints the data table for the given values.
 
@@ -165,8 +166,8 @@ class SingleVariableNewtonCotesIntegrators:
 
         vals = self._value_table()
 
-        x_values = list(map(lambda _: round(_, n_decimal), vals[0]))
-        y_values = list(map(lambda _: round(_, n_decimal), vals[1]))
+        x_values = round_list_(vals[0], n_decimal)
+        y_values = round_list_(vals[1], n_decimal)
 
         DataTable(x_values, y_values).print_table()
 

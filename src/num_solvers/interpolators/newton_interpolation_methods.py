@@ -12,15 +12,13 @@ __all__ = ['forward_interpolation', 'backward_interpolation', 'divided_interpola
 
 from custom_inherit import doc_inherit
 
-from .. import DOC_STYLE, FList, IFloat, OptFunc, OptList
+from .. import DOC_STYLE, FList, IFloat, N_DECIMAL, OptFunc, OptList
 from ..__backend.interpolation_ import BkwInterpolation, DividedInterpolation, FwdInterpolation, Interpolation
 
 
-# TODO: Add module level docstrings
-
 @doc_inherit(Interpolation.__init__, style=DOC_STYLE)
 def forward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                          function_values: OptList = None, n_decimal: int = 8) -> IFloat:
+                          function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """
     Perform forward difference interpolation.
 
