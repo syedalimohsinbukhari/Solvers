@@ -14,8 +14,9 @@ __all__ = ['Interpolation', 'FwdInterpolation', 'BkwInterpolation', 'DividedInte
 
 from custom_inherit import doc_inherit
 
-from .. import DOC_STYLE, FList, IFloat, LList, OptFunc, OptList
+from .. import DOC_STYLE, FList, IFloat, LList, N_DECIMAL, OptFunc, OptList
 from ..__backend.errors_ import AtLeastOneParameterRequired
+from ..__backend.extra_ import round_list_
 
 
 class Interpolation:
@@ -31,7 +32,7 @@ class Interpolation:
     """
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                 function_values: OptList = None, n_decimal: int = 8):
+                 function_values: OptList = None, n_decimal: int = N_DECIMAL):
         """
         Initialize the INTERPOLATION object.
 
@@ -47,7 +48,7 @@ class Interpolation:
             List of y-values corresponding to ``given_values``. If not provided, ``function`` will be used to calculate
             these values.
         n_decimal:
-            Number of digits to round off to.
+            Number of digits to round off to. Default is 8.
 
         Raises
         ------
@@ -160,7 +161,7 @@ class Interpolation:
 
         result = [(difference_table[i] * p_value[i]) / factorial(i + 1) for i in range(iter_condition)]
         result.insert(0, initial_value)
-        result = sum(list(map(lambda x: round(x, round_to), result)))
+        result = sum(round_list_(result, round_to))
 
         return result
 
@@ -180,7 +181,7 @@ class DividedInterpolation(Interpolation):
     """Divided Interpolation class specializes in implementing the divided difference method."""
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                 function_values: OptList = None, n_decimal: int = 8):
+                 function_values: OptList = None, n_decimal: int = N_DECIMAL):
         super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
 
     def difference_table(self) -> FList:
@@ -227,7 +228,7 @@ class LagrangeInterpolation(Interpolation):
     """
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                 function_values: OptList = None, n_decimal: int = 8):
+                 function_values: OptList = None, n_decimal: int = N_DECIMAL):
         super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
 
     def difference_table(self) -> None:

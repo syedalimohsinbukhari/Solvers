@@ -26,11 +26,11 @@ __all__ = ['rk2_multi_ode', 'rk3_multi_ode', 'rk4_multi_ode']
 import numpy as np
 from custom_inherit import doc_inherit
 
-from ... import DOC_STYLE, FList, IFloat, LFunc, LList, NdArray
+from ... import DOC_STYLE, FList, IFloat, LFunc, LList, N_DECIMAL, NdArray
 
 
 def rk2_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.1, x_max: IFloat = 1.0,
-                  n_decimal: IFloat = 9) -> LList:
+                  n_decimal: IFloat = N_DECIMAL) -> LList:
     """
     Solve a system of first-order ordinary differential equations using the Runge-Kutta (RK2) method.
 

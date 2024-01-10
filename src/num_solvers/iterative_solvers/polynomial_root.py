@@ -20,14 +20,16 @@ from typing import List
 
 import numpy as np
 
-from .. import FList, IFloat, LList, TOLERANCE
+from .. import FList, IFloat, LList, OptList, TOLERANCE
+from ..__backend.errors_ import DegreeOfPolynomialNotCorrect
+from ..__backend.extra_ import round_list_
 
 
 # TODO: See if numpy can be removed
 
 
-def laguerre_method(polynomial: FList, x_guess: IFloat, degree_of_polynomial: int, tolerance: IFloat = TOLERANCE,
-                    get_full_result: bool = False):
+def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: IFloat = 0,
+                    get_full_result: bool = False, tolerance: IFloat = TOLERANCE):
     """
     Use Laguerre method to find the roots of the given polynomial.
 
@@ -35,14 +37,14 @@ def laguerre_method(polynomial: FList, x_guess: IFloat, degree_of_polynomial: in
     ----------
     polynomial:
         The polynomial as list of coefficients.
-    x_guess:
-        Initial guess for the root.
     degree_of_polynomial:
-        Degree of the polynomial.
-    tolerance:
-        Tolerance for the result. Default is TOLERANCE.
+        Degree of the polynomial. Defaults to -1. If polynomial's degree is -1, it is calculated inside the function.
+    x_guess:
+        Initial guess for the root. Defaults to 0.
     get_full_result:
         If True, gives all the guesses. If false, only gives the root of polynomial.
+    tolerance:
+        Tolerance for the result. Default is TOLERANCE.
 
     Returns
     -------
@@ -74,8 +76,8 @@ def laguerre_method(polynomial: FList, x_guess: IFloat, degree_of_polynomial: in
     return root_ if get_full_result else root_[-1]
 
 
-def segmented_roots(polynomial: List, x_range: FList, degree_of_polynomial: int,
-                    num_segments: int = 100, tolerance: IFloat = TOLERANCE) -> LList:
+def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: OptList = None,
+                    num_segments: int = 500, n_decimal: int = 8, tolerance: IFloat = TOLERANCE) -> LList:
     """
     Segments the given interval to find all possible roots within that interval for a given polynomial.
 
@@ -83,12 +85,14 @@ def segmented_roots(polynomial: List, x_range: FList, degree_of_polynomial: int,
     ----------
     polynomial:
         The polynomial as list of coefficients.
-    x_range:
-        The range in which the root of polynomial is to be determined.
     degree_of_polynomial:
-        Degree of the polynomial.
+        Degree of the polynomial. Defaults to -1. If polynomial's degree is -1, it is calculated inside the function.
+    x_guess:
+        The range in which the root of polynomial is to be determined. Default is [-100, 100].
     num_segments:
-        Number of segments to divide the ``x_range`` into. Default is 100.
+        Number of segments to divide the ``x_range`` into. Default is 500.
+    n_decimal:
+        Number of digits to round off to. Default is 8
     tolerance:
         Tolerance for the result. Default is TOLERANCE.
 
@@ -97,11 +101,20 @@ def segmented_roots(polynomial: List, x_range: FList, degree_of_polynomial: int,
         List of all possible roots within the given interval.
     """
 
-    x_values = np.linspace(x_range[0], x_range[1], num_segments)
+    x_guess = x_guess if x_guess else [-100, 100]
+    degree_of_polynomial = degree_of_polynomial if degree_of_polynomial > 0 else len(polynomial) - 1
+
+    if degree_of_polynomial:
+        if len(polynomial) - 1 != degree_of_polynomial:
+            raise DegreeOfPolynomialNotCorrect('The provided polynomial and degree of polynomial do not match')
+
+    x_values = np.linspace(x_guess[0], x_guess[1], num_segments)
     all_roots = []
 
+    print(f'Checking roots between {x_guess[0]:+} and {x_guess[1]:+} using {num_segments} intervals.')
+
     for x_0 in x_values:
-        root = laguerre_method(polynomial, x_0, degree_of_polynomial, tolerance)
+        root = laguerre_method(polynomial, degree_of_polynomial, x_0, tolerance=tolerance)
 
         if all(abs(root - existing_root) > tolerance for existing_root in all_roots):
             all_roots.append(root)
@@ -115,7 +128,10 @@ def segmented_roots(polynomial: List, x_range: FList, degree_of_polynomial: int,
         else:
             new_roots.extend([root_, np.conj(root_)])
 
-    new_roots = list(map(lambda x: round(x, 8), new_roots))
+    new_roots = round_list_(new_roots, n_decimal)
+
+    for i, v in enumerate(new_roots):
+        print(f'root_{i + 1:03} = {v}')
 
     return new_roots
 
