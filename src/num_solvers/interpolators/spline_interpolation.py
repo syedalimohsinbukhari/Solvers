@@ -1,11 +1,9 @@
-"""SplineInterpolation
+"""Spline interpolation methods
 
 This module provides the interpolation methods for linear, quadratic and natural cubic spline,
 - linear_spline_interpolation
 - quadratic_spline_interpolation
 - natural_cubic_spline_interpolation
-
-In almost all cases, this user should use this module for spline interpolation.
 
 Created on Nov 01 23:03:42 2023
 """
@@ -14,8 +12,8 @@ __all__ = ['linear_spline_interpolation', 'quadratic_spline_interpolation', 'nat
 
 from custom_inherit import doc_inherit
 
-from ._backend.spline_ import LinearSpline, NaturalCubicSpline, QuadraticSpline, SPLINE
 from .. import DOC_STYLE, FList, IFloat, OptFunc, OptList
+from ..__backend.spline_ import LinearSpline, NaturalCubicSpline, QuadraticSpline, SPLINE
 
 
 @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
