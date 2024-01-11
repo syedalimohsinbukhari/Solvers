@@ -30,9 +30,9 @@ This module contains custom error classes for interpolation methods. The error c
 Created on Jan 07 16:05:26 2024
 """
 
-__all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation', 'NonSymmetricMatrix', 'NumStepCanNotBeFloat',
-           'NotPositiveDefinite', 'DegreeOfPolynomialNotCorrect', 'IndexCanNotBeSlice', 'InconsistentDimensions',
-           'XFindNotDefined']
+__all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation', 'NonSymmetricMatrix', 'NotASquareMatrix',
+           'NumStepCanNotBeFloat', 'NotPositiveDefinite', 'DegreeOfPolynomialNotCorrect', 'IndexCanNotBeSlice',
+           'InconsistentDimensions', 'XFindNotDefined']
 
 
 class NumSolversErrors(BaseException):
@@ -56,6 +56,10 @@ class XFindNotDefined(NumSolversErrors):
 
 
 class NonSymmetricMatrix(NumSolversErrors):
+    pass
+
+
+class NotASquareMatrix(NumSolversErrors):
     pass
 
 

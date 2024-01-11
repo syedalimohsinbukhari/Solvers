@@ -17,7 +17,7 @@ __all__ = ['rk2_solver', 'rk3_solver', 'rk4_solver']
 from custom_inherit import doc_inherit
 
 from ... import DOC_STYLE, Func, IFloat, LList, N_DECIMAL
-from ...__backend.extra_ import round_value_
+from ...__backend.extra_ import num_steps_, round_value_
 
 
 def rk2_solver(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloat = 0.1, x_max: IFloat = 1.0,
@@ -45,7 +45,7 @@ def rk2_solver(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloa
         Tuple containing arrays of x and y values at each step.
     """
 
-    num_steps = int((x_max - x_initial) / step_size) + 1
+    num_steps = num_steps_(x_initial, x_max, step_size)
 
     x_values, y_values = [0] * num_steps, [0] * num_steps
     x_values[0], y_values[0] = x_initial, y_initial
@@ -67,7 +67,7 @@ def rk3_solver(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloa
                n_decimal: IFloat = N_DECIMAL) -> LList:
     """Solve a first-order ordinary differential equation using the Runge-Kutta (RK3) method."""
 
-    num_steps = int((x_max - x_initial) / step_size) + 1
+    num_steps = num_steps_(x_initial, x_max, step_size)
 
     x_values, y_values = [0] * num_steps, [0] * num_steps
     x_values[0], y_values[0] = x_initial, y_initial
@@ -90,7 +90,7 @@ def rk4_solver(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloa
                n_decimal: IFloat = N_DECIMAL) -> LList:
     """Solve a first-order ordinary differential equation using the Runge-Kutta (RK4) method."""
 
-    num_steps = int((x_max - x_initial) / step_size) + 1
+    num_steps = num_steps_(x_initial, x_max, step_size, n_decimal)
 
     x_values, y_values = [0] * num_steps, [0] * num_steps
     x_values[0], y_values[0] = x_initial, y_initial

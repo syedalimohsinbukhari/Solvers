@@ -14,10 +14,10 @@ This module holds general functionalities that can be used in the entire package
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['linear_list', 'round_value_', 'round_list_', 'NumSolversMatrix']
+__all__ = ['linear_list', 'round_value_', 'round_list_', 'num_steps_', 'NumSolversMatrix']
 
 from .errors_ import AtLeastOneParameterRequired, InconsistentDimensions, IndexCanNotBeSlice
-from .. import FList, IFloat, LList, OptIFloat
+from .. import FList, IFloat, LList, N_DECIMAL, OptIFloat
 
 
 class NumSolversMatrix:
@@ -153,3 +153,26 @@ def linear_list(start: IFloat, stop: IFloat, n_elements: OptIFloat = None, step_
     value = [start + (i * step_size) for i in range(n_elements)]
 
     return round_list_(value, n_decimal)
+
+
+def num_steps_(x_initial: IFloat, x_max: IFloat, step_size: IFloat, n_decimal: int = N_DECIMAL) -> int:
+    """
+    Generates the steps for the numerical approximation methods.
+
+    Parameters
+    ----------
+    x_initial:
+        Starting value for the x variable.
+    x_max:
+        Maximum value for the x variable.
+    step_size:
+        The step-size between the starting and ending x value.
+    n_decimal:
+        The number of digits to round off to.
+
+    Returns
+    -------
+        The number of steps required to go from ``x_initial`` to ``x_max``.
+    """
+
+    return int(round_value_(((x_max - x_initial) / step_size) + 1, n_decimal))
