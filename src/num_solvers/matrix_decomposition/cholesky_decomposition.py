@@ -12,13 +12,13 @@ __all__ = ['cholesky_decomposition']
 
 from math import sqrt
 
+from . import LMat, MatOrLList, N_DECIMAL
 from .matrix import Matrix, null_matrix
-from .. import LLList, LList, N_DECIMAL
 from ..__backend.errors_ import NonSymmetricMatrix, NotPositiveDefinite
 from ..__backend.extra_ import round_matrix_
 
 
-def cholesky_decomposition(matrix_a: Matrix or LList, n_decimal: int = N_DECIMAL) -> Matrix or LLList:
+def cholesky_decomposition(matrix_a: MatOrLList, n_decimal: int = N_DECIMAL) -> LMat:
     """
     Performs the Cholesky decomposition on the given matrix.
 
@@ -44,14 +44,14 @@ def cholesky_decomposition(matrix_a: Matrix or LList, n_decimal: int = N_DECIMAL
     if not isinstance(matrix_a, Matrix):
         matrix_a = Matrix(matrix_a)
 
-    if not matrix_a.is_symmetric():
+    if not matrix_a._is_symmetric():
         raise NonSymmetricMatrix('The matrix is not symmetric. Can not perform Cholesky decomposition.')
 
-    if not matrix_a.is_positive_definite():
+    if not matrix_a._is_positive_definite():
         raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
 
-    n_rows = matrix_a.n_rows
-    matrix_l = null_matrix(n_rows, matrix_a.n_cols)
+    n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
+    matrix_l = null_matrix(n_rows, n_cols)
 
     matrix_l[0][0] = sqrt(matrix_a[0][0])
 
@@ -63,12 +63,11 @@ def cholesky_decomposition(matrix_a: Matrix or LList, n_decimal: int = N_DECIMAL
                 f1_ = [matrix_l[i][j] * matrix_l[k][j] for j in range(i - 1)]
                 matrix_l[i][k] = (matrix_a[i][k] - sum(f1_)) / matrix_l[k][k]
             elif k == i:
-                f1 = matrix_l[i]
-                f2_ = sum((elem**2 for elem in f1.elements))
+                f2_ = sum((elem**2 for elem in matrix_l[i].elements))
                 matrix_l[i][k] = sqrt(matrix_a[i][i] - f2_)
             else:
                 matrix_l[i][k] = 0
 
     matrix_l = round_matrix_(matrix_l, n_decimal)
 
-    return [matrix_l, matrix_l.transpose()]
+    return [matrix_l, matrix_l.t]

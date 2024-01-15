@@ -1,9 +1,54 @@
-"""Created on Oct 04 21:36:44 2023"""
+"""Matrix base module
+
+This module provides functionality to create matrices and perform various operations on them. The base class is,
+
+- matrix
+
+which gives the functionality of generating the matrices. All the matrices have the following associated properties,
+
+- n_rows: Number of rows of the matrix.
+- n_cols: Number of columns of the matrix.
+- dim: String describing the dimensions of the matrix.
+- is_square: Whether the given matrix is square or not, e.g., has equal number of rows and columns.
+- is_singular: Whether the given matrix is singular or not, e.g., det(Matrix) = 0 or not.
+- trace: The trace of the matrix.
+- in_fractions: Gives the output of the matrix in fractions.
+- t: Transpose of the matrix.
+
+Along with these properties, the matrix class have the following functions,
+
+- determinant: The determinant of the matrix.
+- inverse: The inverse of the matrix.
+- adjoint_matrix: The adjoint of the matrix.
+- diagonal_of_matrix: The diagonal elements of the matrix.
+- t: Short form for transpose of the matrix.
+- transpose: Transpose of the matrix.
+- hadamard_product: Performs element wise multiplication for two given matrices.
+- elementwise_product: Same as hadamard_product.
+- is_multiplicative_inverse_of: Whether the self matrix is a multiplicative inverse of the other matrix or not.
+- is_orthogonal_to: Whether the self matrix is orthogonal to another matrix or not.
+- get_numpy_compatible_matrix: Gives the numpy compatible matrix.
+- dot: Dot product of two matrices.
+
+Additionally, the module provides the following functions,
+
+- determinant: Calculate the determinant of the given matrix.
+- identity_matrix: Generates identity matrix for given rows and columns.
+- null_matrix: Generates null matrix for given rows and columns.
+- vector_mag: Gives the magnitude of the given vector.
+
+And two classes,
+
+- Inverse: Class for calculation of inverse of the given matrix.
+- InFractions: Provides functionality to turn matrices from decimal to fractions.
+
+Created on Oct 04 21:36:44 2023
+"""
 
 from fractions import Fraction
 from math import sqrt
 
-from .. import LList
+from .. import IFloat, LList, OptIFloat
 from ..__backend import errors_ as err_
 
 
@@ -62,7 +107,7 @@ class Matrix:
                 row = [self_element + other_element
                        for self_element, other_element in zip(self.elements, other.elements)]
 
-            return self.give_output(row)
+            return self._give_output(row)
 
         elif isinstance(other, (int, float)):
             if self._multi_rows():
@@ -70,7 +115,7 @@ class Matrix:
             else:
                 result_elements = [element + other for element in self.elements]
 
-            return self.give_output(result_elements)
+            return self._give_output(result_elements)
 
         else:
             raise ValueError("Unsupported operand type for addition.")
@@ -112,11 +157,11 @@ class Matrix:
         else:
             answer = [element / other for element in self.elements]
 
-        return self.give_output(answer)
+        return self._give_output(answer)
 
     def __neg__(self):
         negated_elements = [[-element for element in row] for row in self.elements]
-        return self.give_output(negated_elements)
+        return self._give_output(negated_elements)
 
     def __getitem__(self, index):
         if index > len(self.elements):
@@ -125,7 +170,7 @@ class Matrix:
         if isinstance(index, slice):
             raise err_.SlicingNotAllowed()
 
-        return self.give_output(self.elements[index]) if self._multi_rows() else self.elements[index]
+        return self._give_output(self.elements[index]) if self._multi_rows() else self.elements[index]
 
     def __setitem__(self, index, value):
         if index >= len(self.elements):
@@ -162,39 +207,12 @@ class Matrix:
 
     @property
     def in_fractions(self):
-        fr_ = [[FRACTION(j).fraction for j in i] for i in self.elements]
+        fr_ = [[InFractions(j).fraction for j in i] for i in self.elements]
 
-        return self.give_output(fr_)
-
-    @property
-    def determinant(self):
-        return determinant(self.elements)
-
-    @property
-    def inverse(self):
-        inv_ = INVERSE(self.elements).inverse()
-        return self.give_output(inv_)
-
-    @property
-    def t(self):
-        return self.transpose()
-
-    @property
-    def adjoint_matrix(self):
-        return (self.inverse * self.determinant).in_fractions
-
-    @property
-    def diagonal_of_matrix(self):
-        n_rows, n_cols, elements = self.n_rows, self.n_cols, self.elements
-
-        identity_ = identity_matrix(n_rows, n_cols)
-        for i in range(n_rows):
-            identity_[i][i] = elements[i][i]
-
-        return identity_
+        return self._give_output(fr_)
 
     @staticmethod
-    def give_output(output):
+    def _give_output(output):
         return Matrix(output)
 
     def _multi_rows(self):
@@ -206,12 +224,12 @@ class Matrix:
         else:
             result_elements = [element * other for element in self.elements]
 
-        return self.give_output(result_elements)
+        return self._give_output(result_elements)
 
     def _row_v_col(self, other):
         row_v_col = [sum([k * l[0] for k, l in zip(self.elements, other.elements)])]
 
-        return self.give_output(row_v_col)
+        return self._give_output(row_v_col)
 
     def _multi_matrix(self, other):
         result = []
@@ -221,7 +239,7 @@ class Matrix:
                 r_temp.append(sum([r_elem * c_elem for r_elem, c_elem in zip(row, c_row)]))
             result.append(r_temp)
 
-        return self.give_output(result)
+        return self._give_output(result)
 
     def _row_v_multi_row(self, other):
         if other.n_cols == 1:
@@ -233,15 +251,15 @@ class Matrix:
 
             mul_ = [sum([i[j] for i in temp_]) for j in range(len(temp_))]
 
-        return self.give_output(mul_) if isinstance(mul_, list) and len(mul_) > 1 else mul_
+        return self._give_output(mul_) if isinstance(mul_, list) and len(mul_) > 1 else mul_
 
     def _multi_row_v_col_matrix(self, other):
         multi_row_v_col_matrix = [[sum(self.elements[row][col] * other.elements[col][0]
                                        for col in range(self.n_cols))] for row in range(self.n_rows)]
-        return self.give_output(multi_row_v_col_matrix)
+        return self._give_output(multi_row_v_col_matrix)
 
     def _transpose(self):
-        n_rows, n_cols, elements, give_output = self.n_rows, self.n_cols, self.elements, self.give_output
+        n_rows, n_cols, elements, give_output = self.n_rows, self.n_cols, self.elements, self._give_output
 
         if len(self) == 0:
             return give_output([])
@@ -261,42 +279,16 @@ class Matrix:
 
         return give_output(transposed_elements)
 
-    def transpose(self):
-        return self._transpose()
-
-    def hadamard_product(self, other):
-        elements, o_elements = self.elements, other.elements
-
-        result = [[i * j for i, j in zip(self_rows, other_rows)] for self_rows, other_rows in
-                  zip(elements, o_elements)]
-
-        return self.give_output(result)
-
-    def elementwise_product(self, other):
-        return self.hadamard_product(other)
-
-    def is_multiplicative_inverse_of(self, other):
-        return True if self * other == identity_matrix(self.n_rows, self.n_cols) else False
-
-    def is_symmetric(self):
+    def _is_symmetric(self):
         return True if self == self.t else False
 
-    def is_orthogonal(self):
+    def _is_orthogonal(self):
         return True if self * self.t == identity_matrix(self.n_rows, self.n_cols) else False
 
-    def is_orthogonal_to(self, other):
-        if self.dim != other.dim:
-            raise err_.MatrixDimensionsMismatch()
-
-        return True if self * other.t == identity_matrix(self.n_rows, self.n_cols) else False
-
-    def get_numpy_compatible_matrix(self, array_function):
-        return array_function([i for i in self.elements])
-
-    def is_positive_definite(self) -> bool:
+    def _is_positive_definite(self) -> bool:
         n_dimensions = self.n_rows
 
-        if not self.is_symmetric():
+        if not self._is_symmetric():
             return False
 
         for i in range(1, n_dimensions + 1):
@@ -307,6 +299,54 @@ class Matrix:
 
         return True
 
+    def determinant(self):
+        return determinant(self.elements)
+
+    def inverse(self):
+        inv_ = Inverse(self.elements).inverse()
+        return self._give_output(inv_)
+
+    def adjoint_matrix(self):
+        return (self.inverse() * self.determinant()).in_fractions
+
+    def diagonal_of_matrix(self):
+        n_rows, n_cols, elements = self.n_rows, self.n_cols, self.elements
+
+        identity_ = identity_matrix(n_rows, n_cols)
+        for i in range(n_rows):
+            identity_[i][i] = elements[i][i]
+
+        return identity_
+
+    def t(self):
+        return self.transpose()
+
+    def transpose(self):
+        return self._transpose()
+
+    def hadamard_product(self, other):
+        elements, o_elements = self.elements, other.elements
+
+        result = [[i * j for i, j in zip(self_rows, other_rows)] for self_rows, other_rows in
+                  zip(elements, o_elements)]
+
+        return self._give_output(result)
+
+    def elementwise_product(self, other):
+        return self.hadamard_product(other)
+
+    def is_multiplicative_inverse_of(self, other):
+        return True if self * other == identity_matrix(self.n_rows, self.n_cols) else False
+
+    def is_orthogonal_to(self, other):
+        if self.dim != other.dim:
+            raise err_.MatrixDimensionsMismatch()
+
+        return True if self * other.t == identity_matrix(self.n_rows, self.n_cols) else False
+
+    def get_numpy_compatible_matrix(self, array_function):
+        return array_function([i for i in self.elements])
+
     def dot(self, other):
         if not isinstance(other, Matrix):
             raise ValueError('The other must be a Matrix object')
@@ -315,24 +355,48 @@ class Matrix:
 
 
 def determinant(matrix: Matrix or LList) -> float:
-    def calculate_determinant(mat):
-        n = len(mat)
+    """
+    Calculate determinant of a given matrix.
 
-        if n == 1:
+    Parameters
+    ----------
+    matrix:
+        The matrix for which the determinant is to be calculated.
+
+    Returns
+    -------
+        Determinant of matrix.
+    """
+
+    def calculate_determinant(mat: Matrix or LList) -> IFloat:
+        """
+        Calculates the determinant.
+
+        Parameters
+        ----------
+        mat:
+            Matrix or sub-matrix
+
+        Returns
+        -------
+            Determinant of the matrix or sub-matrix given.
+        """
+
+        len_mat, det = len(mat), 0
+
+        if len_mat == 1:
             return mat[0][0]
 
-        det = 0
-        for j in range(n):
-            sub_matrix = [row[:j] + row[j + 1:] for row in mat[1:]]
-            cofactor = mat[0][j] * ((-1)**j)
+        for element in range(len_mat):
+            sub_matrix = [row[:element] + row[element + 1:] for row in mat[1:]]
+            cofactor = mat[0][element] * ((-1)**element)
             det += cofactor * calculate_determinant(sub_matrix)
 
         return det
 
     matrix = matrix.elements if isinstance(matrix, Matrix) else matrix
 
-    n_rows = len(matrix)
-    n_cols = len(matrix[0]) if matrix else 0
+    n_rows, n_cols = len(matrix), len(matrix[0])
 
     if n_rows != n_cols:
         raise err_.NotASquareMatrix("Matrix must be square for determinant calculation.")
@@ -340,7 +404,7 @@ def determinant(matrix: Matrix or LList) -> float:
     return calculate_determinant(matrix)
 
 
-class INVERSE:
+class Inverse:
 
     def __init__(self, matrix_elements: LList):
         self.elements = matrix_elements
@@ -401,9 +465,9 @@ class INVERSE:
         return inverse_matrix
 
 
-class FRACTION:
-    def __init__(self, decimal):
-        self.fraction = Fraction(decimal).limit_denominator(100)
+class InFractions:
+    def __init__(self, decimal_value):
+        self.fraction = Fraction(decimal_value).limit_denominator()
 
     def __str__(self):
         return str(self.fraction)
@@ -417,7 +481,27 @@ class FRACTION:
         return self.fraction.denominator
 
 
-def identity_matrix(n_rows, n_cols):
+def identity_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
+    """
+    Generates an identity matrix of given number of rows and columns.
+
+    Parameters
+    ----------
+    n_rows:
+        Number of rows for the null matrix.
+    n_cols:
+        Number of columns for the null matrix.
+
+    Returns
+    -------
+        Identity matrix.
+    """
+
+    if n_cols is not None and n_cols != n_rows:
+        raise err_.NotASquareMatrix('The identity matrix can not be rectangular.')
+
+    n_cols = n_rows if n_cols is None else n_cols
+
     identity_ = Matrix([[0] * n_cols for _ in range(n_rows)])
 
     for i in range(n_rows):
@@ -426,15 +510,44 @@ def identity_matrix(n_rows, n_cols):
     return identity_
 
 
-def null_matrix(n_rows, n_cols):
+def null_matrix(n_rows: int, n_cols: int) -> Matrix:
+    """
+    Generate a null matrix of given number of rows and columns.
+
+    Parameters
+    ----------
+    n_rows:
+        Number of rows for the null matrix.
+    n_cols:
+        Number of columns for the null matrix.
+
+    Returns
+    -------
+        Null matrix.
+
+    """
+
     mat_ = Matrix([[0] * n_cols for _ in range(n_rows)])
-    if n_rows > 1:
-        return mat_
-    else:
-        return mat_[0]
+
+    return mat_ if n_rows > 1 else mat_[0]
 
 
-def vector_norm(vector: Matrix, squared: bool = False):
+def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
+    """
+    Gives the magnitude of the vector.
+
+    Parameters
+    ----------
+    vector:
+        The vector for which the magnitude is to be found. The vector is generally a mx1 matrix.
+    squared:
+        Whether the value required should be squared or not. Default is False.
+
+    Returns
+    -------
+        Magnitude of the vector, squared magnitude if ``squared`` is True.
+    """
+
     if vector.n_cols == 1:
         import itertools
         vector_ = list(itertools.chain.from_iterable(vector.elements))

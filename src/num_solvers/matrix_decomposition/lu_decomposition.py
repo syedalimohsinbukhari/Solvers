@@ -12,13 +12,14 @@ __all__ = ['lu_crout', 'lu_doolittle']
 
 from custom_inherit import doc_inherit
 
+from . import LMat, MatOrLList, N_DECIMAL
 from .matrix import Matrix, null_matrix
-from .. import DOC_STYLE, IFloat, LList, N_DECIMAL
+from .. import DOC_STYLE, IFloat
 from ..__backend.errors_ import NotASquareMatrix
 from ..__backend.extra_ import round_matrix_
 
 
-def lu_crout(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> Matrix or LList:
+def lu_crout(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:
     """Performs LU decomposition using Crout's method.
 
     Parameters
@@ -39,7 +40,7 @@ def lu_crout(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> Matrix
         If the matrix is not square.
     """
 
-    matrix_a, lower_matrix, upper_matrix, n_rows = lu_sanity_check(matrix_a)
+    matrix_a, lower_matrix, upper_matrix, n_rows = _lu_sanity_check(matrix_a)
 
     for i in range(n_rows):
         for j in range(i, n_rows):
@@ -64,7 +65,7 @@ def lu_crout(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> Matrix
 
 
 @doc_inherit(lu_crout, style=DOC_STYLE)
-def lu_doolittle(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> list[Matrix]:
+def lu_doolittle(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:
     """Performs LU decomposition using Doolittle's method.
 
     Returns
@@ -72,7 +73,7 @@ def lu_doolittle(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> li
         The LU decomposition following Doolittle's method.
     """
 
-    matrix_a, lower_matrix, upper_matrix, n_rows = lu_sanity_check(matrix_a)
+    matrix_a, lower_matrix, upper_matrix, n_rows = _lu_sanity_check(matrix_a)
 
     for i in range(n_rows):
         upper_matrix[0][i] = matrix_a[0][i]
@@ -105,7 +106,7 @@ def lu_doolittle(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> li
     return [lower_matrix, upper_matrix]
 
 
-def lu_sanity_check(matrix_a: Matrix):
+def _lu_sanity_check(matrix_a: Matrix):
     """
     Performs sanity check for LU decomposition.
 
@@ -124,7 +125,7 @@ def lu_sanity_check(matrix_a: Matrix):
 
     n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
 
-    if not matrix_a.is_symmetric():
+    if not matrix_a._is_symmetric():
         raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
 
     lower_matrix = null_matrix(n_rows, n_cols)

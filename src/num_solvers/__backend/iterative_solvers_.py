@@ -126,42 +126,6 @@ class SysEqnSolver:
 
         return cond1 and cond2 and cond3
 
-    # def _string(self):
-    #     equations, solution, initial_guess = self.system_of_equations, self.solution, self.initial_guess
-    #     str1_ = f'({solution[0][0]}'
-    #     str1_ += f' - ({equations[0][1]}*{initial_guess[1]})'
-    #     str1_ += f' - ({equations[0][2]}*{initial_guess[2]}))'
-    #
-    #     str1_ = f'({Fraction(1, equations[0][0])})*{str1_}'
-    #
-    #     ic(str1_, eval(str1_))
-    #
-    #     str2_ = f'({solution[1][0]}'
-    #
-    #     if self.__class__.__name__ == 'GaussJacobi':
-    #         str2_ += f' - ({equations[1][0]}*{initial_guess[0]})'
-    #     else:
-    #         str2_ += f' - ({equations[1][0]}*{eval(str1_)})'
-    #
-    #     str2_ += f' - ({equations[1][2]}*{initial_guess[2]}))'
-    #
-    #     str2_ = f'({Fraction(1, equations[1][1])})*{str2_}'
-    #
-    #     ic(str2_, eval(str2_))
-    #
-    #     str3_ = f'({solution[2][0]}'
-    #
-    #     if self.__class__.__name__ == 'GaussJacobi':
-    #         str3_ += f' - ({equations[2][0]}*{initial_guess[0]})'
-    #         str3_ += f' - ({equations[2][1]}*{initial_guess[1]}))'
-    #     else:
-    #         str3_ += f' - ({equations[2][0]}*{eval(str1_)})'
-    #         str3_ += f' - ({equations[2][1]}*{eval(str2_)}))'
-    #
-    #     str3_ = f'({Fraction(1, equations[2][2])})*{str3_}'
-    #
-    #     ic(str3_, eval(str3_))
-
     def solve(self) -> LLList:
         """
         Solves the system of equations.
