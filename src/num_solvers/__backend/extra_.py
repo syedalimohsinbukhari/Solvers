@@ -14,63 +14,11 @@ This module holds general functionalities that can be used in the entire package
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['linear_list', 'round_value_', 'round_list_', 'num_steps_', 'NumSolversMatrix']
+__all__ = ['linear_list', 'round_value_', 'round_list_', 'round_matrix_', 'num_steps_']
 
-from .errors_ import AtLeastOneParameterRequired, InconsistentDimensions, IndexCanNotBeSlice
+from .errors_ import AtLeastOneParameterRequired
 from .. import FList, IFloat, LList, N_DECIMAL, OptIFloat
-
-
-class NumSolversMatrix:
-    """Class for NumSolversMatrix object."""
-
-    def __init__(self, values: LList or FList):
-        """
-        Initializer class for NumSolverArray.
-
-        Parameters
-        ----------
-        values:
-            Values to transform into a NumSolverArray object.
-        """
-
-        self.values = values
-        self.__sanity_check()
-
-    def __sanity_check(self):
-        """Performs a sanity check on NumSolversMatrix object."""
-
-        if isinstance(self.values[0], list):
-            len1 = len(self.values[0])
-            if all(len(x) == len1 for x in self.values[1:]):
-                pass
-            else:
-                raise InconsistentDimensions('The members of NumSolversMatrix are not of same length.')
-
-    def __repr__(self):
-        vals = self.values
-        len_max = len(str(max(max(vals)))) if isinstance(vals[0], list) else len(str(max(vals)))
-        len_cond = len_max + 5 if len_max % 2 == 0 else len_max + 4
-
-        out = '['
-        for i, v in enumerate(vals):
-            if isinstance(v, (int, float)):
-                out += f'{v:^{len_cond}.{len_cond - 4}f}' if i + 1 == len(vals) else f'{v:^{len_cond}.{len_cond - 4}f}|'
-            else:
-                for k in v:
-                    out += f'{k:^{len_cond}.5f}' if i + 1 == len(v) else f'{k:^{len_cond}.5f}|'
-                if v != vals[-1]:
-                    out += ']\n['
-        out += ']'
-
-        return out
-
-    def __getitem__(self, item):
-        return self.values[item][0] if isinstance(item, slice) else self.values[item]
-
-    def __setitem__(self, index, value):
-        if isinstance(self.values[index], list):
-            raise IndexCanNotBeSlice()
-        self.values[index] = value
+from ..matrix_decomposition.matrix import Matrix
 
 
 def round_value_(value: IFloat, n_decimal: int = 8) -> IFloat:
@@ -115,6 +63,26 @@ def round_list_(values: FList or LList, n_decimal: int = 8) -> FList or LList:
         return _auxiliary_function(values)
     else:
         return [_auxiliary_function(i) for i in values]
+
+
+def round_matrix_(matrix: Matrix, n_decimal: int = N_DECIMAL) -> Matrix:
+    """
+    Maps the round function to a matrix.
+
+    Parameters
+    ----------
+    matrix:
+        Given matrix to round off.
+    n_decimal:
+        Number of decimal places to round off to.
+
+    Returns
+    -------
+        Rounded off matrix.
+    """
+
+    matrix_ = round_list_(matrix.elements, n_decimal)
+    return Matrix(matrix_)
 
 
 def linear_list(start: IFloat, stop: IFloat, n_elements: OptIFloat = None, step_size: OptIFloat = None,

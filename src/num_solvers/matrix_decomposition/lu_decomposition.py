@@ -8,19 +8,26 @@ This module provides functionality to decompose given matrix in lower & upper tr
 Created on Jan 12 00:51:02 2024
 """
 
-__all__ = ['lu_crout', 'lu_dolittle']
+__all__ = ['lu_crout', 'lu_doolittle']
 
 from custom_inherit import doc_inherit
 
-from .cholesky_decomposition import cholesky_decomposition
-from .. import DOC_STYLE, LLList, LList, N_DECIMAL
+from .matrix import Matrix, null_matrix
+from .. import DOC_STYLE, IFloat, LList, N_DECIMAL
 from ..__backend.errors_ import NotASquareMatrix
-from ..__backend.matrix_decomposition_ import __lower_upper_matrices, __round_matrices
+from ..__backend.extra_ import round_matrix_
 
 
-@doc_inherit(cholesky_decomposition, style=DOC_STYLE)
-def lu_crout(matrix_a: LList, n_decimal: int = N_DECIMAL) -> LLList:
+def lu_crout(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> Matrix or LList:
     """Performs LU decomposition using Crout's method.
+
+    Parameters
+    ----------
+    matrix_a:
+        The matrix to decompose.
+    n_decimal:
+        The number of digits to round off for the result.
+
 
     Returns
     ------
@@ -32,22 +39,16 @@ def lu_crout(matrix_a: LList, n_decimal: int = N_DECIMAL) -> LLList:
         If the matrix is not square.
     """
 
-    if len(matrix_a) != len(matrix_a[0]):
-        raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
+    matrix_a, lower_matrix, upper_matrix, n_rows = lu_sanity_check(matrix_a)
 
-    len_mat = len(matrix_a)
-
-    lower_matrix, upper_matrix = __lower_upper_matrices(len_mat)
-
-    for i in range(len_mat):
-
-        for j in range(i, len_mat):
+    for i in range(n_rows):
+        for j in range(i, n_rows):
             lower_sum = 0
             for k in range(i):
                 lower_sum += lower_matrix[j][k] * upper_matrix[k][i]
             lower_matrix[j][i] = matrix_a[j][i] - lower_sum
 
-        for j in range(i, len_mat):
+        for j in range(i, n_rows):
             if i == j:
                 upper_matrix[i][j] = 1
             else:
@@ -56,47 +57,40 @@ def lu_crout(matrix_a: LList, n_decimal: int = N_DECIMAL) -> LLList:
                     upper_sum += lower_matrix[i][k] * upper_matrix[k][j]
                 upper_matrix[i][j] = (matrix_a[i][j] - upper_sum) / lower_matrix[i][i]
 
-    return __round_matrices(lower_matrix, upper_matrix, n_decimal)
+    lower_matrix = round_matrix_(lower_matrix, n_decimal)
+    upper_matrix = round_matrix_(upper_matrix, n_decimal)
+
+    return [lower_matrix, upper_matrix]
 
 
-@doc_inherit(cholesky_decomposition, style=DOC_STYLE)
-def lu_dolittle(matrix_a: LList, n_decimal: int = N_DECIMAL) -> LLList:
-    """Performs LU decomposition using Dolittle's method.
+@doc_inherit(lu_crout, style=DOC_STYLE)
+def lu_doolittle(matrix_a: Matrix or LList, n_decimal: IFloat = N_DECIMAL) -> list[Matrix]:
+    """Performs LU decomposition using Doolittle's method.
 
     Returns
     ------
-        The LU decomposition following Dolittle's method.
-
-    Raises
-    ------
-    NotASquareMatrix:
-        If the matrix is not square.
+        The LU decomposition following Doolittle's method.
     """
 
-    if len(matrix_a) != len(matrix_a[0]):
-        raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
+    matrix_a, lower_matrix, upper_matrix, n_rows = lu_sanity_check(matrix_a)
 
-    len_mat = len(matrix_a)
-
-    lower_matrix, upper_matrix = __lower_upper_matrices(len_mat)
-
-    for i in range(len_mat):
+    for i in range(n_rows):
         upper_matrix[0][i] = matrix_a[0][i]
 
-    for i in range(len_mat):
+    for i in range(n_rows):
         lower_matrix[i][0] = matrix_a[i][0] / upper_matrix[0][0]
 
-    for i in range(1, len_mat):
-        for j in range(1, len_mat):
+    for i in range(1, n_rows):
+        for j in range(1, n_rows):
             if j == i:
                 lower_matrix[i][j] = 1
-            if j < i:
+            elif j < i:
                 lower_sum = 0
                 for k in range(j):
                     lower_sum += (lower_matrix[i][k] * upper_matrix[k][j])
                 lower_matrix[i][j] = (matrix_a[i][j] - lower_sum) / upper_matrix[j][j]
 
-        for j in range(1, len_mat):
+        for j in range(1, n_rows):
             if j < i:
                 upper_matrix[i][j] = 0
             else:
@@ -105,4 +99,35 @@ def lu_dolittle(matrix_a: LList, n_decimal: int = N_DECIMAL) -> LLList:
                     upper_sum += (lower_matrix[i][k] * upper_matrix[k][j])
                 upper_matrix[i][j] = matrix_a[i][j] - upper_sum
 
-    return __round_matrices(lower_matrix, upper_matrix, n_decimal)
+    lower_matrix = round_matrix_(lower_matrix, n_decimal)
+    upper_matrix = round_matrix_(upper_matrix, n_decimal)
+
+    return [lower_matrix, upper_matrix]
+
+
+def lu_sanity_check(matrix_a: Matrix):
+    """
+    Performs sanity check for LU decomposition.
+
+    Parameters
+    ----------
+    matrix_a:
+        The given matrix or list of list to be checked.
+
+    Returns
+    -------
+        The given matrix, lower, and upper matrix, and number of rows in the matrix.
+    """
+
+    if not isinstance(matrix_a, Matrix):
+        matrix_a = Matrix(matrix_a)
+
+    n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
+
+    if not matrix_a.is_symmetric():
+        raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
+
+    lower_matrix = null_matrix(n_rows, n_cols)
+    upper_matrix = null_matrix(n_rows, n_cols)
+
+    return matrix_a, lower_matrix, upper_matrix, n_rows

@@ -30,9 +30,9 @@ This module contains custom error classes for interpolation methods. The error c
 Created on Jan 07 16:05:26 2024
 """
 
-__all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation', 'NonSymmetricMatrix', 'NotASquareMatrix',
-           'NumStepCanNotBeFloat', 'NotPositiveDefinite', 'DegreeOfPolynomialNotCorrect', 'IndexCanNotBeSlice',
-           'InconsistentDimensions', 'XFindNotDefined']
+# __all__ = ['AtLeastOneParameterRequired', 'WrongBoundaryEquation', 'NonSymmetricMatrix', 'NotASquareMatrix',
+#            'NumStepCanNotBeFloat', 'NotPositiveDefinite', 'DegreeOfPolynomialNotCorrect', 'IndexCanNotBeSlice',
+#            'InconsistentDimensions', 'XFindNotDefined']
 
 
 class NumSolversErrors(BaseException):
@@ -77,3 +77,36 @@ class IndexCanNotBeSlice(NumSolversErrors):
 
 class InconsistentDimensions(NumSolversErrors):
     pass
+
+
+#######################################################################################################################
+
+class DivisionByMatrix(NumSolversErrors):
+    def __init__(self, message="Can't divide a matrix by matrix. Invalid Operation."):
+        super().__init__(message)
+
+
+class MatrixDimensionsMismatch(NumSolversErrors):
+    def __init__(self, message=''):
+        m = "Matrix dimensions do not match for multiplication.\n"
+        super().__init__(m + message)
+
+
+class NotASquareMatrixError(NumSolversErrors):
+    def __init__(self, message="The provided matrix is not a square matrix.\nCan't perform LU Decomposition."):
+        super().__init__(message)
+
+
+class SlicingNotAllowed(NumSolversErrors):
+    def __init__(self, message="Slicing a matrix is not possible, please use integer indices."):
+        super().__init__(message)
+
+
+class IndexOutOfBounds(NumSolversErrors):
+    def __init__(self, message="The given index doesn't exist for the matrix."):
+        super().__init__(message)
+
+
+class DeterminantIsZero(NumSolversErrors):
+    def __init__(self, message="The given matrix is singular and its inverse can't be calculated."):
+        super().__init__(message)

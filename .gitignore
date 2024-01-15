@@ -163,3 +163,4 @@ cython_debug/
 /main.py
 /double_integrators.py
 /examples.py
+/rough_work.py
