@@ -14,7 +14,7 @@ from .matrix import Matrix, null_matrix, vector_mag
 from ..__backend.extra_ import round_matrix_
 
 
-def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
+def qr_decomposition(matrix: Matrix,  n_decimal: int = N_DECIMAL) -> LMat:
     """
     Performs the QR decomposition for the given matrix.
 

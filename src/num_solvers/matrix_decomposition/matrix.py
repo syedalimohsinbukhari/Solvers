@@ -309,6 +309,13 @@ class Matrix:
     def adjoint_matrix(self):
         return (self.inverse() * self.determinant()).in_fractions
 
+    def diagonal(self):
+        null_ = null_matrix(self.n_rows)
+        for i in range(self.n_rows):
+            null_[i] = self.elements[i][i]
+
+        return null_
+
     def diagonal_of_matrix(self):
         n_rows, n_cols, elements = self.n_rows, self.n_cols, self.elements
 
@@ -318,9 +325,11 @@ class Matrix:
 
         return identity_
 
+    @property
     def t(self):
-        return self.transpose()
+        return self.transpose
 
+    @property
     def transpose(self):
         return self._transpose()
 
@@ -481,7 +490,7 @@ class InFractions:
         return self.fraction.denominator
 
 
-def identity_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
+def identity_matrix(n_rows: int, n_cols: OptIFloat = None, value: IFloat = 1) -> Matrix:
     """
     Generates an identity matrix of given number of rows and columns.
 
@@ -491,6 +500,8 @@ def identity_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
         Number of rows for the null matrix.
     n_cols:
         Number of columns for the null matrix.
+    value:
+        The value to set on diagonals. Defaults to 1.
 
     Returns
     -------
@@ -502,15 +513,15 @@ def identity_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
 
     n_cols = n_rows if n_cols is None else n_cols
 
-    identity_ = Matrix([[0] * n_cols for _ in range(n_rows)])
+    identity_ = null_matrix(n_rows, n_cols)
 
     for i in range(n_rows):
-        identity_[i][i] = 1
+        identity_[i][i] = value
 
     return identity_
 
 
-def null_matrix(n_rows: int, n_cols: int) -> Matrix:
+def null_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
     """
     Generate a null matrix of given number of rows and columns.
 
@@ -526,6 +537,8 @@ def null_matrix(n_rows: int, n_cols: int) -> Matrix:
         Null matrix.
 
     """
+
+    n_cols = n_rows if n_cols is None else n_cols
 
     mat_ = Matrix([[0] * n_cols for _ in range(n_rows)])
 
@@ -552,8 +565,18 @@ def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
         import itertools
         vector_ = list(itertools.chain.from_iterable(vector.elements))
     else:
-        vector_ = vector
+        vector_ = vector.elements
 
-    vec_norm_ = sum(i**2 for i in vector_.elements)
+    vec_norm_ = sum(i**2 for i in vector_)
 
     return vec_norm_ if squared else sqrt(vec_norm_)
+
+
+def characteristic_polynomial(matrix):
+    size = matrix.n_rows
+    coeffs = [1]
+    for i in range(1, size + 1):
+        det_coeff = determinant([row[:i] for row in matrix.elements[:i]])
+        print(det_coeff)
+        coeffs.append((-1)**i * det_coeff)
+    return coeffs

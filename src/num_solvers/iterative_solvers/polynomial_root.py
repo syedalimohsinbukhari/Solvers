@@ -16,6 +16,7 @@ Created on Dec 20 23:21:44 2023
 """
 
 from cmath import sqrt
+from operator import sub
 from typing import List
 
 import numpy as np
@@ -60,6 +61,9 @@ def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: 
         if abs(poly) < tolerance:
             break
 
+        if len(root_) > 20 and sub(*root_[-2:][::-1]) < tolerance:
+            break
+
         poly_derivative = p_val(p_der(polynomial), x_guess)
         poly_double_derivative = p_val(p_der(polynomial, 2), x_guess)
 
@@ -77,7 +81,7 @@ def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: 
 
 
 def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: OptList = None,
-                    num_segments: int = 500, n_decimal: int = 8, tolerance: IFloat = TOLERANCE) -> LList:
+                    num_segments: int = 100, n_decimal: int = 8, tolerance: IFloat = TOLERANCE) -> LList:
     """
     Segments the given interval to find all possible roots within that interval for a given polynomial.
 
@@ -101,7 +105,7 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
         List of all possible roots within the given interval.
     """
 
-    x_guess = x_guess if x_guess else [-100, 100]
+    x_guess = x_guess if x_guess else [-10, 50]
     degree_of_polynomial = degree_of_polynomial if degree_of_polynomial > 0 else len(polynomial) - 1
 
     if degree_of_polynomial:
@@ -110,8 +114,6 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
 
     x_values = np.linspace(x_guess[0], x_guess[1], num_segments)
     all_roots = []
-
-    print(f'Checking roots between {x_guess[0]:+} and {x_guess[1]:+} using {num_segments} intervals.')
 
     for x_0 in x_values:
         root = laguerre_method(polynomial, degree_of_polynomial, x_0, tolerance=tolerance)
@@ -129,9 +131,6 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
             new_roots.extend([root_, np.conj(root_)])
 
     new_roots = round_list_(new_roots, n_decimal)
-
-    for i, v in enumerate(new_roots):
-        print(f'root_{i + 1:03} = {v}')
 
     return new_roots
 

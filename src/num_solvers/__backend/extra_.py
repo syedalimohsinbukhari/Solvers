@@ -14,10 +14,10 @@ This module holds general functionalities that can be used in the entire package
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['linear_list', 'round_value_', 'round_list_', 'round_matrix_', 'num_steps_']
+__all__ = ['linear_list', 'round_value_', 'round_list_', 'round_matrix_', 'num_steps_', 'filter_similar_values']
 
 from .errors_ import AtLeastOneParameterRequired
-from .. import FList, IFloat, LList, N_DECIMAL, OptIFloat
+from .. import FList, IFloat, LList, N_DECIMAL, OptIFloat, TOLERANCE
 from ..matrix_decomposition.matrix import Matrix
 
 
@@ -144,3 +144,13 @@ def num_steps_(x_initial: IFloat, x_max: IFloat, step_size: IFloat, n_decimal: i
     """
 
     return int(round_value_(((x_max - x_initial) / step_size) + 1, n_decimal))
+
+
+def filter_similar_values(original_list, tolerance=TOLERANCE):
+    unique_list = [original_list[0]]
+
+    for value in original_list[1:]:
+        if all(abs(value - unique_value) > tolerance for unique_value in unique_list):
+            unique_list.append(value)
+
+    return unique_list
