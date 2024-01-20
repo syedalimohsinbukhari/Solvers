@@ -222,7 +222,7 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
 
 @doc_inherit(bisection_method, style=DOC_STYLE)
 def steffensen_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
-                      get_full_result: bool = True) -> IFloatOrFList:
+                      get_full_result: bool = False) -> IFloatOrFList:
     """Use the Steffensen method to find the root of a given function within a specified interval."""
 
     def is_sane():
@@ -275,7 +275,7 @@ def newton_raphson_method(function: Func, derivative_of_function: Func, initial_
     if abs(f(x_0)) < tolerance:
         return x_0
     else:
-        return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tolerance)
+        return newton_raphson_method(f, df, x_0 - f(x_0) / df(x_0), tolerance)
 
 
 def muller_method(function: Func, x_0: IFloat, x_1: IFloat, x_2: IFloat, iterations: int,

@@ -23,7 +23,7 @@ import numpy as np
 
 from .. import FList, IFloat, LList, OptList, TOLERANCE
 from ..__backend.errors_ import DegreeOfPolynomialNotCorrect
-from ..__backend.extra_ import round_list_
+from ..__backend.extra_ import filter_similar_values, round_list_
 
 
 # TODO: See if numpy can be removed
@@ -80,7 +80,7 @@ def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: 
     return root_ if get_full_result else root_[-1]
 
 
-def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: OptList = None,
+def segmented_roots(polynomial: List, x_guess: OptList = None,
                     num_segments: int = 100, n_decimal: int = 8, tolerance: IFloat = TOLERANCE) -> LList:
     """
     Segments the given interval to find all possible roots within that interval for a given polynomial.
@@ -89,8 +89,6 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
     ----------
     polynomial:
         The polynomial as list of coefficients.
-    degree_of_polynomial:
-        Degree of the polynomial. Defaults to -1. If polynomial's degree is -1, it is calculated inside the function.
     x_guess:
         The range in which the root of polynomial is to be determined. Default is [-100, 100].
     num_segments:
@@ -106,7 +104,7 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
     """
 
     x_guess = x_guess if x_guess else [-10, 50]
-    degree_of_polynomial = degree_of_polynomial if degree_of_polynomial > 0 else len(polynomial) - 1
+    degree_of_polynomial = len(polynomial) - 1
 
     if degree_of_polynomial:
         if len(polynomial) - 1 != degree_of_polynomial:
@@ -116,7 +114,10 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
     all_roots = []
 
     for x_0 in x_values:
-        root = laguerre_method(polynomial, degree_of_polynomial, x_0, tolerance=tolerance)
+        root = laguerre_method(polynomial,
+                               degree_of_polynomial,
+                               x_0,
+                               tolerance=tolerance)
 
         if all(abs(root - existing_root) > tolerance for existing_root in all_roots):
             all_roots.append(root)
@@ -131,6 +132,17 @@ def segmented_roots(polynomial: List, degree_of_polynomial: int = -1, x_guess: O
             new_roots.extend([root_, np.conj(root_)])
 
     new_roots = round_list_(new_roots, n_decimal)
+
+    while len(new_roots) != degree_of_polynomial:
+        new_roots = round_list_(new_roots, n_decimal - 1)
+        n_decimal -= 1
+        if n_decimal == degree_of_polynomial:
+            break
+
+    new_roots = filter_similar_values(new_roots)
+
+    if len(new_roots) < degree_of_polynomial:
+        print('The roots of polynomial contains repeating roots.')
 
     return new_roots
 

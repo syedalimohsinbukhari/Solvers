@@ -572,11 +572,11 @@ def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
     return vec_norm_ if squared else sqrt(vec_norm_)
 
 
-def characteristic_polynomial(matrix):
-    size = matrix.n_rows
-    coeffs = [1]
-    for i in range(1, size + 1):
-        det_coeff = determinant([row[:i] for row in matrix.elements[:i]])
-        print(det_coeff)
-        coeffs.append((-1)**i * det_coeff)
-    return coeffs
+# def characteristic_polynomial(matrix):
+#     size = matrix.n_rows
+#     coeffs = [1]
+#     for i in range(1, size + 1):
+#         det_coeff = determinant([row[:i] for row in matrix.elements[:i]])
+#         print(det_coeff)
+#         coeffs.append((-1)**i * det_coeff)
+#     return coeffs

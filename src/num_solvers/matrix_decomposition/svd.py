@@ -5,7 +5,7 @@ from operator import mul
 from . import LMat
 from .matrix import Matrix, identity_matrix, null_matrix, vector_mag
 from .qr_decomposition import qr_decomposition
-from .. import Func, IFloat, N_DECIMAL, OptIFloat, TOLERANCE
+from .. import FList, Func, IFloat, N_DECIMAL, OptIFloat, TOLERANCE
 from ..__backend.extra_ import filter_similar_values, linear_list
 
 
@@ -61,7 +61,11 @@ def eigen_identity(n_rows: int, diag_value, n_cols: OptIFloat = None) -> Matrix:
     return null_
 
 
-def faddeev_le_verrier(matrix: Matrix):
+def characteristic_polynomial(matrix: Matrix) -> FList:
+    return faddeev_le_verrier(matrix)
+
+
+def faddeev_le_verrier(matrix: Matrix) -> FList:
     new_matrix_ = [0] * (matrix.n_cols + 1)
     coefficient = [0] * (matrix.n_cols + 1)
 
