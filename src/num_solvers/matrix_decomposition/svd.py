@@ -9,6 +9,8 @@ from .. import FList, Func, IFloat, N_DECIMAL, OptIFloat, TOLERANCE
 from ..__backend.extra_ import filter_similar_values, linear_list
 
 
+# TODO: See if numpy can be removed
+
 # taken from https://www-users.cse.umn.edu/~olver/aims_/qr.pdf
 def eigen_values_qr(matrix: Matrix, n_iter: int = 1000) -> LMat:
     # if matrix.is_singular:
@@ -83,7 +85,3 @@ def svd(matrix: Matrix, n_decimal: IFloat = N_DECIMAL):
     sigma_matrix = identity_matrix(matrix.n_rows)
     u_matrix = null_matrix(matrix.n_rows, matrix.n_cols)
     v_matrix = matrix.t * matrix
-
-    eigen_values = eigen_values_qr(v_matrix, 500)[1]
-
-    print(eigen_values)

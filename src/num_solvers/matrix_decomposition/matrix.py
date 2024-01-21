@@ -182,11 +182,11 @@ class Matrix:
         self.elements[index] = value
 
     @property
-    def n_rows(self):
+    def n_rows(self) -> int:
         return len(self.elements) if self._multi_rows() else 1
 
     @property
-    def n_cols(self):
+    def n_cols(self) -> int:
         return len(self.elements[0]) if self._multi_rows() else len(self.elements)
 
     @property
@@ -570,7 +570,6 @@ def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
     vec_norm_ = sum(i**2 for i in vector_)
 
     return vec_norm_ if squared else sqrt(vec_norm_)
-
 
 # def characteristic_polynomial(matrix):
 #     size = matrix.n_rows
