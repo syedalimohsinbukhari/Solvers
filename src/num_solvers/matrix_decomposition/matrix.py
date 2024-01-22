@@ -207,7 +207,7 @@ class Matrix:
 
     @property
     def in_fractions(self):
-        fr_ = [[InFractions(j).fraction for j in i] for i in self.elements]
+        fr_ = [[InFractions(j) for j in i] for i in self.elements]
 
         return self._give_output(fr_)
 
@@ -478,7 +478,7 @@ class InFractions:
     def __init__(self, decimal_value):
         self.fraction = Fraction(decimal_value).limit_denominator()
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.fraction)
 
     @property

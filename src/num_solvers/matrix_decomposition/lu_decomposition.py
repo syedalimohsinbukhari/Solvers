@@ -125,8 +125,8 @@ def _lu_sanity_check(matrix_a: Matrix):
 
     n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
 
-    if not matrix_a._is_symmetric():
-        raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
+    # if not matrix_a._is_symmetric():
+    #     raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
 
     lower_matrix = null_matrix(n_rows, n_cols)
     upper_matrix = null_matrix(n_rows, n_cols)
