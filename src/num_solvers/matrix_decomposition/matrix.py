@@ -204,7 +204,7 @@ class Matrix:
 
     @property
     def trace(self):
-        return sum(self.elements[i][i] for i in range(self.n_rows))
+        return sum([self.elements[i][i] for i in range(self.n_rows)])
 
     @property
     def in_fractions(self):
@@ -228,7 +228,7 @@ class Matrix:
         return self._give_output(result_elements)
 
     def _row_v_col(self, other):
-        row_v_col = [sum(k * l[0] for k, l in zip(self.elements, other.elements))]
+        row_v_col = [sum([k * l[0] for k, l in zip(self.elements, other.elements)])]
 
         return self._give_output(row_v_col)
 
@@ -237,26 +237,26 @@ class Matrix:
         for row in self.elements:
             r_temp = []
             for c_row in other.t.elements:
-                r_temp.append(sum(r_elem * c_elem for r_elem, c_elem in zip(row, c_row)))
+                r_temp.append(sum([r_elem * c_elem for r_elem, c_elem in zip(row, c_row)]))
             result.append(r_temp)
 
         return self._give_output(result)
 
     def _row_v_multi_row(self, other):
         if other.n_cols == 1:
-            mul_ = sum(sum(s_elem * o_elem[0]) for o_elem, s_elem in zip(other.elements, self.elements))
+            mul_ = sum([sum([s_elem * o_elem[0]]) for o_elem, s_elem in zip(other.elements, self.elements)])
         else:
             temp_ = []
             for c_rw, r_rw in zip(self.elements, other.elements):
                 temp_.append([c_rw * i for i in r_rw])
 
-            mul_ = [sum(i[j] for i in temp_) for j in range(len(temp_))]
+            mul_ = [sum([i[j] for i in temp_]) for j in range(len(temp_))]
 
         return self._give_output(mul_) if isinstance(mul_, list) and len(mul_) > 1 else mul_
 
     def _multi_row_v_col_matrix(self, other):
-        multi_row_v_col_matrix = [[sum(self.elements[row][col] * other.elements[col][0]
-                                       for col in range(self.n_cols))] for row in range(self.n_rows)]
+        multi_row_v_col_matrix = [[sum([self.elements[row][col] * other.elements[col][0]
+                                        for col in range(self.n_cols)])] for row in range(self.n_rows)]
         return self._give_output(multi_row_v_col_matrix)
 
     def _transpose(self):
@@ -294,7 +294,7 @@ class Matrix:
 
         for i in range(1, n_dimensions + 1):
             minor = [row[:i] for row in self.elements[:i]]
-            determinant_ = sum((minor[j][j] for j in range(i)))
+            determinant_ = sum([minor[j][j] for j in range(i)])
             if determinant_ <= 0:
                 return False
 
@@ -358,7 +358,7 @@ class Matrix:
         if not isinstance(other, Matrix):
             raise ValueError('The other must be a Matrix object')
 
-        return sum(i * j for i, j in zip(self.elements, other.elements))
+        return sum([i * j for i, j in zip(self.elements, other.elements)])
 
 
 def determinant(matrix: Matrix or LList) -> float:
@@ -513,10 +513,13 @@ def identity_matrix(n_rows: int, n_cols: OptIFloat = None, value: IFloat = 1) ->
 
     identity_ = null_matrix(n_rows, n_cols)
 
-    for i in range(n_rows):
-        identity_[i][i] = value
+    if n_rows == n_cols == 1:
+        return Matrix([1])
+    else:
+        for i in range(n_rows):
+            identity_[i][i] = value
 
-    return identity_
+        return identity_
 
 
 def null_matrix(n_rows: int, n_cols: OptIFloat = None) -> Matrix:
@@ -559,20 +562,14 @@ def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
         Magnitude of the vector, squared magnitude if ``squared`` is True.
     """
 
+    if not isinstance(vector, Matrix):
+        vector = Matrix(vector)
+
     if vector.n_cols == 1:
         vector_ = list(chain.from_iterable(vector.elements))
     else:
         vector_ = vector.elements
 
-    vec_norm_ = sum(i**2 for i in vector_)
+    vec_norm_ = sum([i**2 for i in vector_])
 
     return vec_norm_ if squared else sqrt(vec_norm_)
-
-# def characteristic_polynomial(matrix):
-#     size = matrix.n_rows
-#     coeffs = [1]
-#     for i in range(1, size + 1):
-#         det_coeff = determinant([row[:i] for row in matrix.elements[:i]])
-#         print(det_coeff)
-#         coeffs.append((-1)**i * det_coeff)
-#     return coeffs

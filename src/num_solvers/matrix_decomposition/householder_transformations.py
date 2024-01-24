@@ -31,34 +31,34 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
     # check if there's only a single element in the matrix or not, it'll be dealt as a special case
     cond = matrix_.n_rows > 1 and matrix_.n_cols > 1
 
-    # keeping it in if/else becuase it is more readable.
+    # keeping it in if/else because it is more readable.
     if cond:
         a0_ = Matrix(matrix_.t.elements[0]).t
         a_mag = vector_mag(a0_)
+
+        d1_ = -a_mag if a0_[0][0] > 0 else a_mag
+        w11 = (a0_[0] - d1_).elements[0]
+
+        # special case, when w11 = 0 meaning the sub-matrix only has a single element.
+        if w11 == 0:
+            return [matrix_, Matrix([-1])]
+
+        v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1_)).t
+
+        # create a list to hold the householder transformations
+        household_a = [0] * matrix.n_cols
+        household_a[0] = Matrix([d1_] + [0] * (a0_.n_rows - 1)).elements
+
+        # I - 2*((v*v.t)/(v.t*v))
+        household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector * v_vector.t) / (v_vector.t * v_vector))
+
+        # calculate 1:n household transformations
+        for i in range(1, matrix_.n_cols):
+            f2 = 2 * v_vector.t * matrix_.t[i].t
+            household_a[i] = (matrix_.t[i].t - f2 * v_vector).t.elements
     else:
-        a0_ = Matrix([[matrix_.t.elements]]).t
-        a_mag = a0_.elements[0][0]
-
-    d1_ = -a_mag if a0_[0][0] > 0 else a_mag
-    w11 = (a0_[0] - d1_).elements[0]
-
-    # special case, when w11 = 0 meaning the sub-matrix only has a single element.
-    if w11 == 0:
-        return [matrix_, Matrix([-1])]
-
-    v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1_)).t
-
-    # create a list to hold the householder transformations
-    household_a = [0] * matrix.n_cols
-    household_a[0] = Matrix([d1_] + [0] * (a0_.n_rows - 1)).elements
-
-    # I - 2*((v*v.t)/(v.t*v))
-    household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector * v_vector.t) / (v_vector.t * v_vector))
-
-    # calculate 1:n household transformations
-    for i in range(1, matrix_.n_cols):
-        f2 = 2 * v_vector.t * matrix_.t[i].t
-        household_a[i] = (matrix_.t[i].t - f2 * v_vector).t.elements
+        household_h = Matrix([1])
+        household_a = (-1 * matrix_).elements[0]
 
     return [Matrix(household_a).t, household_h]
 
@@ -134,10 +134,13 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
 
     for i in range(1, matrix_.n_rows):
         f1 = matrix_.n_rows - h_matrices[i].n_rows
-        h_matrices[i] = populate_identity_matrix(h_matrices[i], matrix_.n_rows, matrix.n_cols, f1, f1)
+        h_matrices[i] = populate_identity_matrix(h_matrices[i], matrix_.n_rows, matrix_.n_rows, f1, f1)
 
     q_matrix = reduce(mul, h_matrices)
     r_matrix = reduce(mul, h_matrices[::-1] + [matrix_])
+
+    q_matrix = tolerance_to_zeros(q_matrix)
+    r_matrix = tolerance_to_zeros(r_matrix)
 
     return [q_matrix, r_matrix]
 

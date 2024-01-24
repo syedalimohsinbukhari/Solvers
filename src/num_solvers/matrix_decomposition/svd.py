@@ -12,19 +12,6 @@ from ..__backend.extra_ import filter_similar_values, linear_list
 # TODO: See if numpy can be removed
 
 # taken from https://www-users.cse.umn.edu/~olver/aims_/qr.pdf
-def eigen_values_qr(matrix: Matrix, n_iter: int = 1000) -> LMat:
-    # if matrix.is_singular:
-    #     raise ValueError('Cannot use QR decomposition method for eigen values on singular matrices.')
-
-    id_ = identity_matrix(matrix.n_rows, matrix.n_cols)
-
-    for _ in range(n_iter):
-        temp_ = qr_decomposition(matrix)
-        id_ *= temp_[0]
-        matrix = mul(*temp_[::-1])
-
-    return [id_, matrix.diagonal()]
-
 
 def rayleigh_quotient_method(matrix: Matrix, n_iter: int = 50, initial_guess: int = 200) -> list:
 
