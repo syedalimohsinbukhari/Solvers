@@ -4,8 +4,8 @@ from typing import Callable, Optional, Union
 
 from numpy.typing import NDArray
 
-TOLERANCE = 1e-10
-N_DECIMAL = 8
+TOLERANCE = 1e-8
+N_DECIMAL = 6
 
 DOC_STYLE = 'numpy_napoleon_with_merge'
 

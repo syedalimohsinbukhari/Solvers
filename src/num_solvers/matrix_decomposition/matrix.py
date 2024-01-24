@@ -2,7 +2,7 @@
 
 This module provides functionality to create matrices and perform various operations on them. The base class is,
 
-- matrix
+- :class:`matrix`
 
 which gives the functionality of generating the matrices. All the matrices have the following associated properties,
 
@@ -15,7 +15,7 @@ which gives the functionality of generating the matrices. All the matrices have 
 - in_fractions: Gives the output of the matrix in fractions.
 - t: Transpose of the matrix.
 
-Along with these properties, the matrix class have the following functions,
+Along with these properties, the matrix object has the following functions,
 
 - determinant: The determinant of the matrix.
 - inverse: The inverse of the matrix.
