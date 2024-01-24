@@ -6,7 +6,8 @@ from operator import mul
 
 from . import LMat, Matrix
 from .matrix import identity_matrix, vector_mag
-from .. import IFloat, TOLERANCE
+from .. import IFloat, N_DECIMAL, TOLERANCE
+from ..__backend.extra_ import round_matrix_
 
 
 def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> LMat:
@@ -25,6 +26,20 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
         Householder transformed matrix.
     """
 
+    def calculate_householder_parameters():
+        a_mag = vector_mag(a0_)
+
+        d1 = -a_mag if a0_[0][0] > 0 else a_mag
+        w11 = (a0_[0] - d1).elements[0]
+
+        # special case, when w11 = 0 meaning the sub-matrix only has a single element.
+        if w11 == 0:
+            return [matrix_, Matrix([-1])]
+
+        v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1)).t
+
+        return a_mag, d1, w11, v_vector
+
     # taken from https://core.ac.uk/download/pdf/215673996.pdf
     matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
 
@@ -34,31 +49,30 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
     # keeping it in if/else because it is more readable.
     if cond:
         a0_ = Matrix(matrix_.t.elements[0]).t
-        a_mag = vector_mag(a0_)
 
-        d1_ = -a_mag if a0_[0][0] > 0 else a_mag
-        w11 = (a0_[0] - d1_).elements[0]
-
-        # special case, when w11 = 0 meaning the sub-matrix only has a single element.
-        if w11 == 0:
-            return [matrix_, Matrix([-1])]
-
-        v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1_)).t
+        a_mag_, d1_, w11_, v_vector_ = calculate_householder_parameters()
 
         # create a list to hold the householder transformations
         household_a = [0] * matrix.n_cols
         household_a[0] = Matrix([d1_] + [0] * (a0_.n_rows - 1)).elements
 
         # I - 2*((v*v.t)/(v.t*v))
-        household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector * v_vector.t) / (v_vector.t * v_vector))
+        household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector_ * v_vector_.t) / (v_vector_.t * v_vector_))
 
         # calculate 1:n household transformations
         for i in range(1, matrix_.n_cols):
-            f2 = 2 * v_vector.t * matrix_.t[i].t
-            household_a[i] = (matrix_.t[i].t - f2 * v_vector).t.elements
+            f2 = 2 * v_vector_.t * matrix_.t[i].t
+            household_a[i] = (matrix_.t[i].t - f2 * v_vector_).t.elements
     else:
-        household_h = Matrix([1])
-        household_a = (-1 * matrix_).elements[0]
+        if matrix_.n_rows == 1:
+            household_h = Matrix([1])
+            household_a = (-1 * matrix_).elements[0]
+        else:
+            a0_ = matrix_
+            a_mag_, d1_, w11_, v_vector_ = calculate_householder_parameters()
+
+            household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector_ * v_vector_.t) / (v_vector_.t * v_vector_))
+            household_a = (household_h * a0_).elements
 
     return [Matrix(household_a).t, household_h]
 
@@ -99,7 +113,7 @@ def populate_identity_matrix(sub_matrix: Matrix, n_rows: int, n_cols: int, s_row
     return Matrix(populated_identity_matrix)
 
 
-def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = False) -> LMat:
+def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, overwrite_original: bool = False) -> LMat:
     """
     Performs QR decomposition of matrix using Householder's reflections.
 
@@ -107,6 +121,8 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
     ----------
     matrix:
         The matrix to calculate QR decomposition for.
+    n_decimal:
+        The number of decimal places to round off to.
     overwrite_original:
         Whether to overwrite on the original provided matrix or not. Defaults to False.
 
@@ -116,8 +132,16 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
     """
 
     matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
-    household_matrices: list = [0] * matrix_.n_rows
-    h_matrices: list = [0] * matrix_.n_rows
+
+    if matrix_.n_rows > matrix_.n_cols:
+        remove_ = True
+        cond = matrix_.n_cols
+    else:
+        remove_ = False
+        cond = matrix_.n_rows
+
+    household_matrices: list = [0] * cond
+    h_matrices: list = [0] * cond
 
     household_matrices[0], h_matrices[0] = householder_reduction(matrix_)
 
@@ -125,14 +149,14 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
         return [household_matrices[0], h_matrices[0]]
 
     temp_ = []
-    for j in range(1, matrix_.n_rows):
+    for j in range(1, cond):
         temp_.append(Matrix([i[1:] for i in household_matrices[j - 1].elements[1:]]))
         # have to do separate variable insertion in lists, doesn't work with simultaneous appending
         reductions_ = householder_reduction(temp_[j - 1])
         household_matrices[j] = reductions_[0]
         h_matrices[j] = reductions_[1]
 
-    for i in range(1, matrix_.n_rows):
+    for i in range(1, cond):
         f1 = matrix_.n_rows - h_matrices[i].n_rows
         h_matrices[i] = populate_identity_matrix(h_matrices[i], matrix_.n_rows, matrix_.n_rows, f1, f1)
 
@@ -141,6 +165,13 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
 
     q_matrix = tolerance_to_zeros(q_matrix)
     r_matrix = tolerance_to_zeros(r_matrix)
+
+    if remove_:
+        q_matrix = Matrix(q_matrix.t.elements[:-1]).t
+        r_matrix = Matrix(r_matrix.elements[:-1])
+
+    q_matrix = round_matrix_(q_matrix, n_decimal)
+    r_matrix = round_matrix_(r_matrix, n_decimal)
 
     return [q_matrix, r_matrix]
 
