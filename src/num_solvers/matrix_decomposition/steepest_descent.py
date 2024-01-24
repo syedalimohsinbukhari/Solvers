@@ -18,6 +18,8 @@ References
 Created on Jan 22 23:00:22 2024
 """
 
+__all__ = ['steepest_descent', 'modified_steepest_descent']
+
 from custom_inherit import doc_inherit
 
 from .matrix import Matrix, vector_mag
@@ -25,8 +27,10 @@ from .. import DOC_STYLE, IFloat, N_DECIMAL, TOLERANCE
 from ..__backend.extra_ import round_matrix_
 
 
+# TODO: Something might be wrong with steepest_descent
+
 # taken from https://www.phys.uconn.edu/~rozman/Courses/m3511_18s/downloads/steepest-descent.pdf
-def steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 250,
+def steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 10_000,
                      tolerance: IFloat = TOLERANCE, n_decimal: int = N_DECIMAL) -> Matrix:
     """
     Solve a linear system using the steepest descent method.
@@ -61,29 +65,26 @@ def steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_
     https://www.phys.uconn.edu/~rozman/Courses/m3511_18s/downloads/steepest-descent.pdf
     """
 
-    r: list = [0] * n_iterations
+    r_mat_: list = [0] * n_iterations
     new_guess: list = [0] * n_iterations
     new_guess[0] = initial_guess
 
-    processed_iters = 0
-
-    for iter_ in range(1, 25):
-        r[iter_ - 1] = solution - (matrix * new_guess[iter_ - 1])
-        alpha = (r[iter_ - 1].t * r[iter_ - 1]) / (r[iter_ - 1].t * matrix * r[iter_ - 1])
-        new_guess[iter_] = new_guess[iter_ - 1] + alpha * r[iter_ - 1]
+    for iter_ in range(1, n_iterations):
+        r_mat_[iter_ - 1] = solution - (matrix * new_guess[iter_ - 1])
+        alpha = (r_mat_[iter_ - 1].t * r_mat_[iter_ - 1]) / (r_mat_[iter_ - 1].t * matrix * r_mat_[iter_ - 1])
+        new_guess[iter_] = new_guess[iter_ - 1] + alpha * r_mat_[iter_ - 1]
 
         temp_ = vector_mag(new_guess[iter_] - new_guess[iter_ - 1])
 
         if temp_ < tolerance:
-            processed_iters = iter_
-            break
+            return round_matrix_(new_guess[iter_], n_decimal)
 
-    return round_matrix_(new_guess[processed_iters], n_decimal)
+    return round_matrix_(new_guess[-1], n_decimal)
 
 
 # direct link: https://d-nb.info/1215094116/34
 @doc_inherit(steepest_descent, style=DOC_STYLE)
-def modified_steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 250,
+def modified_steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 10_000,
                               tolerance: IFloat = TOLERANCE, n_decimal: int = N_DECIMAL):
     """Solve a linear system using the modified steepest descent method.
 
@@ -96,36 +97,33 @@ application to Poisson’s equation." https://doi.org/10.1186/s13662-020-02715-9
     def iter_summation(calculation_type: str = '1'):
         if calculation_type == '1':
             condition = matrix.n_cols
-            mat1, mat2 = c_, c
+            mat1, mat2 = c_matrix2, c_matrix
         else:
             condition = matrix.n_rows
-            mat1, mat2 = d_, d
+            mat1, mat2 = d_matrix2, d_matrix
 
-        sum1, sum2, cond2 = 0, 0, matrix.n_cols
+        sum_ = 0
 
         for i in range(condition):
-            sum2 += (mat2[i] - sum(mat1[i][j] * new_guess[iter_ - 1][j] for j in range(matrix.n_cols))).elements[0]**2
+            sum_ += (mat2[i] - sum(mat1[i][j] * new_guess[iter_ - 1][j] for j in range(matrix.n_cols))).elements[0]**2
 
-        return sum2
+        return sum_
 
     tau: list = [0] * n_iterations
 
     new_guess: list = [0] * n_iterations
     new_guess[0] = initial_guess
 
-    c, c_ = matrix.t * solution, matrix.t * matrix
-    d, d_ = matrix * c, matrix * c_
-
-    processed_iters = 0
+    c_matrix, c_matrix2 = matrix.t * solution, matrix.t * matrix
+    d_matrix, d_matrix2 = matrix * c_matrix, matrix * c_matrix2
 
     for iter_ in range(1, n_iterations):
         tau[iter_ - 1] = iter_summation() / iter_summation('2')
-        new_guess[iter_] = new_guess[iter_ - 1] + tau[iter_ - 1] * (c - c_ * new_guess[iter_ - 1])
+        new_guess[iter_] = new_guess[iter_ - 1] + tau[iter_ - 1] * (c_matrix - c_matrix2 * new_guess[iter_ - 1])
 
         temp_ = vector_mag(new_guess[iter_] - new_guess[iter_ - 1])
 
         if temp_ < tolerance:
-            processed_iters = iter_
-            break
+            return round_matrix_(new_guess[iter_], n_decimal)
 
-    return round_matrix_(new_guess[processed_iters], n_decimal)
+    return round_matrix_(new_guess[-1], n_decimal)

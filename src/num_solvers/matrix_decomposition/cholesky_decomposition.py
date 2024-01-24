@@ -44,10 +44,10 @@ def cholesky_decomposition(matrix_a: MatOrLList, n_decimal: int = N_DECIMAL) -> 
     if not isinstance(matrix_a, Matrix):
         matrix_a = Matrix(matrix_a)
 
-    if not matrix_a._is_symmetric():
+    if not matrix_a.is_symmetric():
         raise NonSymmetricMatrix('The matrix is not symmetric. Can not perform Cholesky decomposition.')
 
-    if not matrix_a._is_positive_definite():
+    if not matrix_a.is_positive_definite():
         raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
 
     n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols

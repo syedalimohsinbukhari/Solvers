@@ -15,6 +15,20 @@ from ..__backend.extra_ import round_matrix_
 
 
 def schur_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
+    """
+    Performs Schur decomposition for the given matrix.
+    Parameters
+    ----------
+    matrix:
+        The given matrix to perform QR decomposition on.
+    n_decimal:
+        Number of digits to round off to. Default is 8.
+
+    Returns
+    -------
+    LMat:
+        Schur decomposition of the matrix.
+    """
     raise NotImplementedError()
 
 

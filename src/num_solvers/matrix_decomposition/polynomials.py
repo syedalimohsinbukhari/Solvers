@@ -49,7 +49,7 @@ class Polynomial:
                 short_poly, long_poly = other, self
 
             diff = long_poly.degree - short_poly.degree
-            for i in range(diff):
+            for _ in range(diff):
                 short_poly.polynomial.insert(0, 0)
 
             return self._get_output([sum(x) for x in zip(self.polynomial, other.polynomial)])

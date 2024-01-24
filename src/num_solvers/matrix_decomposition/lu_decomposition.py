@@ -15,7 +15,6 @@ from custom_inherit import doc_inherit
 from . import LMat, MatOrLList, N_DECIMAL
 from .matrix import Matrix, null_matrix
 from .. import DOC_STYLE, IFloat
-from ..__backend.errors_ import NotASquareMatrix
 from ..__backend.extra_ import round_matrix_
 
 

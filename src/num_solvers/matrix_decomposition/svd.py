@@ -16,33 +16,33 @@ def eigen_values_qr(matrix: Matrix, n_iter: int = 1000) -> LMat:
     # if matrix.is_singular:
     #     raise ValueError('Cannot use QR decomposition method for eigen values on singular matrices.')
 
-    s = identity_matrix(matrix.n_rows, matrix.n_cols)
+    id_ = identity_matrix(matrix.n_rows, matrix.n_cols)
 
     for _ in range(n_iter):
         temp_ = qr_decomposition(matrix)
-        s *= temp_[0]
+        id_ *= temp_[0]
         matrix = mul(*temp_[::-1])
 
-    return [s, matrix.diagonal()]
+    return [id_, matrix.diagonal()]
 
 
 def rayleigh_quotient_method(matrix: Matrix, n_iter: int = 50, initial_guess: int = 200) -> list:
 
     identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
 
-    b = null_matrix(n_iter, 1).elements
-    mu = null_matrix(n_iter, 1).elements
+    b_matrix = null_matrix(n_iter, 1).elements
+    mu_matrix = null_matrix(n_iter, 1).elements
 
-    b[0], mu[0] = Matrix([[1]] * matrix.n_rows), initial_guess
+    b_matrix[0], mu_matrix[0] = Matrix([[1]] * matrix.n_rows), initial_guess
 
     for _ in range(n_iter - 1):
-        f1 = (matrix - mu[_] * identity_).inverse() * b[_]
-        b[_ + 1] = f1 / vector_mag(f1)
+        f1 = (matrix - mu_matrix[_] * identity_).inverse() * b_matrix[_]
+        b_matrix[_ + 1] = f1 / vector_mag(f1)
 
-        mu[_ + 1] = b[_ + 1].t * matrix * b[_ + 1]
-        mu[_ + 1] /= b[_ + 1].t * b[_ + 1]
+        mu_matrix[_ + 1] = b_matrix[_ + 1].t * matrix * b_matrix[_ + 1]
+        mu_matrix[_ + 1] /= b_matrix[_ + 1].t * b_matrix[_ + 1]
 
-    return mu[-1]
+    return mu_matrix[-1]
 
 
 def eigen_value_multi(iter_func: Func, matrix: Matrix, range_: tuple = (-10, 10),
@@ -82,6 +82,4 @@ def faddeev_le_verrier(matrix: Matrix) -> FList:
 
 
 def svd(matrix: Matrix, n_decimal: IFloat = N_DECIMAL):
-    sigma_matrix = identity_matrix(matrix.n_rows)
-    u_matrix = null_matrix(matrix.n_rows, matrix.n_cols)
-    v_matrix = matrix.t * matrix
+    raise NotImplementedError()

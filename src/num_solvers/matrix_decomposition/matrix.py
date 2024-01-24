@@ -46,6 +46,7 @@ Created on Oct 04 21:36:44 2023
 """
 
 from fractions import Fraction
+from itertools import chain
 from math import sqrt
 
 from .. import IFloat, LList, OptIFloat
@@ -71,8 +72,8 @@ class Matrix:
             out = '['
             max_width = max(len(str(element)) for row in elements for element in row)
             for index, row in enumerate(elements):
-                br = '[' if index == 0 else ' ['
-                out += br + ' '.join([str(element).rjust(max_width) for element in row]) + ']'
+                break_ = '[' if index == 0 else ' ['
+                out += break_ + ' '.join([str(element).rjust(max_width) for element in row]) + ']'
                 if index < self.n_rows - 1:
                     out += '\n'
             out += ']'
@@ -199,11 +200,11 @@ class Matrix:
 
     @property
     def is_singular(self):
-        return True if determinant(self.elements) == 0 else False
+        return determinant(self.elements) == 0
 
     @property
     def trace(self):
-        return sum([self.elements[i][i] for i in range(self.n_rows)])
+        return sum(self.elements[i][i] for i in range(self.n_rows))
 
     @property
     def in_fractions(self):
@@ -227,7 +228,7 @@ class Matrix:
         return self._give_output(result_elements)
 
     def _row_v_col(self, other):
-        row_v_col = [sum([k * l[0] for k, l in zip(self.elements, other.elements)])]
+        row_v_col = [sum(k * l[0] for k, l in zip(self.elements, other.elements))]
 
         return self._give_output(row_v_col)
 
@@ -236,20 +237,20 @@ class Matrix:
         for row in self.elements:
             r_temp = []
             for c_row in other.t.elements:
-                r_temp.append(sum([r_elem * c_elem for r_elem, c_elem in zip(row, c_row)]))
+                r_temp.append(sum(r_elem * c_elem for r_elem, c_elem in zip(row, c_row)))
             result.append(r_temp)
 
         return self._give_output(result)
 
     def _row_v_multi_row(self, other):
         if other.n_cols == 1:
-            mul_ = sum([sum([s_elem * o_elem[0]]) for o_elem, s_elem in zip(other.elements, self.elements)])
+            mul_ = sum(sum(s_elem * o_elem[0]) for o_elem, s_elem in zip(other.elements, self.elements))
         else:
             temp_ = []
             for c_rw, r_rw in zip(self.elements, other.elements):
                 temp_.append([c_rw * i for i in r_rw])
 
-            mul_ = [sum([i[j] for i in temp_]) for j in range(len(temp_))]
+            mul_ = [sum(i[j] for i in temp_) for j in range(len(temp_))]
 
         return self._give_output(mul_) if isinstance(mul_, list) and len(mul_) > 1 else mul_
 
@@ -275,20 +276,20 @@ class Matrix:
             if self.n_cols > 1:
                 transposed_elements = [[element] for element in elements]
             else:
-                transposed_elements = [element for element in elements]
+                transposed_elements = list(elements)
 
         return give_output(transposed_elements)
 
-    def _is_symmetric(self):
-        return True if self == self.t else False
+    def is_symmetric(self):
+        return self == self.t
 
     def _is_orthogonal(self):
-        return True if self * self.t == identity_matrix(self.n_rows, self.n_cols) else False
+        return self * self.t == identity_matrix(self.n_rows, self.n_cols)
 
-    def _is_positive_definite(self) -> bool:
+    def is_positive_definite(self) -> bool:
         n_dimensions = self.n_rows
 
-        if not self._is_symmetric():
+        if not self.is_symmetric():
             return False
 
         for i in range(1, n_dimensions + 1):
@@ -345,22 +346,19 @@ class Matrix:
         return self.hadamard_product(other)
 
     def is_multiplicative_inverse_of(self, other):
-        return True if self * other == identity_matrix(self.n_rows, self.n_cols) else False
+        return self * other == identity_matrix(self.n_rows, self.n_cols)
 
     def is_orthogonal_to(self, other):
         if self.dim != other.dim:
             raise err_.MatrixDimensionsMismatch()
 
-        return True if self * other.t == identity_matrix(self.n_rows, self.n_cols) else False
-
-    def get_numpy_compatible_matrix(self, array_function):
-        return array_function([i for i in self.elements])
+        return self * other.t == identity_matrix(self.n_rows, self.n_cols)
 
     def dot(self, other):
         if not isinstance(other, Matrix):
             raise ValueError('The other must be a Matrix object')
 
-        return sum([i * j for i, j in zip(self.elements, other.elements)])
+        return sum(i * j for i, j in zip(self.elements, other.elements))
 
 
 def determinant(matrix: Matrix or LList) -> float:
@@ -562,8 +560,7 @@ def vector_mag(vector: Matrix, squared: bool = False) -> IFloat:
     """
 
     if vector.n_cols == 1:
-        import itertools
-        vector_ = list(itertools.chain.from_iterable(vector.elements))
+        vector_ = list(chain.from_iterable(vector.elements))
     else:
         vector_ = vector.elements
 

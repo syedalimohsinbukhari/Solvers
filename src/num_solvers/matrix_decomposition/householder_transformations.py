@@ -33,32 +33,32 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
 
     # keeping it in if/else becuase it is more readable.
     if cond:
-        a0 = Matrix(matrix_.t.elements[0]).t
-        a_mag = vector_mag(a0)
+        a0_ = Matrix(matrix_.t.elements[0]).t
+        a_mag = vector_mag(a0_)
     else:
-        a0 = Matrix([[matrix_.t.elements]]).t
-        a_mag = a0.elements[0][0]
+        a0_ = Matrix([[matrix_.t.elements]]).t
+        a_mag = a0_.elements[0][0]
 
-    d1 = -a_mag if a0[0][0] > 0 else a_mag
-    w11 = (a0[0] - d1).elements[0]
+    d1_ = -a_mag if a0_[0][0] > 0 else a_mag
+    w11 = (a0_[0] - d1_).elements[0]
 
     # special case, when w11 = 0 meaning the sub-matrix only has a single element.
     if w11 == 0:
         return [matrix_, Matrix([-1])]
 
-    v = (Matrix([w11] + a0.t.elements[1:]) / sqrt(-2 * w11 * d1)).t
+    v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1_)).t
 
     # create a list to hold the householder transformations
     household_a = [0] * matrix.n_cols
-    household_a[0] = Matrix([d1] + [0] * (a0.n_rows - 1)).elements
+    household_a[0] = Matrix([d1_] + [0] * (a0_.n_rows - 1)).elements
 
     # I - 2*((v*v.t)/(v.t*v))
-    household_h = identity_matrix(matrix_.n_rows) - 2 * ((v * v.t) / (v.t * v))
+    household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector * v_vector.t) / (v_vector.t * v_vector))
 
     # calculate 1:n household transformations
     for i in range(1, matrix_.n_cols):
-        f2 = 2 * v.t * matrix_.t[i].t
-        household_a[i] = (matrix_.t[i].t - f2 * v).t.elements
+        f2 = 2 * v_vector.t * matrix_.t[i].t
+        household_a[i] = (matrix_.t[i].t - f2 * v_vector).t.elements
 
     return [Matrix(household_a).t, household_h]
 
@@ -116,8 +116,8 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
     """
 
     matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
-    household_matrices = [0] * matrix_.n_rows
-    h_matrices = [0] * matrix_.n_rows
+    household_matrices: list = [0] * matrix_.n_rows
+    h_matrices: list = [0] * matrix_.n_rows
 
     household_matrices[0], h_matrices[0] = householder_reduction(matrix_)
 
@@ -132,7 +132,6 @@ def qr_decomposition_householder(matrix: Matrix, overwrite_original: bool = Fals
         household_matrices[j] = reductions_[0]
         h_matrices[j] = reductions_[1]
 
-    # 
     for i in range(1, matrix_.n_rows):
         f1 = matrix_.n_rows - h_matrices[i].n_rows
         h_matrices[i] = populate_identity_matrix(h_matrices[i], matrix_.n_rows, matrix.n_cols, f1, f1)
