@@ -1,10 +1,29 @@
 """Created on Jan 21 00:12:13 2024"""
 
-from .matrix import Matrix
+from umatrix.matrix import Matrix
+
 from .. import IFloat, TOLERANCE
 
 
 def gauss_elimination(matrix: Matrix, tolerance: IFloat = TOLERANCE, modify_original: bool = False) -> Matrix:
+    """
+    Performs Gaussian elimination on the given matrix.
+
+    Parameters
+    ----------
+    matrix:
+        The matrix to perform Gaussian elimination on.
+    tolerance:
+        Tolerance for convergence. Default is TOLERANCE.
+    modify_original:
+        Whether to modify the original given matrix or not.
+
+    Returns
+    -------
+    Matrix:
+        The modified matrix with Gaussian elimination applied.
+    """
+
     matrix_ = matrix if modify_original else Matrix(matrix.elements[:])
     num_rows, num_cols = matrix_.n_rows, matrix.n_cols
 

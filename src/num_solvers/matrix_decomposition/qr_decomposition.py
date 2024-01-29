@@ -9,27 +9,10 @@ Created on Jan 12 12:42:02 2024
 
 __all__ = ['qr_decomposition']
 
-from . import LMat, N_DECIMAL
-from .matrix import Matrix, null_matrix, vector_mag
-from ..__backend.extra_ import round_matrix_
+from umatrix.matrix import Matrix, null_matrix, vector_mag
 
-
-def schur_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
-    """
-    Performs Schur decomposition for the given matrix.
-    Parameters
-    ----------
-    matrix:
-        The given matrix to perform QR decomposition on.
-    n_decimal:
-        Number of digits to round off to. Default is 8.
-
-    Returns
-    -------
-    LMat:
-        Schur decomposition of the matrix.
-    """
-    raise NotImplementedError()
+from .. import LMat, N_DECIMAL
+from ..__backend.matrix_ import remove_zeroed_columns, round_matrix_
 
 
 def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
@@ -84,44 +67,10 @@ def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
             else:
                 r_matrix[row][col] = u_matrix[col].dot(q_matrix.t[row])
 
-    q_matrix = _remove_zero_columns(q_matrix.t).t
-    r_matrix = _remove_zero_columns(r_matrix)
+    q_matrix = remove_zeroed_columns(q_matrix.t).t
+    r_matrix = remove_zeroed_columns(r_matrix)
 
     q_matrix = round_matrix_(q_matrix, n_decimal)
     r_matrix = round_matrix_(r_matrix, n_decimal)
 
     return [q_matrix, r_matrix]
-
-
-def _remove_zero_columns(matrix_to_modify: Matrix) -> Matrix:
-    """
-    Removes the extra columns from the final Q and R decomposed matrices.
-
-    Parameters
-    ----------
-    matrix_to_modify:
-        The decomposed Q or R matrix.
-
-    Returns
-    -------
-        Matrix with removed columns after all 0s.
-    """
-
-    new_, all_zeros = [0] * matrix_to_modify.n_rows, []
-
-    for i, elem in enumerate(matrix_to_modify.elements):
-        if not all(j == 0 for j in elem):
-            new_[i] = elem
-        else:
-            new_[i] = elem
-            all_zeros.append(i)
-
-    if bool(all_zeros):
-        if len(new_) == all_zeros[0]:
-            return Matrix(new_)
-        else:
-            cond = len(matrix_to_modify) - all_zeros[0]
-            f1 = new_[:-cond]
-            return Matrix(f1)
-    else:
-        return Matrix(new_)

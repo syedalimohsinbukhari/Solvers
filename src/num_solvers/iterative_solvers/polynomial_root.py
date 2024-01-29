@@ -22,8 +22,8 @@ from typing import List
 import numpy as np
 
 from .. import FList, IFloat, LList, OptList, TOLERANCE
+from ..__backend.core_helpers_ import filter_similar_values, round_list_
 from ..__backend.errors_ import DegreeOfPolynomialNotCorrect
-from ..__backend.extra_ import filter_similar_values, round_list_
 
 
 # TODO: See if numpy can be removed

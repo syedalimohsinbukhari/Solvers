@@ -16,8 +16,11 @@ Created on Oct 14 06:07:34 2023
 
 __all__ = ['SysEqnSolver', 'GaussJacobi', 'GaussSeidel']
 
-from .extra_ import round_list_
+from .core_helpers_ import round_list_
 from .. import FList, FTuple, IFloat, LLList, LList, N_DECIMAL, TOLERANCE
+
+
+# TODO: re-implement SysEqnSolver using Matrix class internally.
 
 
 class SysEqnSolver:

@@ -17,7 +17,7 @@ __all__ = ['rk2_solver', 'rk3_solver', 'rk4_solver']
 from custom_inherit import doc_inherit
 
 from ... import DOC_STYLE, Func, IFloat, LList, N_DECIMAL
-from ...__backend.extra_ import num_steps_, round_value_
+from ...__backend.core_helpers_ import num_steps_, round_value_
 
 
 def rk2_solver(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloat = 0.1, x_max: IFloat = 1.0,

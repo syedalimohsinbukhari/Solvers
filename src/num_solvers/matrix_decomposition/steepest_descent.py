@@ -21,10 +21,10 @@ Created on Jan 22 23:00:22 2024
 __all__ = ['steepest_descent', 'modified_steepest_descent']
 
 from custom_inherit import doc_inherit
+from umatrix.matrix import Matrix, vector_mag
 
-from .matrix import Matrix, vector_mag
 from .. import DOC_STYLE, IFloat, N_DECIMAL, TOLERANCE
-from ..__backend.extra_ import round_matrix_
+from ..__backend.matrix_ import round_matrix_
 
 
 # TODO: Something might be wrong with steepest_descent

@@ -1,13 +1,15 @@
 """Created on Jan 21 15:05:20 2024"""
 
+__all__ = ['householder_reduction', 'qr_decomposition_householder']
+
 from functools import reduce
 from math import sqrt
 from operator import mul
 
-from . import LMat, Matrix
-from .matrix import identity_matrix, vector_mag
-from .. import IFloat, N_DECIMAL, TOLERANCE
-from ..__backend.extra_ import round_matrix_
+from umatrix.matrix import Matrix, identity_matrix, populate_identity_matrix, vector_mag
+
+from .. import LMat, N_DECIMAL
+from ..__backend.matrix_ import round_matrix_, reduce_to_zeros
 
 
 def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> LMat:
@@ -38,7 +40,7 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
 
         v_vector = (Matrix([w11] + a0_.t.elements[1:]) / sqrt(-2 * w11 * d1)).t
 
-        return a_mag, d1, w11, v_vector
+        return d1, v_vector
 
     # taken from https://core.ac.uk/download/pdf/215673996.pdf
     matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
@@ -50,7 +52,7 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
     if cond:
         a0_ = Matrix(matrix_.t.elements[0]).t
 
-        a_mag_, d1_, w11_, v_vector_ = calculate_householder_parameters()
+        d1_, v_vector_ = calculate_householder_parameters()
 
         # create a list to hold the householder transformations
         household_a = [0] * matrix.n_cols
@@ -61,56 +63,20 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
 
         # calculate 1:n household transformations
         for i in range(1, matrix_.n_cols):
-            f2 = 2 * v_vector_.t * matrix_.t[i].t
-            household_a[i] = (matrix_.t[i].t - f2 * v_vector_).t.elements
+            f1 = 2 * v_vector_.t * matrix_.t[i].t
+            household_a[i] = (matrix_.t[i].t - f1 * v_vector_).t.elements
     else:
         if matrix_.n_rows == 1:
             household_h = Matrix([1])
             household_a = (-1 * matrix_).elements[0]
         else:
             a0_ = matrix_
-            a_mag_, d1_, w11_, v_vector_ = calculate_householder_parameters()
+            d1_, v_vector_ = calculate_householder_parameters()
 
             household_h = identity_matrix(matrix_.n_rows) - 2 * ((v_vector_ * v_vector_.t) / (v_vector_.t * v_vector_))
             household_a = (household_h * a0_).elements
 
     return [Matrix(household_a).t, household_h]
-
-
-def populate_identity_matrix(sub_matrix: Matrix, n_rows: int, n_cols: int, s_row: int, s_col: int) -> Matrix:
-    """
-    Populate the identity matrix with given sub-matrices.
-
-    Parameters
-    ----------
-    sub_matrix:
-        The sub-matrix to populate the identity matrix into.
-    n_rows:
-        The number of rows in the parent matrix.
-    n_cols:
-        The number of columns in the parent matrix.
-    s_row:
-        The starting row for insertion of the sub-matrix.
-    s_col:
-        The starting column for insertion of the sub-matrix.
-
-    Returns
-    -------
-        Identity matrix, populated with the provided sub-matrix.
-    """
-
-    # create a simple identity matrix
-    populated_identity_matrix = identity_matrix(n_rows, n_cols).elements
-
-    for i in range(sub_matrix.n_rows):
-        # the sub-matrix can be populated within identity matrix easily if sub-matrix is not a single element matrix.
-        if sub_matrix.n_rows > 1 and sub_matrix.n_cols > 1:
-            populated_identity_matrix[s_row:][i][s_col:] = sub_matrix.elements[i]
-        # if the sub-matrix only has a single element, treat it as a special case.
-        else:
-            populated_identity_matrix[-1][-1] = sub_matrix.elements[0]
-
-    return Matrix(populated_identity_matrix)
 
 
 def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, overwrite_original: bool = False) -> LMat:
@@ -163,8 +129,8 @@ def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, ove
     q_matrix = reduce(mul, h_matrices)
     r_matrix = reduce(mul, h_matrices[::-1] + [matrix_])
 
-    q_matrix = tolerance_to_zeros(q_matrix)
-    r_matrix = tolerance_to_zeros(r_matrix)
+    q_matrix = reduce_to_zeros(q_matrix)
+    r_matrix = reduce_to_zeros(r_matrix)
 
     if remove_:
         q_matrix = Matrix(q_matrix.t.elements[:-1]).t
@@ -174,30 +140,6 @@ def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, ove
     r_matrix = round_matrix_(r_matrix, n_decimal)
 
     return [q_matrix, r_matrix]
-
-
-def tolerance_to_zeros(matrix: Matrix, tolerance: IFloat = TOLERANCE) -> Matrix:
-    """
-    Replaces the values in the matrices below tolerance to 0s.
-
-    Parameters
-    ----------
-    matrix:
-        The matrix in which the values are to be replaced with zeros.
-    tolerance:
-        The tolerance level below which the values are reduced to zero. Default is 1e-8.
-
-    Returns
-    -------
-        The matrix with 0s instead of very small values.
-    """
-
-    for i, row in enumerate(matrix.elements):
-        for j, element in enumerate(row):
-            if abs(element) < tolerance:
-                matrix[i][j] = 0
-
-    return matrix
 
 
 def eigen_qr(matrix: Matrix, n_iter: int = 100) -> LMat:

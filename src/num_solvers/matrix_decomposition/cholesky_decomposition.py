@@ -12,19 +12,20 @@ __all__ = ['cholesky_decomposition']
 
 from math import sqrt
 
-from . import LMat, MatOrLList, N_DECIMAL
-from .matrix import Matrix, null_matrix
+from umatrix.matrix import Matrix, null_matrix
+
+from .. import LMat, MatOrLList, N_DECIMAL
 from ..__backend.errors_ import NonSymmetricMatrix, NotPositiveDefinite
-from ..__backend.extra_ import round_matrix_
+from ..__backend.matrix_ import round_matrix_, reduce_to_zeros
 
 
-def cholesky_decomposition(matrix_a: MatOrLList, n_decimal: int = N_DECIMAL) -> LMat:
+def cholesky_decomposition(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> LMat:
     """
     Performs the Cholesky decomposition on the given matrix.
 
     Parameters
     ----------
-    matrix_a:
+    matrix:
         The matrix to decompose.
     n_decimal:
         The number of digits to round off for the result.
@@ -41,33 +42,34 @@ def cholesky_decomposition(matrix_a: MatOrLList, n_decimal: int = N_DECIMAL) -> 
         If the matrix is not positive definite.
     """
 
-    if not isinstance(matrix_a, Matrix):
-        matrix_a = Matrix(matrix_a)
+    if not isinstance(matrix, Matrix):
+        matrix = Matrix(matrix)
 
-    if not matrix_a.is_symmetric():
+    if not matrix.is_symmetric():
         raise NonSymmetricMatrix('The matrix is not symmetric. Can not perform Cholesky decomposition.')
 
-    if not matrix_a.is_positive_definite():
+    if not matrix.is_positive_definite():
         raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
 
-    n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
+    n_rows, n_cols = matrix.n_rows, matrix.n_cols
     matrix_l = null_matrix(n_rows, n_cols)
 
-    matrix_l[0][0] = sqrt(matrix_a[0][0])
+    matrix_l[0][0] = sqrt(matrix[0][0])
 
     for i in range(1, n_rows):
         for k in range(n_rows):
             if k == 0:
-                matrix_l[i][k] = matrix_a[k][i] / matrix_l[0][0]
+                matrix_l[i][k] = matrix[k][i] / matrix_l[0][0]
             elif k < i:
                 f1_ = [matrix_l[i][j] * matrix_l[k][j] for j in range(i - 1)]
-                matrix_l[i][k] = (matrix_a[i][k] - sum(f1_)) / matrix_l[k][k]
+                matrix_l[i][k] = (matrix[i][k] - sum(f1_)) / matrix_l[k][k]
             elif k == i:
                 f2_ = sum((elem**2 for elem in matrix_l[i].elements))
-                matrix_l[i][k] = sqrt(matrix_a[i][i] - f2_)
+                matrix_l[i][k] = sqrt(matrix[i][i] - f2_)
             else:
                 matrix_l[i][k] = 0
 
+    matrix_l = reduce_to_zeros(matrix_l)
     matrix_l = round_matrix_(matrix_l, n_decimal)
 
     return [matrix_l, matrix_l.t]

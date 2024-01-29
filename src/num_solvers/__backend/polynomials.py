@@ -20,9 +20,10 @@ The polynomial class can add two polynomial of different degrees,
 Created on Jan 22 23:12:46 2024
 """
 
-from .matrix import InFractions
+from fractions import Fraction
+
+from .core_helpers_ import round_list_, round_value_
 from .. import FList, IFloat, N_DECIMAL
-from ..__backend.extra_ import round_list_, round_value_
 
 
 class Polynomial:
@@ -174,3 +175,19 @@ class Polynomial:
         eval_ = [coefficient * value**(poly_degree - index) for index, coefficient in enumerate(poly[:-1])]
 
         return round_value_(sum(eval_ + [poly[-1]]), n_decimal)
+
+
+class InFractions:
+    def __init__(self, decimal_value: IFloat):
+        self.fraction = Fraction(decimal_value).limit_denominator()
+
+    def __repr__(self) -> str:
+        return str(self.fraction)
+
+    @property
+    def numerator(self) -> IFloat:
+        return self.fraction.numerator
+
+    @property
+    def denominator(self) -> IFloat:
+        return self.fraction.denominator

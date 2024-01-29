@@ -3,6 +3,7 @@
 from typing import Callable, Optional, Union
 
 from numpy.typing import NDArray
+from umatrix.matrix import Matrix
 
 TOLERANCE = 1e-8
 N_DECIMAL = 6
@@ -27,4 +28,6 @@ OptFunc = Optional[Func]
 OptList = Optional[FList]
 OptIFloat = Optional[IFloat]
 
-NdArray2 = tuple[NdArray, NdArray]
+MatOrLList = Union[Matrix, LList]
+LMat = list[Matrix]
+N_DECIMAL = N_DECIMAL

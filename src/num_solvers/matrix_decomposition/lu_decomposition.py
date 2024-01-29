@@ -11,11 +11,10 @@ Created on Jan 12 00:51:02 2024
 __all__ = ['lu_crout', 'lu_doolittle']
 
 from custom_inherit import doc_inherit
+from umatrix.matrix import Matrix, null_matrix
 
-from . import LMat, MatOrLList, N_DECIMAL
-from .matrix import Matrix, null_matrix
-from .. import DOC_STYLE, IFloat
-from ..__backend.extra_ import round_matrix_
+from .. import DOC_STYLE, IFloat, LMat, MatOrLList, N_DECIMAL
+from ..__backend.matrix_ import round_matrix_
 
 
 def lu_crout(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:

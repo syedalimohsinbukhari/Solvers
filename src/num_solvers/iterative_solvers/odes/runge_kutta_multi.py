@@ -27,7 +27,7 @@ import numpy as np
 from custom_inherit import doc_inherit
 
 from ... import DOC_STYLE, FList, IFloat, LFunc, LList, N_DECIMAL, NdArray
-from ...__backend.extra_ import num_steps_
+from ...__backend.core_helpers_ import num_steps_
 
 
 def rk2_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.1, x_max: IFloat = 1.0,
