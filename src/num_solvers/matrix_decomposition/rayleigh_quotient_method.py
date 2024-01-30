@@ -2,11 +2,13 @@
 
 from umatrix.matrix import Matrix, identity_matrix, null_matrix, vector_mag
 
+from .. import IFloat, MatOrLList
+
 
 # taken from https://www-users.cse.umn.edu/~olver/aims_/qr.pdf
 
 
-def rayleigh_quotient_method(matrix: Matrix, n_iter: int = 50, initial_guess: int = 200) -> list:
+def rayleigh_quotient_method(matrix: MatOrLList, n_iter: int = 50, initial_guess: int = 200) -> IFloat:
 
     identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
 

@@ -1,18 +1,15 @@
 """Created on Oct 04 21:36:44 2023"""
 
-from umatrix.matrix import Matrix, identity_matrix
+from umatrix.matrix import identity_matrix
 
-from .. import FList
-
-
-# TODO: Check the setting of values inside column matrices, they're acting up
+from .. import FList, MatOrLList
 
 
-def characteristic_polynomial(matrix: Matrix) -> FList:
+def characteristic_polynomial(matrix: MatOrLList) -> FList:
     return faddeev_le_verrier(matrix)
 
 
-def faddeev_le_verrier(matrix: Matrix) -> FList:
+def faddeev_le_verrier(matrix: MatOrLList) -> FList:
     new_matrix_: list = [0] * (matrix.n_cols + 1)
     coefficient: list = [0] * (matrix.n_cols + 1)
 

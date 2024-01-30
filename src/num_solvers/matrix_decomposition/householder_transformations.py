@@ -8,11 +8,12 @@ from operator import mul
 
 from umatrix.matrix import Matrix, identity_matrix, populate_identity_matrix, vector_mag
 
-from .. import LMat, N_DECIMAL
-from ..__backend.matrix_ import round_matrix_, reduce_to_zeros
+from .. import LMat, MatOrLList
+from ..__backend.matrix_ import reduce_to_zeros
 
 
-def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> LMat:
+# taken from https://core.ac.uk/download/pdf/215673996.pdf
+def householder_reduction(matrix: MatOrLList, overwrite_original: bool = False) -> LMat:
     """
     Reduces the given matrix using Householder's method.
 
@@ -42,8 +43,10 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
 
         return d1, v_vector
 
-    # taken from https://core.ac.uk/download/pdf/215673996.pdf
-    matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
+    if not isinstance(matrix, Matrix):
+        matrix = Matrix(matrix)
+
+    matrix_: Matrix = matrix if overwrite_original else Matrix(matrix.elements[:])
 
     # check if there's only a single element in the matrix or not, it'll be dealt as a special case
     cond = matrix_.n_rows > 1 and matrix_.n_cols > 1
@@ -79,7 +82,7 @@ def householder_reduction(matrix: Matrix, overwrite_original: bool = False) -> L
     return [Matrix(household_a).t, household_h]
 
 
-def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, overwrite_original: bool = False) -> LMat:
+def qr_decomposition_householder(matrix: MatOrLList, overwrite_original: bool = False) -> LMat:
     """
     Performs QR decomposition of matrix using Householder's reflections.
 
@@ -87,8 +90,6 @@ def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, ove
     ----------
     matrix:
         The matrix to calculate QR decomposition for.
-    n_decimal:
-        The number of decimal places to round off to.
     overwrite_original:
         Whether to overwrite on the original provided matrix or not. Defaults to False.
 
@@ -97,7 +98,10 @@ def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, ove
         QR decomposition of the matrix.
     """
 
-    matrix_ = matrix if overwrite_original else Matrix(matrix.elements[:])
+    if not isinstance(matrix, Matrix):
+        matrix = Matrix(matrix)
+
+    matrix_: Matrix = matrix if overwrite_original else Matrix(matrix.elements[:])
 
     if matrix_.n_rows > matrix_.n_cols:
         remove_ = True
@@ -136,13 +140,13 @@ def qr_decomposition_householder(matrix: Matrix, n_decimal: int = N_DECIMAL, ove
         q_matrix = Matrix(q_matrix.t.elements[:-1]).t
         r_matrix = Matrix(r_matrix.elements[:-1])
 
-    q_matrix = round_matrix_(q_matrix, n_decimal)
-    r_matrix = round_matrix_(r_matrix, n_decimal)
-
     return [q_matrix, r_matrix]
 
 
-def eigen_qr(matrix: Matrix, n_iter: int = 100) -> LMat:
+def eigen_qr(matrix: MatOrLList, n_iter: int = 100) -> LMat:
+    if not isinstance(matrix, Matrix):
+        matrix = Matrix(matrix)
+
     identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
 
     for _ in range(n_iter):

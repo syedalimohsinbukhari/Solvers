@@ -2,11 +2,8 @@
 
 from umatrix.matrix import Matrix, identity_matrix, vector_mag
 
-from .. import N_DECIMAL
-from ..__backend.matrix_ import reduce_to_zeros, round_matrix_
 
-
-def givens_rotation(matrix: Matrix, n_decimal: int = N_DECIMAL, override_original: bool = False):
+def givens_rotation(matrix: Matrix, override_original: bool = False):
     matrix_ = matrix if override_original else Matrix(matrix.elements[:])
 
     givens_ = identity_matrix(matrix_.n_rows)
@@ -23,8 +20,5 @@ def givens_rotation(matrix: Matrix, n_decimal: int = N_DECIMAL, override_origina
         identity_[i + 1][i] = sine
         matrix_ = identity_ * matrix_
         givens_ *= identity_.t
-
-    givens_ = round_matrix_(reduce_to_zeros(givens_), n_decimal)
-    matrix_ = round_matrix_(reduce_to_zeros(matrix_), n_decimal)
 
     return givens_, matrix_

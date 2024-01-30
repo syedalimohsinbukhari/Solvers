@@ -2,10 +2,10 @@
 
 from umatrix.matrix import Matrix
 
-from .. import IFloat, TOLERANCE
+from .. import IFloat, MatOrLList, TOLERANCE
 
 
-def gauss_elimination(matrix: Matrix, tolerance: IFloat = TOLERANCE, modify_original: bool = False) -> Matrix:
+def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_original: bool = False) -> Matrix:
     """
     Performs Gaussian elimination on the given matrix.
 

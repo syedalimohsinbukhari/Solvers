@@ -14,12 +14,12 @@ from math import sqrt
 
 from umatrix.matrix import Matrix, null_matrix
 
-from .. import LMat, MatOrLList, N_DECIMAL
+from .. import LList, LMat
 from ..__backend.errors_ import NonSymmetricMatrix, NotPositiveDefinite
-from ..__backend.matrix_ import round_matrix_, reduce_to_zeros
+from ..__backend.matrix_ import reduce_to_zeros
 
 
-def cholesky_decomposition(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> LMat:
+def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
     """
     Performs the Cholesky decomposition on the given matrix.
 
@@ -27,8 +27,6 @@ def cholesky_decomposition(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> LM
     ----------
     matrix:
         The matrix to decompose.
-    n_decimal:
-        The number of digits to round off for the result.
 
     Returns
     -------
@@ -70,6 +68,5 @@ def cholesky_decomposition(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> LM
                 matrix_l[i][k] = 0
 
     matrix_l = reduce_to_zeros(matrix_l)
-    matrix_l = round_matrix_(matrix_l, n_decimal)
 
     return [matrix_l, matrix_l.t]

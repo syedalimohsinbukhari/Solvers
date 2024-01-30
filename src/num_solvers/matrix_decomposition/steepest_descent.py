@@ -23,15 +23,16 @@ __all__ = ['steepest_descent', 'modified_steepest_descent']
 from custom_inherit import doc_inherit
 from umatrix.matrix import Matrix, vector_mag
 
-from .. import DOC_STYLE, IFloat, N_DECIMAL, TOLERANCE
+from .. import DOC_STYLE, IFloat, MatOrLList, N_DECIMAL, TOLERANCE
 from ..__backend.matrix_ import round_matrix_
 
 
 # TODO: Something might be wrong with steepest_descent
 
 # taken from https://www.phys.uconn.edu/~rozman/Courses/m3511_18s/downloads/steepest-descent.pdf
-def steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 10_000,
+def steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: MatOrLList, n_iterations: int = 10_000,
                      tolerance: IFloat = TOLERANCE, n_decimal: int = N_DECIMAL) -> Matrix:
+
     """
     Solve a linear system using the steepest descent method.
 
@@ -84,8 +85,8 @@ def steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_
 
 # direct link: https://d-nb.info/1215094116/34
 @doc_inherit(steepest_descent, style=DOC_STYLE)
-def modified_steepest_descent(matrix: Matrix, solution: Matrix, initial_guess: Matrix, n_iterations: int = 10_000,
-                              tolerance: IFloat = TOLERANCE, n_decimal: int = N_DECIMAL):
+def modified_steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: MatOrLList,
+                              n_iterations: int = 10_000, tolerance: IFloat = TOLERANCE):
     """Solve a linear system using the modified steepest descent method.
 
     References
@@ -97,10 +98,12 @@ application to Poisson’s equation." https://doi.org/10.1186/s13662-020-02715-9
     def iter_summation(calculation_type: str = '1'):
         if calculation_type == '1':
             condition = matrix.n_cols
-            mat1, mat2 = c_matrix2, c_matrix
+            mat1: Matrix = c_matrix2
+            mat2: Matrix = c_matrix
         else:
             condition = matrix.n_rows
-            mat1, mat2 = d_matrix2, d_matrix
+            mat1: Matrix = d_matrix2
+            mat2: Matrix = d_matrix
 
         sum_ = 0
 
@@ -124,6 +127,6 @@ application to Poisson’s equation." https://doi.org/10.1186/s13662-020-02715-9
         temp_ = vector_mag(new_guess[iter_] - new_guess[iter_ - 1])
 
         if temp_ < tolerance:
-            return round_matrix_(new_guess[iter_], n_decimal)
+            return round_matrix_(new_guess[iter_], N_DECIMAL)
 
-    return round_matrix_(new_guess[-1], n_decimal)
+    return new_guess[-1]

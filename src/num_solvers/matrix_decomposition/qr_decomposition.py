@@ -11,11 +11,11 @@ __all__ = ['qr_decomposition']
 
 from umatrix.matrix import Matrix, null_matrix, vector_mag
 
-from .. import LMat, N_DECIMAL
-from ..__backend.matrix_ import remove_zeroed_columns, round_matrix_
+from .. import LMat, MatOrLList
+from ..__backend.matrix_ import remove_zeroed_columns
 
 
-def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
+def qr_decomposition(matrix: MatOrLList) -> LMat:
     """
     Performs the QR decomposition for the given matrix.
 
@@ -23,8 +23,6 @@ def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
     ----------
     matrix:
         The given matrix to perform QR decomposition on.
-    n_decimal:
-        Number of digits to round off to. Default is 8.
 
     Returns
     -------
@@ -50,7 +48,7 @@ def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
         v_matrix[elements] = u_matrix[elements] - sum(temp_)
         temp_ = []
 
-    v_matrix = [round_matrix_(i, n_decimal) for i in v_matrix]
+    # v_matrix = [round_matrix_(i, n_decimal) for i in v_matrix]
 
     for index, value in enumerate(v_matrix):
         if all(x == 0 for x in value):
@@ -69,8 +67,5 @@ def qr_decomposition(matrix: Matrix, n_decimal: int = N_DECIMAL) -> LMat:
 
     q_matrix = remove_zeroed_columns(q_matrix.t).t
     r_matrix = remove_zeroed_columns(r_matrix)
-
-    q_matrix = round_matrix_(q_matrix, n_decimal)
-    r_matrix = round_matrix_(r_matrix, n_decimal)
 
     return [q_matrix, r_matrix]

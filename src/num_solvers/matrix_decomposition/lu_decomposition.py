@@ -17,15 +17,13 @@ from .. import DOC_STYLE, IFloat, LMat, MatOrLList, N_DECIMAL
 from ..__backend.matrix_ import round_matrix_
 
 
-def lu_crout(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:
+def lu_crout(matrix_a: MatOrLList) -> LMat:
     """Performs LU decomposition using Crout's method.
 
     Parameters
     ----------
     matrix_a:
         The matrix to decompose.
-    n_decimal:
-        The number of digits to round off for the result.
 
 
     Returns
@@ -55,9 +53,6 @@ def lu_crout(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:
                 for k in range(i):
                     upper_sum += lower_matrix[i][k] * upper_matrix[k][j]
                 upper_matrix[i][j] = (matrix_a[i][j] - upper_sum) / lower_matrix[i][i]
-
-    lower_matrix = round_matrix_(lower_matrix, n_decimal)
-    upper_matrix = round_matrix_(upper_matrix, n_decimal)
 
     return [lower_matrix, upper_matrix]
 

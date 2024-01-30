@@ -4,10 +4,10 @@ from math import sqrt
 
 from umatrix.matrix import Matrix, identity_matrix
 
-from .. import FList
+from .. import FList, LList, MatOrLList
 
 
-def eigenvalues_2x2(matrix: Matrix) -> FList:
+def eigenvalues_2x2(matrix: MatOrLList) -> FList:
     """
     Compute the eigenvalues of a 2x2 matrix.
 
@@ -31,7 +31,7 @@ def eigenvalues_2x2(matrix: Matrix) -> FList:
     return [num1 / 2, num2 / 2]
 
 
-def eigenvectors_2x2(matrix: Matrix):
+def eigenvectors_2x2(matrix: MatOrLList) -> LList:
     """
     Compute the eigenvectors of a 2x2 matrix.
 
@@ -52,4 +52,4 @@ def eigenvectors_2x2(matrix: Matrix):
 
     scaled_eigenvectors = [(eigenvector.t[0] / eigenvector.t[0][-1]).elements for eigenvector in eigenvectors]
 
-    return eigenvalues, Matrix(scaled_eigenvectors)
+    return [eigenvalues, Matrix(scaled_eigenvectors)]
