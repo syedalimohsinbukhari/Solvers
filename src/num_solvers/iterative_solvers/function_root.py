@@ -26,7 +26,8 @@ Created on Dec 24 12:56:39 2023
 """
 
 __all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', 'secant_method',
-           'generalized_secant_method', 'sidi_method', 'ridder_method', 'steffensen_method', 'muller_method']
+           'generalized_secant_method', 'sidi_method', 'ridder_method', 'steffensen_method', 'muller_method',
+           'newton_raphson_method']
 
 from cmath import sqrt
 from math import sqrt

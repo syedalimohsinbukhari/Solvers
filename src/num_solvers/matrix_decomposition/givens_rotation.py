@@ -1,15 +1,46 @@
-"""Created on Jan 28 15:43:08 2024"""
+"""Givens rotation
+
+Provides functionality to apply Givens rotation to the matrix, via,
+
+- given_rotation
+
+Created on Jan 28 15:43:08 2024
+"""
 
 from umatrix.matrix import Matrix, identity_matrix, vector_mag
 
+from .. import LMat
+from ..__backend.matrix_ import copy_matrix
 
-def givens_rotation(matrix: Matrix, override_original: bool = False):
-    matrix_ = matrix if override_original else Matrix(matrix.elements[:])
 
-    givens_ = identity_matrix(matrix_.n_rows)
+def givens_rotation(matrix: Matrix, override_original: bool = False) -> LMat:
+    """
+    Apply Givens rotations to triangularize a matrix.
+
+    Parameters
+    ----------
+    matrix : Matrix
+        The input matrix to be triangularized.
+    override_original : bool, optional
+        If True, the original matrix is modified in place. If False (default),
+        a new matrix is created, and the original matrix remains unchanged.
+
+    Returns
+    -------
+    LMat
+        A tuple containing two matrices:
+
+        1. The Givens rotation matrix (product of all Givens rotations).
+        2. The triangularized matrix.
+    """
+
+    matrix_ = copy_matrix(matrix, override_original)
+
+    givens_matrix = identity_matrix(matrix_.n_rows)
 
     for i in range(matrix_.n_rows - 1):
         identity_ = identity_matrix(matrix_.n_rows)
+
         r_magnitude = vector_mag(matrix_.t[i].elements[i:i + 2])
         cosine = matrix_[i][i] / r_magnitude
         sine = -matrix[i + 1][i] / r_magnitude
@@ -18,7 +49,8 @@ def givens_rotation(matrix: Matrix, override_original: bool = False):
         identity_[i + 1][i + 1] = cosine
         identity_[i][i + 1] = -sine
         identity_[i + 1][i] = sine
-        matrix_ = identity_ * matrix_
-        givens_ *= identity_.t
 
-    return givens_, matrix_
+        matrix_ = identity_ * matrix_
+        givens_matrix *= identity_.t
+
+    return [givens_matrix, matrix_]

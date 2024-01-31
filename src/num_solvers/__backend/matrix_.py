@@ -4,10 +4,20 @@ This module provides a helpful functionality to display the matrices in fraction
 
 - :class:`InFractions`
 
+Additionally, it provides other functionalities for matrices via,
+
+- reduce_to_zeros: Reduces the values below tolerance level to 0.
+- remove_zeroed_columns: Remove the columns/rows below the all zero column/rows. Mainly for usage in QR decomposition.
+- round_matrix_: Rounds the values of matrices.
+- map_to_matrix: Maps a certain function to the entire matrix.
+- copy_matrix: Copies or creates a deep-copy of the given matrix.
+
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['map_to_matrix', 'remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros']
+__all__ = ['map_to_matrix', 'remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros', 'copy_matrix']
+
+from copy import deepcopy
 
 from umatrix.matrix import Matrix
 
@@ -92,8 +102,45 @@ def round_matrix_(matrix: Matrix, n_decimal: int = N_DECIMAL) -> Matrix:
 
 
 def map_to_matrix(function, matrix: Matrix):
+    """
+    Apply a given function element-wise to a matrix.
+
+    Parameters
+    ----------
+    function : callable
+        A function that takes a single float as input and returns a float.
+    matrix : Matrix
+        The matrix to be mapped.
+
+    Returns
+    -------
+    Matrix
+        A new matrix where the function has been applied element-wise.
+    """
+
     for i in range(matrix.n_rows):
         for j in range(matrix.n_cols):
             matrix[j][j] = function(matrix[i][j])
 
     return matrix
+
+
+def copy_matrix(matrix: Matrix, overwrite: bool = False) -> Matrix:
+    """
+    Copy or make a deep-copy of the given matrix.
+
+    Parameters
+    ----------
+    matrix:
+        The matrix to make the copy of.
+    overwrite:
+        Whether to overwrite the original matrix or not.
+
+    Returns
+    -------
+    Matrix:
+        The copied matrix instance.
+
+    """
+
+    return matrix if overwrite else Matrix(deepcopy(matrix.elements[:]))

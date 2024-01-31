@@ -1,18 +1,49 @@
-"""Created on Jan 18 00:48:38 2024"""
+"""
+Singular Value Decomposition using Power Iteration
+
+This module provides an implementation of the Singular Value Decomposition (SVD) using the Power Iteration method.
+The SVD decomposes a matrix into the product of three matrices: U, Sigma, and V^T.
+
+References:
+    https://www.cs.yale.edu/homes/el327/datamining2013aFiles/07_singular_value_decomposition.pdf
+
+Created on Jan 18 00:48:38 2024
+"""
 
 import random
 
 from umatrix.matrix import Matrix, identity_matrix, vector_mag
 
-from src.num_solvers import LMat, TOLERANCE
-
-random.seed(123)
+from .. import LMat, TOLERANCE
 
 
 # works for mxn where m=n
 # works for mxn where m=n-1
 
 def svd_power_method(matrix: Matrix) -> LMat:
+    """
+    Compute the Singular Value Decomposition (SVD) of a given matrix using Power Iteration.
+
+    Parameters
+    ----------
+    matrix : Matrix
+        The input matrix for which the SVD is to be computed.
+
+    Returns
+    -------
+    List[Matrix]
+        A list containing three matrices: U, Sigma, and V^T, such that matrix = U * Sigma * V^T.
+
+    Notes
+    -----
+    This implementation uses the Power Iteration method to compute the singular value decomposition.
+    It works for matrices with dimensions m x n where m=n or m=n-1.
+
+    References
+    ----------
+    https://www.cs.yale.edu/homes/el327/datamining2013aFiles/07_singular_value_decomposition.pdf
+
+    """
 
     def uv_difference(u_or_v_list, difference):
         temp_ = []
@@ -67,8 +98,14 @@ def svd_power_method(matrix: Matrix) -> LMat:
 
     # re-calibrate the u, v, and sigma matrices.
     u_matrix = uv_difference(u, 0)
-    v_matrix = uv_difference(v, 1)
-    sigma_matrix = sigma_difference(sigma, 1)
+
+    if nr != nc:
+        # re-calibrate the u, v, and sigma matrices.
+        v_matrix = uv_difference(v, 1)
+        sigma_matrix = sigma_difference(sigma, 1)
+    else:
+        v_matrix = uv_difference(v, 0)
+        sigma_matrix = sigma_difference(sigma, 0)
 
     # change list of list to matrices
     u_matrix = Matrix(u_matrix).t

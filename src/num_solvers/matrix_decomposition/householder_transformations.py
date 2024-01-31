@@ -1,4 +1,12 @@
-"""Created on Jan 21 15:05:20 2024"""
+"""Householder transformations
+
+This module provides functionality to apply Householder transformation to a given matrix, via,
+
+- householder_reduction: Applies the Householder reduction to the columns of the given matrix.
+- qr_decomposition_householder: Decomposes the given matrix into Q and R matrices via householder reductions.
+
+Created on Jan 21 15:05:20 2024
+"""
 
 __all__ = ['householder_reduction', 'qr_decomposition_householder']
 
@@ -142,16 +150,15 @@ def qr_decomposition_householder(matrix: MatOrLList, overwrite_original: bool = 
 
     return [q_matrix, r_matrix]
 
-
-def eigen_qr(matrix: MatOrLList, n_iter: int = 100) -> LMat:
-    if not isinstance(matrix, Matrix):
-        matrix = Matrix(matrix)
-
-    identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
-
-    for _ in range(n_iter):
-        temp_ = qr_decomposition_householder(matrix)
-        identity_ *= temp_[0]
-        matrix = mul(*temp_[::-1])
-
-    return [identity_, matrix.diagonal()]
+# def eigen_qr(matrix: MatOrLList, n_iter: int = 100) -> LMat:
+#     if not isinstance(matrix, Matrix):
+#         matrix = Matrix(matrix)
+#
+#     identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
+#
+#     for _ in range(n_iter):
+#         temp_ = qr_decomposition_householder(matrix)
+#         identity_ *= temp_[0]
+#         matrix = mul(*temp_[::-1])
+#
+#     return [identity_, matrix.diagonal()]

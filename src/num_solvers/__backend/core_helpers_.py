@@ -1,4 +1,26 @@
-"""Created on Jan 28 03:52:37 2024"""
+"""Utility Functions for Numeric Operations
+
+This module provides a collection of utility functions for numerical operations, including rounding values and lists,
+generating linearly spaced lists, determining the number of steps for numerical approximation methods, and filtering
+similar values from a list.
+
+Functions:
+    - round_value_: Rounds off a given value.
+    - round_list_: Maps the round function to a list.
+    - linear_list: Creates a linearly spaced list of floats.
+    - num_steps_: Generates the steps for numerical approximation methods.
+    - filter_similar_values: Remove similar values from a list within a specified tolerance.
+
+Exceptions:
+    - AtLeastOneParameterRequired: Raised when neither ``step_size`` nor ``n_elements`` is provided in the
+    ``linear_list`` function.
+
+Constants:
+    - TOLERANCE: Default tolerance level for filtering similar values. Default is 1e-8.
+    - N_DECIMAL: Default number of decimal places to round off to. Default is 6.
+
+Created on Jan 28 03:52:37 2024
+"""
 
 from .errors_ import AtLeastOneParameterRequired
 from .. import FList, IFloat, LList, N_DECIMAL, OptIFloat, TOLERANCE

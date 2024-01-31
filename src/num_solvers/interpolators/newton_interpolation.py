@@ -8,7 +8,7 @@ This module provides the functionality to implement three Newton interpolation m
 Created on Nov 02 00:25:14 2023
 """
 
-__all__ = ['forward_interpolation', 'backward_interpolation', 'divided_interpolation']
+__all__ = ['newton_forward_interpolation', 'newton_backward_interpolation', 'divided_difference_interpolation']
 
 from custom_inherit import doc_inherit
 
@@ -17,8 +17,8 @@ from ..__backend.interpolation_ import BkwInterpolation, DividedInterpolation, F
 
 
 @doc_inherit(Interpolation.__init__, style=DOC_STYLE)
-def forward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                          function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
+def newton_forward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                                 function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """
     Perform forward difference interpolation.
 
@@ -31,18 +31,18 @@ def forward_interpolation(given_values: FList, value_to_approximate: IFloat, fun
     return interpolation.interpolate()
 
 
-@doc_inherit(forward_interpolation, style=DOC_STYLE)
-def backward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                           function_values: OptList = None):
+@doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
+def newton_backward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                                  function_values: OptList = None):
     """Perform backwards difference interpolation."""
 
     interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values)
     return interpolation.interpolate()
 
 
-@doc_inherit(forward_interpolation, style=DOC_STYLE)
-def divided_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                          function_values: OptList = None):
+@doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
+def divided_difference_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
+                                     function_values: OptList = None):
     """Perform divided difference interpolation."""
 
     interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values)

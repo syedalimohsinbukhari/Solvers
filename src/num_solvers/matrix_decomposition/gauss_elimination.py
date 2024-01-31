@@ -1,8 +1,19 @@
-"""Created on Jan 21 00:12:13 2024"""
+"""Gauss elimination
+
+This module provides functionality to apply gauss elimination process on given matrices, via,
+
+- gauss_elimination
+
+
+Created on Jan 21 00:12:13 2024
+"""
+
+__all__ = ['gauss_elimination']
 
 from umatrix.matrix import Matrix
 
 from .. import IFloat, MatOrLList, TOLERANCE
+from ..__backend.matrix_ import copy_matrix
 
 
 def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_original: bool = False) -> Matrix:
@@ -24,7 +35,7 @@ def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_
         The modified matrix with Gaussian elimination applied.
     """
 
-    matrix_ = matrix if modify_original else Matrix(matrix.elements[:])
+    matrix_ = copy_matrix(matrix, modify_original)
     num_rows, num_cols = matrix_.n_rows, matrix.n_cols
 
     for i in range(min(num_rows, num_cols)):

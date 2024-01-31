@@ -1,9 +1,12 @@
-"""Cholesky decomposition
+"""
+Cholesky Decomposition
 
-This module provides the functionality to decompose a symmetric and positive definite matrix A, using
-Cholesky decomposition.
+This module provides the functionality to decompose a symmetric and positive definite matrix A using
+Cholesky decomposition. The Cholesky decomposition expresses the matrix A as the product of a lower triangular matrix
+L and its conjugate transpose L*.
 
-- cholesky_decomposition: Performs matrix decomposition using Cholesky method.
+Functions:
+    - cholesky_decomposition: Performs Cholesky decomposition on the given matrix.
 
 Created on Jan 09 02:03:16 2024
 """
