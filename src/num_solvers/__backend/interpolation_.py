@@ -14,9 +14,9 @@ __all__ = ['Interpolation', 'FwdInterpolation', 'BkwInterpolation', 'DividedInte
 
 from custom_inherit import doc_inherit
 
+from .core_helpers_ import round_list_
 from .. import DOC_STYLE, FList, IFloat, LList, N_DECIMAL, OptFunc, OptList
 from ..__backend.errors_ import AtLeastOneParameterRequired
-from ..__backend.extra_ import round_list_
 
 
 class Interpolation:

@@ -159,6 +159,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 
 .idea/
-/src/error_config.py
 /main.py
 /double_integrators.py
+/examples.py
+/rough_work.py
+/src/num_solvers/matrix_decomposition/example.py
