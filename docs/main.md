@@ -16,7 +16,7 @@ Most of the modules included in this library have been implemented efficiently i
 This library includes implementations of,
 
 1. Integrators
-    * [Newton-Cotes integrators]()
+    * [Newton-Cotes integrators](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/newton-cotes-integrators.md)
         * Trapezoidal rule
         * Simpson 1/3 rule
         * Simpson 3/8 rule
