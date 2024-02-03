@@ -16,7 +16,7 @@ Most of the modules included in this library have been implemented efficiently i
 This library includes implementations of,
 
 1. Integrators
-    * [Newton-Cotes integrators](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/newton-cotes-integrators.md)
+    * [Newton-Cotes integrators](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/newton-cotes-integrators.md)
         * Trapezoidal rule
         * Simpson 1/3 rule
         * Simpson 3/8 rule
@@ -24,12 +24,12 @@ This library includes implementations of,
         * Weddle 3/10 rule
         * Weddle 41/140 rule
 2. Interpolation methods
-    * [Newton interpolation method]()
+    * [Newton interpolation method](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/newton-interpolators.md)
         * Forward interpolation
         * Backward interpolation
         * Divided difference interpolation
-    * [Lagrange's interpolation method]()
-    * [Spline interpolation]()
+    * [Lagrange's interpolation method](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/lagrange-interpolators.md)
+    * [Spline interpolation](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/spline-interpolators.md)
         * Linear spline
         * Quadratic spline
         * Natural cubic spline
