@@ -4,10 +4,16 @@ A library for some basic numerical solvers.
 ## Why another numerical solver library?
 The library is the product of my PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at _Institute of Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is for educational purpose only.
 
-Most of the modules included in this library have been implemented efficiently in the mainstream packages like **NumPy**, **SciPy**, and more. The users are encouraged to use those packages for their daily tasks.
+The library is the product of my PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at _Institute of
+Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is
+for educational purpose only.
+
+Most of the modules included in this library have been implemented efficiently in the mainstream packages like **NumPy
+**, **SciPy**, and more. The users are encouraged to use those packages for their daily tasks.
 
 ## What's in this library?
 This library includes implementations of,
+
 * Newton-Cotes integrators,
   * Trapezoid Rule
   * Simpson's 1/3 Rule
@@ -15,3 +21,7 @@ This library includes implementations of,
   * Boole's Method
   * Weddle 3/10 Rule
   * Weddle 4/140 Rule
+
+### Numerical integration
+
+The library includes a few Newton-Cotes integrators to help with single-variable numerical integration,
