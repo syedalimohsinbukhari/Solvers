@@ -8,10 +8,6 @@ The library is the product of my PhD coursework for **Advance Numerical Techniqu
 Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is
 for educational purpose only.
 
-The library is the product of my PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at _Institute of
-Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is
-for educational purpose only.
-
 Most of the modules included in this library have been implemented efficiently in the mainstream packages like **NumPy
 **, **SciPy**, and more. The users are encouraged to use those packages for their daily tasks.
 
