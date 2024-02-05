@@ -164,3 +164,4 @@ cython_debug/
 /examples.py
 /rough_work.py
 /src/num_solvers/matrix_decomposition/example.py
+/nbproject/

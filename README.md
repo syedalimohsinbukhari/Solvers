@@ -1,8 +1,8 @@
 # num_solvers
+
 A library for some basic numerical solvers.
 
 ## Why another numerical solver library?
-The library is the product of my PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at _Institute of Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is for educational purpose only.
 
 The library is the product of my PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at _Institute of
 Space Technology, Pakistan, Islamabad_ and is not intended to replace any existing numerical solving packages. This is
@@ -12,16 +12,59 @@ Most of the modules included in this library have been implemented efficiently i
 **, **SciPy**, and more. The users are encouraged to use those packages for their daily tasks.
 
 ## What's in this library?
+
 This library includes implementations of,
 
-* Newton-Cotes integrators,
-  * Trapezoid Rule
-  * Simpson's 1/3 Rule
-  * Simpson's 3/8 Rule
-  * Boole's Method
-  * Weddle 3/10 Rule
-  * Weddle 4/140 Rule
-
-### Numerical integration
-
-The library includes a few Newton-Cotes integrators to help with single-variable numerical integration,
+1. Integrators
+    * [Newton-Cotes integrators](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/newton-cotes-integrators.md)
+        * Trapezoidal rule
+        * Simpson 1/3 rule
+        * Simpson 3/8 rule
+        * Boole's rule
+        * Weddle 3/10 rule
+        * Weddle 41/140 rule
+2. Interpolation methods
+    * [Newton interpolation method](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/newton-interpolators.md)
+        * Forward interpolation
+        * Backward interpolation
+        * Divided difference interpolation
+    * [Lagrange's interpolation method](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/lagrange-interpolators.md)
+    * [Spline interpolation](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/modules/spline-interpolators.md)
+        * Linear spline
+        * Quadratic spline
+        * Natural cubic spline
+3. Iterative solvers
+    * [ODE solvers]()
+        * Runge-Kutta solvers
+    * [System of equation solvers]()
+        * Gauss-Jacobi solver
+        * Gauss-Seidel solver
+        * Predictor-corrector solver
+    * [Function root]()
+        * Bisection method
+        * False position method
+        * Generalized secant method
+        * Muller method
+        * Newton-Raphson method
+        * Ridder method
+        * Sidi method
+        * Steffensen method
+    * [Polynomial root]()
+        * Laguerre method
+4. Matrix decomposition methods
+    * [Cholesky decomposition]()
+    * [Extra]()
+    * [Gauss elimination]()
+    * [Given's rotation]()
+    * [Householder method]()
+        * Householder reduction
+        * Householder QR decomposition
+    * [LU decomposition]()
+        * LU Crout
+        * LU Doolittle
+    * [QR decomposition]()
+    * [Rayleigh quotient method]()
+    * [Steepest descent method]()
+        * Steepest descent
+        * Modified steepest descent
+    * [Singular value decomposition]()
