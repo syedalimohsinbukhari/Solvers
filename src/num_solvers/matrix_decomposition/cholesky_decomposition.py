@@ -13,13 +13,14 @@ Created on Jan 09 02:03:16 2024
 
 __all__ = ['cholesky_decomposition']
 
+import copy
 from math import sqrt
 
-from umatrix.matrix import Matrix, null_matrix
+from custom_inherit import doc_inherit
+from umatrix.matrix import Matrix, identity_matrix, null_matrix
 
-from .. import LList, LMat
-from ..__backend.errors_ import NonSymmetricMatrix, NotPositiveDefinite
-from ..__backend.matrix_ import reduce_to_zeros
+from .. import DOC_STYLE, LList, LMat
+from ..__backend.matrix_ import cholesky_sanity_check, reduce_to_zeros
 
 
 def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
@@ -33,24 +34,11 @@ def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
 
     Returns
     -------
+    LMat:
         The Cholesky decomposition of the matrix. Matrix L, and L_star.
-
-    Raises
-    ------
-    NonSymmetricMatrix:
-        If the matrix is not symmetric.
-    NotPositiveDefinite:
-        If the matrix is not positive definite.
     """
 
-    if not isinstance(matrix, Matrix):
-        matrix = Matrix(matrix)
-
-    if not matrix.is_symmetric():
-        raise NonSymmetricMatrix('The matrix is not symmetric. Can not perform Cholesky decomposition.')
-
-    if not matrix.is_positive_definite():
-        raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
+    matrix = cholesky_sanity_check(matrix)
 
     n_rows, n_cols = matrix.n_rows, matrix.n_cols
     matrix_l = null_matrix(n_rows, n_cols)
@@ -73,3 +61,38 @@ def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
     matrix_l = reduce_to_zeros(matrix_l)
 
     return [matrix_l, matrix_l.t]
+
+
+# taken from https://services.math.duke.edu/~jdr/2021f-218/materials/week11.pdf
+@doc_inherit(cholesky_decomposition, style=DOC_STYLE)
+def cholesky_ldl(matrix: Matrix or LList) -> LMat:
+    """
+
+    Returns
+    -------
+    LMat:
+        The LDL Cholesky decomposition of the matrix. Matrix L, diagonal matrix D, and L_star.
+    """
+
+    def _ldl_reduction(r_index):
+        for iter_ in range(r_index, matrix_.n_rows):
+            value_normalization = matrix_[iter_][r_index] / matrix_[r_index][r_index]
+
+            matrix_l[r_index][iter_] = value_normalization if iter_ > 0 else matrix_[iter_][r_index]
+
+            if iter_ > r_index:
+                matrix_[iter_] -= value_normalization * matrix_[r_index]
+
+        # extra step
+        if r_index == 0:
+            matrix_l[0][0] = 1
+
+    matrix = cholesky_sanity_check(matrix)
+
+    matrix_ = Matrix(copy.deepcopy(matrix.elements[:]))
+    matrix_l = identity_matrix(matrix_.n_rows)
+
+    for row_number in range(matrix_.n_rows):
+        _ldl_reduction(row_number)
+
+    return [matrix_l.t, matrix_.diagonal_of_matrix(), matrix_l]

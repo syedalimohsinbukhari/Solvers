@@ -15,14 +15,15 @@ Additionally, it provides other functionalities for matrices via,
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['map_to_matrix', 'remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros', 'copy_matrix']
+__all__ = ['map_to_matrix', 'remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros', 'copy_matrix', 'cholesky_sanity_check']
 
 from copy import deepcopy
 
 from umatrix.matrix import Matrix
 
 from .core_helpers_ import round_list_
-from .. import IFloat, N_DECIMAL, TOLERANCE
+from .errors_ import NonSymmetricMatrix, NotPositiveDefinite
+from .. import IFloat, LList, N_DECIMAL, TOLERANCE
 
 
 def reduce_to_zeros(matrix: Matrix, tolerance: IFloat = TOLERANCE) -> Matrix:
@@ -144,3 +145,32 @@ def copy_matrix(matrix: Matrix, overwrite: bool = False) -> Matrix:
     """
 
     return matrix if overwrite else Matrix(deepcopy(matrix.elements[:]))
+
+
+def cholesky_sanity_check(matrix: Matrix or LList) -> Matrix:
+    """
+    Performs sanity check for Cholesky decomposition.
+
+    Parameters
+    ----------
+    matrix:
+        The matrix to perform cholesky decomposition on.
+
+    Raises
+    ------
+    NonSymmetricMatrix:
+        If the matrix is not symmetric.
+    NotPositiveDefinite:
+        If the matrix is not positive definite.
+    """
+
+    if not isinstance(matrix, Matrix):
+        matrix = Matrix(matrix)
+
+    if not matrix.is_symmetric():
+        raise NonSymmetricMatrix('The matrix is not symmetric. Can not perform Cholesky decomposition.')
+
+    if not matrix.is_positive_definite():
+        raise NotPositiveDefinite('The matrix is not positive definite. Can not perform Cholesky decomposition.')
+
+    return matrix
