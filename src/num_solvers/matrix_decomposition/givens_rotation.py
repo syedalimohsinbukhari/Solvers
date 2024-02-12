@@ -10,7 +10,7 @@ Created on Jan 28 15:43:08 2024
 from umatrix.matrix import Matrix, identity_matrix, vector_mag
 
 from .. import LMat
-from ..__backend.matrix_ import copy_matrix
+from ..__backend.matrix_ import matrix_copy
 
 
 def givens_rotation(matrix: Matrix, override_original: bool = False) -> LMat:
@@ -34,8 +34,7 @@ def givens_rotation(matrix: Matrix, override_original: bool = False) -> LMat:
         2. The triangularized matrix.
     """
 
-    matrix_ = copy_matrix(matrix, override_original)
-
+    matrix_ = matrix_copy(matrix.elements)
     givens_matrix = identity_matrix(matrix_.n_rows)
 
     for i in range(matrix_.n_rows - 1):

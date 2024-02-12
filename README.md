@@ -35,7 +35,7 @@ This library includes implementations of,
         * Natural cubic spline
 3. Iterative solvers
     * ODE solvers
-        * [Runge-Kutta solvers]((https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/rk-solvers.md))
+        * [Runge-Kutta solvers](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/rk-solvers.md)
     * [System of equation solvers]()
         * Gauss-Jacobi solver
         * Gauss-Seidel solver

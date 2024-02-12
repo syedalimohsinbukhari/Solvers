@@ -33,17 +33,17 @@ def newton_forward_interpolation(given_values: FList, value_to_approximate: IFlo
 
 @doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
 def newton_backward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                                  function_values: OptList = None):
+                                  function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """Perform backwards difference interpolation."""
 
-    interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values)
+    interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
     return interpolation.interpolate()
 
 
 @doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
 def divided_difference_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
-                                     function_values: OptList = None):
+                                     function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """Perform divided difference interpolation."""
 
-    interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values)
+    interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
     return interpolation.interpolate()
