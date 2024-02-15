@@ -11,7 +11,7 @@ $$
 x_i^{k+1} = \frac{1}{a_{ii}}\left(b_i - \sum_{j\neq i}a_{ij}x_k^{(k)}\right)
 \end{equation}
 $$
-where $i = 1, 2, 3, \ldots, n.$ It should be noted that the Gauss-Jacobi method is very sensitive and only works well with strictly diagonally dominant matrices, such that,
+where $i = 1, 2, 3, \ldots, n.$. The procedure is generally continued until the changes made by an iteration are below some tolerance, such as a sufficiently small residual. It should be noted that the Gauss-Jacobi method is very sensitive and only works well with strictly diagonally dominant matrices, such that,
 
 $$
 \left|a_{11}\right| \geq \left|a_{12}\right| + \left|a_{13}\right|
@@ -24,3 +24,7 @@ $$
 $$
 \left|a_{33}\right| \geq \left|a_{31}\right| + \left|a_{32}\right|
 $$
+
+
+> [!NOTE]
+> See alo, **[Jacobi-Matrix method](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/matrix-decomposition/gauss-jacobi.md)**.
