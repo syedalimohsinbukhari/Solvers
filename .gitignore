@@ -161,7 +161,5 @@ cython_debug/
 .idea/
 /main.py
 /double_integrators.py
-/examples.py
 /rough_work.py
 /src/num_solvers/matrix_decomposition/example.py
-/nbproject/
