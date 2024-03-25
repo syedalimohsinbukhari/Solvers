@@ -1,8 +1,7 @@
 """Created on Jan 09 05:07:28 2024"""
 
-from .characteristic_polynomial import characteristic_polynomial
 from .cholesky_decomposition import cholesky_decomposition
-from .eigen import eigenvalues_2x2, eigenvectors_2x2
+from .extra import characteristic_polynomial, eigenvalues_2x2, eigenvectors_2x2
 from .gauss_elimination import gauss_elimination
 from .givens_rotation import givens_rotation
 from .householder_transformations import householder_reduction, qr_decomposition_householder

@@ -7,6 +7,7 @@ from umatrix.matrix import Matrix
 
 TOLERANCE = 1e-8
 N_DECIMAL = 6
+MAX_ITER = 500
 
 DOC_STYLE = 'numpy_napoleon_with_merge'
 
@@ -30,4 +31,3 @@ OptIFloat = Optional[IFloat]
 
 MatOrLList = Union[Matrix, LList]
 LMat = list[Matrix]
-N_DECIMAL = N_DECIMAL

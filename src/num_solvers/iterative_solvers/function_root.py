@@ -30,7 +30,6 @@ __all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', '
            'newton_raphson_method']
 
 from cmath import sqrt
-from math import sqrt
 
 from custom_inherit import doc_inherit
 
@@ -192,10 +191,10 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
 
     def sign_function(functions_to_evaluate, value):
         f1, f2 = functions_to_evaluate
-        return value if f1 - f2 > 0 else -value if f2 - f1 > 0 else 0
+        return value if f1 - f2 > 0 else -value
 
     def is_sane():
-        return True if f(x_start) * f(x_end) < 0 else False
+        return f(x_start) * f(x_end) < 0
 
     f, root_ = function, [x_start, x_end, (x_start + x_end) / 2]
 
@@ -227,13 +226,11 @@ def steffensen_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance:
     """Use the Steffensen method to find the root of a given function within a specified interval."""
 
     def is_sane():
-        return True if f(x_start) * f(x_end) < 0 else False
+        return f(x_start) * f(x_end) < 0
 
     f, root_ = function, [x_start, x_end, (x_start + x_end) / 2]
 
-    solve = True if is_sane() else False
-
-    while solve:
+    while is_sane():
         f_mid = f(root_[-1])
         f_mid2 = f(root_[-1] + f_mid)
 

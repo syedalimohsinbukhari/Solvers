@@ -10,10 +10,9 @@ Created on Jan 21 00:12:13 2024
 
 __all__ = ['gauss_elimination']
 
-from umatrix.matrix import Matrix
+from umatrix.matrix import Matrix, matrix_copy
 
 from .. import IFloat, MatOrLList, TOLERANCE
-from ..__backend.matrix_ import copy_matrix
 
 
 def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_original: bool = False) -> Matrix:
@@ -35,7 +34,8 @@ def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_
         The modified matrix with Gaussian elimination applied.
     """
 
-    matrix_ = copy_matrix(matrix, modify_original)
+    matrix_ = matrix_copy(matrix, modify_original)
+
     num_rows, num_cols = matrix_.n_rows, matrix.n_cols
 
     for i in range(min(num_rows, num_cols)):
