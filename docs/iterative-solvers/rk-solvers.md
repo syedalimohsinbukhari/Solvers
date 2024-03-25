@@ -50,5 +50,5 @@ $$ k_3 = hF\left(x_n + \frac{h}{2}, y_n + \frac{k_2}{2}\right)$$
 
 $$ k_4 = hF\left(x_n + h, y_n + k_3 \right)$$
 
-> [!TIP]
+> [!NOTE]
 > See also, [Multi-RK implementation](https://github.com/syedalimohsinbukhari/Solvers/blob/md-docs/docs/rk-multi-solvers.md)

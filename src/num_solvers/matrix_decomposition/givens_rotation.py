@@ -7,34 +7,33 @@ Provides functionality to apply Givens rotation to the matrix, via,
 Created on Jan 28 15:43:08 2024
 """
 
-from umatrix.matrix import Matrix, identity_matrix, vector_mag
+from umatrix.matrix import Matrix, identity_matrix, matrix_copy, vector_mag
 
 from .. import LMat
-from ..__backend.matrix_ import matrix_copy
 
 
-def givens_rotation(matrix: Matrix, override_original: bool = False) -> LMat:
+def givens_rotation(matrix: Matrix, overwrite: bool = False) -> LMat:
     """
     Apply Givens rotations to triangularize a matrix.
 
     Parameters
     ----------
-    matrix : Matrix
+    matrix:
         The input matrix to be triangularized.
-    override_original : bool, optional
+    overwrite:
         If True, the original matrix is modified in place. If False (default),
         a new matrix is created, and the original matrix remains unchanged.
 
     Returns
     -------
     LMat
-        A tuple containing two matrices:
+        A list containing two matrices:
 
-        1. The Givens rotation matrix (product of all Givens rotations).
-        2. The triangularized matrix.
+            1. The Givens rotation matrix (product of all Givens rotations).
+            2. The triangularized matrix.
     """
 
-    matrix_ = matrix_copy(matrix.elements)
+    matrix_ = matrix_copy(matrix, overwrite)
     givens_matrix = identity_matrix(matrix_.n_rows)
 
     for i in range(matrix_.n_rows - 1):

@@ -9,43 +9,19 @@ Additionally, it provides other functionalities for matrices via,
 - reduce_to_zeros: Reduces the values below tolerance level to 0.
 - remove_zeroed_columns: Remove the columns/rows below the all zero column/rows. Mainly for usage in QR decomposition.
 - round_matrix_: Rounds the values of matrices.
-- map_to_matrix: Maps a certain function to the entire matrix.
-- copy_matrix: Copies or creates a deep-copy of the given matrix.
 
 Created on Jan 10 00:01:13 2024
 """
 
-__all__ = ['map_to_matrix', 'remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros', 'cholesky_sanity_check',
-           'matrix_copy', 'upper_lower_matrices', 'gauss_methods_sanity_check', 'upper_diagonal_lower_matrices']
+__all__ = ['remove_zeroed_columns', 'round_matrix_', 'reduce_to_zeros', 'cholesky_sanity_check',
+           'upper_lower_matrices', 'gauss_methods_sanity_check', 'upper_diagonal_lower_matrices',
+           'populate_identity_matrix']
 
-from copy import deepcopy
-
-from umatrix.matrix import Matrix, identity_matrix, null_matrix
+from umatrix.matrix import Matrix, identity_matrix, matrix_copy, null_matrix
 
 from .core_helpers_ import round_list_
 from .errors_ import NonSymmetricMatrix, NotPositiveDefinite
-from .. import FList, Func, IFloat, LMat, MatOrLList, N_DECIMAL, TOLERANCE
-
-
-def matrix_copy(matrix: MatOrLList, overwrite: bool = False) -> Matrix:
-    """
-    Copy or make a deep-copy of the given matrix.
-
-    Parameters
-    ----------
-    matrix:
-        The matrix to make the copy of.
-    overwrite:
-        Whether to overwrite the original matrix or not.
-
-    Returns
-    -------
-    Matrix:
-        The copied matrix instance.
-    """
-
-    temp_ = Matrix(matrix) if not isinstance(matrix, Matrix) else matrix
-    return Matrix(deepcopy(temp_.elements[:])) if overwrite else temp_
+from .. import FList, IFloat, LMat, MatOrLList, N_DECIMAL, TOLERANCE
 
 
 def reduce_to_zeros(matrix: MatOrLList, tolerance: IFloat = TOLERANCE) -> Matrix:
@@ -130,30 +106,40 @@ def round_matrix_(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> Matrix:
     return Matrix(round_list_(matrix.elements, n_decimal))
 
 
-def map_to_matrix(matrix: MatOrLList, function: Func):
+def populate_identity_matrix(sub_matrix: Matrix, n_rows: int, n_cols: int, s_row: int, s_col: int) -> Matrix:
     """
-    Apply a given function element-wise to a matrix.
+    Populate the identity matrix with given sub-matrices.
 
     Parameters
     ----------
-    matrix:
-        The matrix to be mapped.
-    function:
-        A function that takes a single float as input and returns a float.
+    sub_matrix:
+        The sub-matrix to populate the identity matrix into.
+    n_rows:
+        The number of rows in the parent matrix.
+    n_cols:
+        The number of columns in the parent matrix.
+    s_row:
+        The starting row for insertion of the sub-matrix.
+    s_col:
+        The starting column for insertion of the sub-matrix.
 
     Returns
     -------
-    Matrix
-        A new matrix where the function has been applied element-wise.
+        Identity matrix, populated with the provided sub-matrix.
     """
 
-    matrix = matrix_copy(matrix)
+    # create a simple identity matrix
+    populated_identity_matrix = identity_matrix(n_rows, n_cols).elements
 
-    for i in range(matrix.n_rows):
-        for j in range(matrix.n_cols):
-            matrix[j][j] = function(matrix[i][j])
+    for i in range(sub_matrix.n_rows):
+        # the sub-matrix can be populated within identity matrix easily if sub-matrix is not a single element matrix.
+        if sub_matrix.n_rows > 1 and sub_matrix.n_cols > 1:
+            populated_identity_matrix[s_row:][i][s_col:] = sub_matrix.elements[i]
+        # if the sub-matrix only has a single element, treat it as a special case.
+        else:
+            populated_identity_matrix[-1][-1] = sub_matrix.elements[0]
 
-    return matrix
+    return Matrix(populated_identity_matrix)
 
 
 def cholesky_sanity_check(matrix: MatOrLList) -> Matrix:
@@ -255,3 +241,20 @@ def gauss_methods_sanity_check(matrix: Matrix, solution: FList, initial_guess: F
         print('The system of equations is not diagonally dominant. The solutions might not be correct.')
 
     return matrix_, solution, initial_guess
+
+
+def strassen_mat_mul(matrix_a: Matrix, matrix_b: Matrix):
+    m1 = (matrix_a[0][0] + matrix_a[1][1]) * (matrix_b[0][0] + matrix_b[1][1])
+    m2 = (matrix_a[1][0] + matrix_a[1][1]) * matrix_b[0][0]
+    m3 = matrix_a[0][0] * (matrix_b[0][1] - matrix_b[1][1])
+    m4 = matrix_a[1][1] * (matrix_b[1][0] - matrix_b[0][0])
+    m5 = (matrix_a[0][0] + matrix_a[0][1]) * matrix_b[1][1]
+    m6 = (matrix_a[1][0] - matrix_a[0][0]) * (matrix_b[0][0] + matrix_b[0][1])
+    m7 = (matrix_a[0][1] - matrix_a[1][1]) * (matrix_b[1][0] + matrix_b[1][1])
+
+    c11 = m1 + m4 - m5 + m7
+    c12 = m3 + m5
+    c21 = m2 + m4
+    c22 = m1 - m2 + m3 + m6
+
+    return Matrix([[c11, c12], [c21, c22]])

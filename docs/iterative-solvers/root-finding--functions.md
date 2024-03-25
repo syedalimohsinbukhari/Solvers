@@ -74,7 +74,7 @@ $$x_\text{new} = x_\text{mid} + \text{sign}\left[f(x_n), f(x_{n+1})\right]X$$
 4. If, $f(x_\text{new}) = 0$ or $\sqrt{f(x_\text{mid})^2 - f(x_n)f(x_{n+1})} = 0$ return $x_\text{new}$ as the root.
 5. Otherwise,
    1. If $f(x_\text{mid})f(x_\text{new}) < 0$, set $x_{n} = x_\text{mid}$ and $x_{n+1} = x_\text{new}$
-   3. Else set $x_n = x_\text{new}$
+   2. Else set $x_n = x_\text{new}$
 
 > [!NOTE]
 > $$ 

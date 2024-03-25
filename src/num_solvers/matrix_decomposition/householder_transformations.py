@@ -14,10 +14,10 @@ from functools import reduce
 from math import sqrt
 from operator import mul
 
-from umatrix.matrix import Matrix, identity_matrix, populate_identity_matrix, vector_mag
+from umatrix.matrix import Matrix, identity_matrix, vector_mag
 
 from .. import LMat, MatOrLList
-from ..__backend.matrix_ import reduce_to_zeros
+from ..__backend.matrix_ import populate_identity_matrix, reduce_to_zeros
 
 
 # taken from https://core.ac.uk/download/pdf/215673996.pdf

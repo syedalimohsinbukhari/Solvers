@@ -1,120 +1,50 @@
 """Created on Jan 11 13:59:35 2024"""
 
-from umatrix.matrix import null_matrix
+import numpy as np
 
-from src.num_solvers import FList, IFloat, IFloatOrFList
+from src.num_solvers.__backend.fdm_ import OneDimensionalFDM, OneDimensionalPDESolver
 
+L = 2
+x_range, dx, dt, k = [0, L], 0.1, 0.01, 9
+x_r = np.linspace(0, L, int(L / dx))
 
-def tri_diagonal_matrix(elements, n_rows, n_cols, diff):
-    zero = null_matrix(n_rows, n_cols)
+oneD_FDM = OneDimensionalFDM(x_range, dx, dt)
 
-    for row in range(zero.n_rows):
-        for col in range(zero.n_cols):
-            if row == col + diff:
-                zero[row][col] = elements[0]
-            if row == col:
-                zero[row][col] = elements[1]
-            if row == col - diff:
-                zero[row][col] = elements[2]
+d = OneDimensionalPDESolver(lambda x: 2 * x**2 - 4 * x,
+                            [0, 0],
+                            [oneD_FDM.d1_backward(), -k * oneD_FDM.d2_central()],
+                            ic_values=x_r)
 
-    return zero
+d1 = d.solve(3)
 
+print(d1[0])
+print(d1[1])
 
-def tri_diagonal_matrix2(elements, n_rows, n_cols):
-    zero = null_matrix(n_rows, n_cols)
+# def exact_solution(n, i_dx, i_dt, k):
+#     sum_ = 0
+#     for i in range(n):
+#         if i % 2 == 1:
+#             f1_ = 400 / (pi**3 * i**3)
+#             f1_ *= sin(i * pi * i_dx) * exp(-i**2 * pi**2 * k * i_dt)
+#             sum_ += f1_
 
-    for row in range(zero.n_rows - 1):
-        for i, v in enumerate(elements):
-            zero[row][i + row - 1] = v
-
-    for i, v in enumerate(elements[:-1]):
-        zero[-1][-i - 1] = v
-
-    zero[0][-1] = 0
-
-    return zero
+#     return sum_
 
 
-def d2_matrix(time_step: int, space_step: int, d_type: str = 'x', delta_factor: IFloat = 1):
-    values = [i / delta_factor**2 for i in [1, -2, 1]]
-    return tri_diagonal_matrix(values, time_step, space_step, 1 if d_type == 'x' else 4)
+# plt.plot(x_, [i - j for i, j in zip(d1[0], [exact_solution(20, i, 1, k) for i in x_])],
+#          label='numerical - original n=20 difference')
+# plt.plot(x_, [i - j for i, j in zip(d1[0], [exact_solution(200, i, 1, k) for i in x_])],
+#          label='numerical - original n=200 difference')
+# plt.plot(x_, [i - j for i, j in zip(d1[0], [exact_solution(2000, i, 1, k) for i in x_])],
+#          label='numerical - original n=2000 difference')
 
+# plt.plot(x_, [i - j for i, j in zip(d1[1], [exact_solution(20, i, 2, k) for i in x_])],
+#          label='numerical - original n=20 difference')
+# plt.plot(x_, [i - j for i, j in zip(d1[1], [exact_solution(200, i, 2, k) for i in x_])],
+#          label='numerical - original n=200 difference')
+# plt.plot(x_, [i - j for i, j in zip(d1[1], [exact_solution(2000, i, 2, k) for i in x_])],
+#          label='numerical - original n=2000 difference')
 
-def d1_central(time_step: int, space_step: int, d_type: str = 'x', delta_factor: IFloat = 1):
-    values = [i / (2 * delta_factor) for i in [-1, 0, 1]]
-    return tri_diagonal_matrix(values, time_step, space_step, 1 if d_type == 'x' else 4)
-
-
-def bi_diagonal_space_matrix(n_rows, n_cols):
-    zero = null_matrix(n_rows, n_cols)
-
-    for row in range(zero.n_rows):
-        for col in range(zero.n_cols):
-            if row == col - 1:
-                zero[row][col] = 1
-            if row == col:
-                zero[row][col] = -1
-
-    return zero
-
-
-def d1_fwd(time_step: int, space_step: int, d_type: str = 'x', delta_factor: IFloat = 1):
-    values = [i / delta_factor for i in [-1, 0, 1]]
-    return tri_diagonal_matrix(values, time_step, space_step, 1 if d_type == 'x' else 4)
-
-
-def d1_bkw(time_step: int, space_step: int, d_type: str = 'x', delta_factor: IFloat = 1):
-    values = [i / delta_factor for i in [1, 0, -1]]
-    return tri_diagonal_matrix(values, time_step, space_step, 1 if d_type == 'x' else 4)
-
-
-def backwards_euler(time_step: int, space_step: int, d_type: str = 'x', delta_factor: IFloat = 1):
-    values = [i / delta_factor for i in [0, -1, 1]]
-    return tri_diagonal_matrix(values, time_step, space_step, 1 if d_type == 'x' else 4)
-
-
-def single_term(time_step: int, space_step: int, delta_factor: IFloat = 1):
-    return tri_diagonal_matrix([0, 1, 0], time_step, space_step, 1) * delta_factor
-
-
-def boundary_matrix(time_step: int, boundary_condition: FList):
-    zeros = null_matrix(time_step, 1)
-
-    zeros[0] = [boundary_condition[0]]
-    zeros[-1] = [boundary_condition[1]]
-
-    return zeros
-
-
-def apply_ic(time_step: int, initial_condition: IFloatOrFList):
-    zeros = null_matrix(time_step, 1).t
-
-    if isinstance(initial_condition, float):
-        for i in range(zeros.n_cols):
-            zeros[i] = initial_condition
-    else:
-        zeros.elements = initial_condition
-
-    return zeros.t
-
-
-class SingleVariableODESolver:
-
-    def __init__(self, fdm_functions, delta, steps, boundary_conditions, has_single_term=True):
-        self.fdm = fdm_functions
-        self.delta = delta
-        self.steps = steps
-        self.bc = boundary_conditions
-        self.hST = has_single_term
-
-    def lhs(self):
-        if self.hST:
-            temp_ = ([i(self.steps, self.steps, self.delta) for i in self.fdm[:-1]] +
-                     [self.fdm[-1](self.steps, self.steps, 1)])
-        else:
-            temp_ = [i(self.steps, self.steps, self.delta) for i in self.fdm[:-1]]
-
-        return temp_
-
-    def rhs(self):
-        return boundary_matrix(self.steps, 1)
+# plt.legend(loc='best')
+# plt.tight_layout()
+# plt.show()

@@ -10,7 +10,7 @@ Created on Jan 25 06:38:05 2024
 
 from umatrix.matrix import Matrix, identity_matrix, null_matrix, vector_mag
 
-from src.num_solvers import IFloat, MatOrLList
+from .. import IFloat, MatOrLList
 
 
 def rayleigh_quotient_method(matrix: MatOrLList, n_iter: int = 50, initial_guess: int = 200) -> IFloat:

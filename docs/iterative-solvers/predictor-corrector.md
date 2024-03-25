@@ -21,6 +21,8 @@ $$ Y^{\text{pred}}_{i+1} = y_i + hf(x_i, y_i)$$
 
 Now we calculate the corrector step with Trapezoidal rule using the predictor step as,
 
-$$ Y^{\text{corrector}}_{i+1} = y_i + \frac{h}{2}\left[f(x_i, y_i) + f(x_{i+1}, Y^{\text{pred}}_{i+1}) \right]$$
+$$
+Y_{i+1}^{\text{corrector}} = y_i + \frac{h}{2}\left[f(x_i, y_i) + f(x_{i+1}, Y^{\text{pred}}_{i+1})\right]
+$$
 
 which is used as the first iteration $y_{i+1} = Y^{\text{corrector}}_{i+1}$.
