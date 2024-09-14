@@ -5,8 +5,7 @@ __all__ = ['OneDimensionalFDM', 'OneDimensionalPDESolver', 'bi_diagonal_matrix',
 
 from math import floor
 
-import numpy as np
-from umatrix.matrix import Matrix, identity_matrix, null_matrix
+from umatrix.matrix import identity_matrix, Matrix, null_matrix
 
 from .core_helpers_ import round_value_
 from .matrix_ import matrix_copy
@@ -103,7 +102,7 @@ class OneDimensionalPDESolver:
         solution = [temp_]
 
         for i in range(1, time_steps):
-            solution.append(lhs * solution[i-1])
+            solution.append(lhs * solution[i - 1])
             enforce_boundary_condition(solution[i], self.bc, i > 0)
 
         return solution
@@ -137,7 +136,6 @@ def enforce_boundary_condition(matrix: Matrix, boundary_conditions: FList, overw
 
 def bi_diagonal_matrix(n_steps, wrap_boundaries: bool = False, diff_type: str = 'fwd',
                        elements: OptList = None) -> Matrix:
-
     difference_indices = {'fwd': [-1, 0],
                           'bkw': [1, 0],
                           'cnt': [-1, 1]}
