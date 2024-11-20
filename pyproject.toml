@@ -1,4 +1,4 @@
 [build-system]
-requires = ["custom-inherit", "numpy==1.26.4", "setuptools", "umatrix"]
+requires = ["custom-inherit", "numpy~=1.26.0", "setuptools", "umatrix"]
 
 build-backend = "setuptools.build_meta:__legacy__"
