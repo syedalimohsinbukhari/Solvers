@@ -18,7 +18,7 @@ metadata_ = load_metadata()
 with open('README.md', 'r') as readme_file:
     readme = readme_file.read()
 
-setup(name='__name__',
+setup(name=metadata_['__name__'],
       version=metadata_['__version__'],
       author=metadata_['__author__'],
       author_email=metadata_['__email__'],
