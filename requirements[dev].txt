@@ -1,4 +1,6 @@
 numpy<2.0.1
+matplotlib
+pygments
 setuptools
 custom-inherit
 umatrix

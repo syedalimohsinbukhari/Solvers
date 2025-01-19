@@ -103,7 +103,7 @@ def round_matrix_(matrix: MatOrLList, n_decimal: int = N_DECIMAL) -> Matrix:
 
     matrix = matrix_copy(matrix)
 
-    return Matrix(round_list_(matrix.elements, n_decimal))
+    return Matrix(round_list_(original_list=matrix.elements, n_decimal=n_decimal))
 
 
 def populate_identity_matrix(sub_matrix: Matrix, n_rows: int, n_cols: int, s_row: int, s_col: int) -> Matrix:
@@ -129,7 +129,7 @@ def populate_identity_matrix(sub_matrix: Matrix, n_rows: int, n_cols: int, s_row
     """
 
     # create a simple identity matrix
-    populated_identity_matrix = identity_matrix(n_rows, n_cols).elements
+    populated_identity_matrix = identity_matrix(n_rows=n_rows, n_cols=n_cols).elements
 
     for i in range(sub_matrix.n_rows):
         # the sub-matrix can be populated within identity matrix easily if sub-matrix is not a single element matrix.

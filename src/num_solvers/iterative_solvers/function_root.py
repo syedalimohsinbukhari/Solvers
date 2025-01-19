@@ -89,7 +89,7 @@ def bisection_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: 
     return root if get_all_values else root[-1]
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def false_position_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                           get_all_values: bool = False) -> IFloatOrFList:
     """Use the false position method to find the root of a given function within a specified interval."""
@@ -120,14 +120,15 @@ def false_position_method(function: Func, x_start: IFloat, x_end: IFloat, tolera
     return root if get_all_values else root[-1]
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def regula_falsi_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                         get_all_values: bool = False) -> IFloatOrFList:
     """Use the regula-falsi method to find the root of a given function within a specified interval."""
-    return false_position_method(function, x_start, x_end, tolerance, get_all_values)
+    return false_position_method(function=function, x_start=x_start, x_end=x_end, tolerance=tolerance,
+                                 get_all_values=get_all_values)
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def secant_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                   get_all_values: bool = False) -> IFloatOrFList:
     """Apply the secant method to find the root of a given function within a specified interval."""
@@ -150,20 +151,20 @@ def secant_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
     return root if get_all_values else root[-1]
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def generalized_secant_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                               get_full_result: bool = True) -> IFloatOrFList:
     """Use the generalized secant method to find the root of a given function within a specified interval."""
 
-    x_2 = x_end - function(x_end) / div_diff(function, [x_start, x_end])
+    x_2 = x_end - function(x_end) / div_diff(function=function, xs_=[x_start, x_end])
 
     root_ = [x_start, x_end, x_2]
 
     while True:
         f0 = function(root_[-1])
 
-        f1 = div_diff(function, [x_2, x_end])
-        f2 = div_diff(function, [x_2, x_end, x_start]) * (x_2 - x_end)
+        f1 = div_diff(function=function, xs_=[x_2, x_end])
+        f2 = div_diff(function=function, xs_=[x_2, x_end, x_start]) * (x_2 - x_end)
 
         f_ = f1 + f2
         x_3 = x_2 - (f0 / f_)
@@ -177,14 +178,15 @@ def generalized_secant_method(function: Func, x_start: IFloat, x_end: IFloat, to
     return root_ if get_full_result else root_[-1]
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def sidi_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                 get_full_result: bool = True) -> IFloatOrFList:
     """Use the Sidi method to find the root of a given function within a specified interval."""
-    return generalized_secant_method(function, x_start, x_end, tolerance, get_full_result)
+    return generalized_secant_method(function=function, x_start=x_start, x_end=x_end, tolerance=tolerance,
+                                     get_all_values=get_full_result)
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                   get_full_result: bool = True) -> IFloatOrFList:
     """Use the Ridder method to find the root of a given function within a specified interval."""
@@ -205,7 +207,7 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
         den_ = sqrt(f(x_mid)**2 - f(x_start) * f(x_end))
         f_ = num_ / den_
 
-        x_new = x_mid + sign_function([f(x_start), f(x_end)], f_)
+        x_new = x_mid + sign_function(functions_to_evaluate=[f(x_start), f(x_end)], value=f_)
 
         if abs(f(x_new)) < tolerance or f_ == 0:
             break
@@ -220,7 +222,7 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
     return root_ if get_full_result else root_[-1]
 
 
-@doc_inherit(bisection_method, style=DOC_STYLE)
+@doc_inherit(parent=bisection_method, style=DOC_STYLE)
 def steffensen_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
                       get_full_result: bool = False) -> IFloatOrFList:
     """Use the Steffensen method to find the root of a given function within a specified interval."""
@@ -273,7 +275,8 @@ def newton_raphson_method(function: Func, derivative_of_function: Func, initial_
     if abs(f(x_0)) < tolerance:
         return x_0
     else:
-        return newton_raphson_method(f, df, x_0 - f(x_0) / df(x_0), tolerance)
+        return newton_raphson_method(function=f, derivative_of_function=df, initial_guess=x_0 - f(x_0) / df(x_0),
+                                     tolerance=tolerance)
 
 
 def muller_method(function: Func, x_0: IFloat, x_1: IFloat, x_2: IFloat, iterations: int,
@@ -307,7 +310,9 @@ def muller_method(function: Func, x_0: IFloat, x_1: IFloat, x_2: IFloat, iterati
     root_ = [x_0, x_1, x_2]
 
     for _ in range(iterations):
-        w = div_diff(function, [x_2, x_1]) + div_diff(function, [x_2, x_0]) - div_diff(function, [x_2, x_1])
+        w = div_diff(function=function,
+                     xs_=[x_2, x_1]) + div_diff(function=function,
+                                                xs_=[x_2, x_0]) - div_diff(function=function, xs_=[x_2, x_1])
         s_delta = sqrt(w**2 - 4 * function(x_2) * div_diff(function, [x_2, x_1, x_0]))
         denominators = [w + s_delta, w - s_delta]
         # Take the higher-magnitude denominator

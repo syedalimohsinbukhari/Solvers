@@ -16,7 +16,7 @@ from .. import DOC_STYLE, FList, IFloat, OptFunc, OptList
 from ..__backend.spline_ import LinearSpline, NaturalCubicSpline, QuadraticSpline, SPLINE
 
 
-@doc_inherit(SPLINE.__init__, style=DOC_STYLE)
+@doc_inherit(parent=SPLINE.__init__, style=DOC_STYLE)
 def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                                 function_values: OptList = None, show_splines: bool = False) -> IFloat:
     """
@@ -47,7 +47,8 @@ def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloa
                                     function_values=[4, 6, 2, 4, 8, 10])
     """
 
-    linear_spline = LinearSpline(given_values, value_to_approximate, function, function_values)
+    linear_spline = LinearSpline(given_values=given_values, value_to_approximate=value_to_approximate,
+                                 function=function, function_values=function_values)
 
     if show_splines:
         linear_spline.show_splines()
@@ -55,7 +56,7 @@ def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloa
     return linear_spline.interpolate()
 
 
-@doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
+@doc_inherit(parent=linear_spline_interpolation, style=DOC_STYLE)
 def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
                                    function: OptFunc = None, function_values: OptList = None,
                                    last_equation: str = 'first', show_splines: bool = False) -> IFloat:
@@ -77,7 +78,8 @@ def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IF
                                        function_values=[4, 6, 2, 4, 8, 10])
     """
 
-    quadratic_spline = QuadraticSpline(given_values, value_to_approximate, function, function_values, last_equation)
+    quadratic_spline = QuadraticSpline(given_values=given_values, value_to_approximate=value_to_approximate,
+                                       function=function, function_values=function_values, last_equation=last_equation)
 
     if show_splines:
         quadratic_spline.show_splines()
@@ -85,7 +87,7 @@ def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IF
     return quadratic_spline.interpolate()
 
 
-@doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
+@doc_inherit(parent=linear_spline_interpolation, style=DOC_STYLE)
 def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
                                        function: OptFunc = None, function_values: OptList = None,
                                        last_equation: str = 'first', show_splines: bool = False) -> IFloat:
@@ -107,8 +109,9 @@ def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate
                                            function_values=[4, 6, 2, 4, 8, 10])
     """
 
-    natural_cubic_spline = NaturalCubicSpline(given_values, value_to_approximate, function, function_values,
-                                              last_equation)
+    natural_cubic_spline = NaturalCubicSpline(given_values=given_values, value_to_approximate=value_to_approximate,
+                                              function=function, function_values=function_values,
+                                              last_equation=last_equation)
 
     if show_splines:
         natural_cubic_spline.show_splines()

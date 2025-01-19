@@ -97,15 +97,15 @@ def svd_power_method(matrix: Matrix) -> LMat:
         matrix_ -= u[j] * sigma[j] * v[j].t
 
     # re-calibrate the u, v, and sigma matrices.
-    u_matrix = uv_difference(u, 0)
+    u_matrix = uv_difference(u_or_v_list=u, difference=0)
 
     if nr != nc:
         # re-calibrate the u, v, and sigma matrices.
-        v_matrix = uv_difference(v, 1)
-        sigma_matrix = sigma_difference(sigma, 1)
+        v_matrix = uv_difference(u_or_v_list=v, difference=1)
+        sigma_matrix = sigma_difference(sigma_list=sigma, difference=1)
     else:
-        v_matrix = uv_difference(v, 0)
-        sigma_matrix = sigma_difference(sigma, 0)
+        v_matrix = uv_difference(u_or_v_list=v, difference=0)
+        sigma_matrix = sigma_difference(sigma_list=sigma, difference=0)
 
     # change list of list to matrices
     u_matrix = Matrix(u_matrix).t

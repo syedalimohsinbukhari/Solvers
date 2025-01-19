@@ -161,28 +161,29 @@ class Interpolation:
 
         result = [(difference_table[i] * p_value[i]) / factorial(i + 1) for i in range(iter_condition)]
         result.insert(0, initial_value)
-        result = sum(round_list_(result, round_to))
+        result = sum(round_list_(original_list=result, n_decimal=round_to))
 
         return result
 
 
-@doc_inherit(Interpolation, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation, style=DOC_STYLE)
 class FwdInterpolation(Interpolation):
     """Forward Interpolation class specializes in implementing the forward difference method."""
 
 
-@doc_inherit(Interpolation, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation, style=DOC_STYLE)
 class BkwInterpolation(Interpolation):
     """Backward Interpolation class specializes in implementing the backward difference method."""
 
 
-@doc_inherit(Interpolation, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation, style=DOC_STYLE)
 class DividedInterpolation(Interpolation):
     """Divided Interpolation class specializes in implementing the divided difference method."""
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                  function_values: OptList = None, n_decimal: int = N_DECIMAL):
-        super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
+        super().__init__(given_values=given_values, value_to_approximate=value_to_approximate, function=function,
+                         function_values=function_values, n_decimal=n_decimal)
 
     def difference_table(self) -> FList:
         given, func_values = self.given_values, self.function_values
@@ -216,7 +217,7 @@ class DividedInterpolation(Interpolation):
         return result
 
 
-@doc_inherit(Interpolation, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation, style=DOC_STYLE)
 class LagrangeInterpolation(Interpolation):
     """Class to implement Lagrange interpolation technique.
 
@@ -229,7 +230,8 @@ class LagrangeInterpolation(Interpolation):
 
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                  function_values: OptList = None, n_decimal: int = N_DECIMAL):
-        super().__init__(given_values, value_to_approximate, function, function_values, n_decimal)
+        super().__init__(given_values=given_values, value_to_approximate=value_to_approximate, function=function,
+                         function_values=function_values, n_decimal=n_decimal)
 
     def difference_table(self) -> None:
         """Difference table not implemented for Lagrange Interpolation Method."""

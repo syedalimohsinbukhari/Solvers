@@ -93,8 +93,8 @@ def lu_doolittle(matrix_a: MatOrLList, n_decimal: IFloat = N_DECIMAL) -> LMat:
                     upper_sum += (lower_matrix[i][k] * upper_matrix[k][j])
                 upper_matrix[i][j] = matrix_a[i][j] - upper_sum
 
-    lower_matrix = round_matrix_(lower_matrix, n_decimal)
-    upper_matrix = round_matrix_(upper_matrix, n_decimal)
+    lower_matrix = round_matrix_(matrix=lower_matrix, n_decimal=n_decimal)
+    upper_matrix = round_matrix_(matrix=upper_matrix, n_decimal=n_decimal)
 
     return [lower_matrix, upper_matrix]
 
@@ -118,10 +118,7 @@ def _lu_sanity_check(matrix_a: Matrix):
 
     n_rows, n_cols = matrix_a.n_rows, matrix_a.n_cols
 
-    # if not matrix_a._is_symmetric():
-    #     raise NotASquareMatrix('The given matrix is not square, LU decomposition cannot be performed.')
-
-    lower_matrix = null_matrix(n_rows, n_cols)
-    upper_matrix = null_matrix(n_rows, n_cols)
+    lower_matrix = null_matrix(n_rows=n_rows, n_cols=n_cols)
+    upper_matrix = null_matrix(n_rows=n_rows, n_cols=n_cols)
 
     return matrix_a, lower_matrix, upper_matrix, n_rows

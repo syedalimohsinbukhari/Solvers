@@ -166,10 +166,10 @@ class SingleVariableNewtonCotesIntegrators:
 
         vals = self._value_table()
 
-        x_values = round_list_(vals[0], n_decimal)
-        y_values = round_list_(vals[1], n_decimal)
+        x_values = round_list_(original_list=vals[0], n_decimal=n_decimal)
+        y_values = round_list_(original_list=vals[1], n_decimal=n_decimal)
 
-        DataTable(x_values, y_values).print_table()
+        DataTable(x=x_values, y=y_values).print_table()
 
     def solve(self) -> IFloat:
         """
@@ -197,7 +197,7 @@ class SingleVariableNewtonCotesIntegrators:
         return normalizer * sum(f_list)
 
 
-@doc_inherit(SingleVariableNewtonCotesIntegrators.__init__, style=DOC_STYLE)
+@doc_inherit(parent=SingleVariableNewtonCotesIntegrators.__init__, style=DOC_STYLE)
 def solve_helper(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False,
                  method: str = 'trapezoid'):
     """
@@ -208,7 +208,8 @@ def solve_helper(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, 
         The numerical result of integration.
     """
 
-    solver = SingleVariableNewtonCotesIntegrators(function, x_0, x_n, composites, method)
+    solver = SingleVariableNewtonCotesIntegrators(function=function, x_0=x_0, x_n=x_n, composites=composites,
+                                                  integration_method=method)
 
     if get_table:
         solver.value_table()

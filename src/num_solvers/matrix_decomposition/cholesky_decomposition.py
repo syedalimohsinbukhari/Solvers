@@ -40,7 +40,7 @@ def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
     matrix_ = cholesky_sanity_check(matrix)
 
     n_rows, n_cols = matrix_.n_rows, matrix_.n_cols
-    matrix_l = null_matrix(n_rows, n_cols)
+    matrix_l = null_matrix(n_rows=n_rows, n_cols=n_cols)
 
     matrix_l[0][0] = sqrt(matrix_[0][0])
 
@@ -61,7 +61,7 @@ def cholesky_decomposition(matrix: Matrix or LList) -> LMat:
 
 
 # taken from https://services.math.duke.edu/~jdr/2021f-218/materials/week11.pdf
-@doc_inherit(cholesky_decomposition, style=DOC_STYLE)
+@doc_inherit(parent=cholesky_decomposition, style=DOC_STYLE)
 def cholesky_ldl(matrix: Matrix or LList) -> LMat:
     """
 

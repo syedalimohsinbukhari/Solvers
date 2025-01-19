@@ -56,7 +56,7 @@ def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: 
     root_ = [x_guess]
 
     while True:
-        poly = p_val(polynomial, x_guess)
+        poly = p_val(p=polynomial, x=x_guess)
 
         if abs(poly) < tolerance:
             break
@@ -64,8 +64,8 @@ def laguerre_method(polynomial: FList, degree_of_polynomial: int = -1, x_guess: 
         if len(root_) > 20 and sub(*root_[-2:][::-1]) < tolerance:
             break
 
-        poly_derivative = p_val(p_der(polynomial), x_guess)
-        poly_double_derivative = p_val(p_der(polynomial, 2), x_guess)
+        poly_derivative = p_val(p=p_der(polynomial), x=x_guess)
+        poly_double_derivative = p_val(p=p_der(p=polynomial, m=2), x=x_guess)
 
         g_ = poly_derivative / poly
         h_ = g_**2 - (poly_double_derivative / poly)
@@ -110,31 +110,31 @@ def segmented_roots(polynomial: List, x_guess: OptList = None,
         if len(polynomial) - 1 != degree_of_polynomial:
             raise DegreeOfPolynomialNotCorrect('The provided polynomial and degree of polynomial do not match')
 
-    x_values = np.linspace(x_guess[0], x_guess[1], num_segments)
+    x_values = np.linspace(start=x_guess[0], stop=x_guess[1], num=num_segments)
     all_roots = []
 
     for x_0 in x_values:
-        root = laguerre_method(polynomial,
-                               degree_of_polynomial,
-                               x_0,
+        root = laguerre_method(polynomial=polynomial,
+                               degree_of_polynomial=degree_of_polynomial,
+                               x_guess=x_0,
                                tolerance=tolerance)
 
         if all(abs(root - existing_root) > tolerance for existing_root in all_roots):
             all_roots.append(root)
 
-    unique_roots = np.fromiter(all_roots, dtype=complex)
+    unique_roots = np.fromiter(iter=all_roots, dtype=complex)
 
     new_roots = []
     for i, root_ in enumerate(unique_roots):
-        if np.allclose(np.imag(root_), 0):
+        if np.allclose(a=np.imag(root_), b=0):
             new_roots.append(np.real(root_))
         else:
             new_roots.extend([root_, np.conj(root_)])
 
-    new_roots = round_list_(new_roots, n_decimal)
+    new_roots = round_list_(original_list=new_roots, n_decimal=n_decimal)
 
     while len(new_roots) != degree_of_polynomial:
-        new_roots = round_list_(new_roots, n_decimal - 1)
+        new_roots = round_list_(original_list=new_roots, n_decimal=n_decimal - 1)
         n_decimal -= 1
         if n_decimal == degree_of_polynomial:
             break
@@ -166,9 +166,9 @@ def generate_random_polynomial(degree: int, low: int = -10, high: int = 10) -> F
         A list of coefficients representing the random polynomial.
     """
 
-    coefficients = np.random.uniform(low, high, degree + 1)
+    coefficients = np.random.uniform(low=low, high=high, size=degree + 1)
 
     while coefficients[0] == 0:
-        coefficients[0] = np.random.uniform(low, high)
+        coefficients[0] = np.random.uniform(low=low, high=high)
 
     return list(coefficients)

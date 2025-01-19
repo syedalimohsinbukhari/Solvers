@@ -33,7 +33,7 @@ def givens_rotation(matrix: Matrix, overwrite: bool = False) -> LMat:
             2. The triangularized matrix.
     """
 
-    matrix_ = matrix_copy(matrix, overwrite)
+    matrix_ = matrix_copy(matrix=matrix, overwrite=overwrite)
     givens_matrix = identity_matrix(matrix_.n_rows)
 
     for i in range(matrix_.n_rows - 1):

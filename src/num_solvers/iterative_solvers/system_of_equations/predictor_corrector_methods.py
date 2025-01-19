@@ -51,7 +51,7 @@ def trapezoidal_method(ode: Func, x_current: IFloat, y_current: IFloat, x_next: 
         f_p = ode(x_next, y_next)
         return y_current + (step_size / 2) * (f_n + f_p)
 
-    return round_value_(_trapezoidal(), n_decimal)
+    return round_value_(original_value=_trapezoidal(), n_decimal=n_decimal)
 
 
 def euler_method(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloat = 0.1, x_find: OptIFloat = None,
@@ -93,15 +93,15 @@ def euler_method(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFl
         y_values_ = y_values[i - 1] + step_size * ode(x_values[i - 1], y_values[i - 1])
         x_values_ = x_values[i - 1] + step_size
 
-        y_values[i] = round_value_(y_values_, n_decimal)
-        x_values[i] = round_value_(x_values_, n_decimal)
+        y_values[i] = round_value_(original_value=y_values_, n_decimal=n_decimal)
+        x_values[i] = round_value_(original_value=x_values_, n_decimal=n_decimal)
 
         x_initial += step_size
 
     return [x_values, y_values] if full_result else y_values[-1]
 
 
-@doc_inherit(euler_method, style=DOC_STYLE)
+@doc_inherit(parent=euler_method, style=DOC_STYLE)
 def euler_trapezoidal(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size: IFloat = 0.1,
                       x_find: OptIFloat = None, n_decimal: int = 6, full_result: bool = False):
     """Solve a first-order ordinary differential equation using the Euler method with trapezoidal correction."""
@@ -111,7 +111,8 @@ def euler_trapezoidal(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size
 
     num_steps = int((x_find - x_initial) / step_size) + 1
 
-    x_values = linear_list(x_initial, x_initial + (num_steps * step_size), num_steps + 1, n_decimal=n_decimal)
+    x_values = linear_list(start=x_initial, stop=x_initial + (num_steps * step_size), n_elements=num_steps + 1,
+                           n_decimal=n_decimal)
 
     y_values = [0] * len(x_values)
 
@@ -119,11 +120,15 @@ def euler_trapezoidal(ode: Func, x_initial: IFloat, y_initial: IFloat, step_size
     y_values[0], predictor_values[0], corrector_values[0] = [y_initial] * 3
 
     for i in range(1, num_steps + 1):
-        predictor = euler_method(ode, x_values[i - 1], corrector_values[i - 1], step_size, n_decimal)
-        predictor_values[i] = round_value_(predictor, n_decimal)
+        predictor = euler_method(ode=ode,
+                                 x_initial=x_values[i - 1], y_initial=corrector_values[i - 1],
+                                 step_size=step_size, x_find=n_decimal)
+        predictor_values[i] = round_value_(original_value=predictor, n_decimal=n_decimal)
 
-        corrector = trapezoidal_method(ode, x_values[i - 1], y_values[i - 1], x_values[i], predictor_values[i],
-                                       step_size, n_decimal)
+        corrector = trapezoidal_method(ode=ode,
+                                       x_current=x_values[i - 1], y_current=y_values[i - 1],
+                                       x_next=x_values[i], y_next=predictor_values[i],
+                                       step_size=step_size, n_decimal=n_decimal)
         corrector_values[i] = corrector
         y_values[i] = corrector
 

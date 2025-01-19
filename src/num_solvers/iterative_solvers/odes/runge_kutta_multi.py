@@ -61,7 +61,7 @@ def rk2_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.
     initial_conditions = np.array(initial_conditions) if isinstance(initial_conditions, list) else initial_conditions
 
     num_odes = len(odes) + 1
-    num_steps = num_steps_(initial_conditions.tolist()[0], x_max, step_size)
+    num_steps = num_steps_(x_initial=initial_conditions.tolist()[0], x_max=x_max, step_size=step_size)
 
     result = np.zeros((num_steps, num_odes))
     result[0] = initial_conditions
@@ -69,21 +69,27 @@ def rk2_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.
     for i in range(1, num_steps):
         quantities = result[i - 1]
 
-        temp_ = _k_0(num_odes, odes, quantities, step_size, rk_type=2)
-        temp_ = _k_n(odes, quantities, num_odes, step_size, temp_, index=0)
+        temp_ = _k_0(odes=odes,
+                     quantities=quantities, num_odes=num_odes,
+                     step_size=step_size, rk_type=2)
+        temp_ = _k_n(odes=odes,
+                     quantities=quantities, num_odes=num_odes,
+                     step_size=step_size, temp_=temp_, index=0)
 
-        result = _multi_rk_result(num_odes, quantities, step_size, i, temp_, result, rk_type=2, n_decimal=n_decimal)
+        result = _multi_rk_result(quantities=quantities, num_odes=num_odes,
+                                  temp_=temp_, step_size=step_size, result=result,
+                                  rk_type=2, index=i, n_decimal=n_decimal)
 
     return [result[:, i] for i in range(num_odes)]
 
 
-@doc_inherit(rk2_multi_ode, style=DOC_STYLE)
+@doc_inherit(parent=rk2_multi_ode, style=DOC_STYLE)
 def rk3_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.1, x_max: IFloat = 1.0,
                   n_decimal: IFloat = 9) -> LList:
     """Solve a system of first-order ordinary differential equations using the Runge-Kutta (RK3) method."""
 
     num_odes = len(odes) + 1
-    num_steps = num_steps_(initial_conditions[0], x_max, step_size)
+    num_steps = num_steps_(x_initial=initial_conditions[0], x_max=x_max, step_size=step_size)
 
     result = np.zeros((num_steps, num_odes))
     result[0] = initial_conditions
@@ -91,7 +97,9 @@ def rk3_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.
     for i in range(1, num_steps):
         quantities = result[i - 1]
 
-        temp_ = _k_0(num_odes, odes, quantities, step_size, rk_type=3)
+        temp_ = _k_0(odes=odes,
+                     quantities=quantities, num_odes=num_odes,
+                     step_size=step_size, rk_type=3)
 
         temp__ = [quantities[0] + step_size / 2] + list(quantities[1:] + temp_[0, :] / 2)
         temp_[1, :] = step_size * np.array([odes[j](*temp__) for j in range(num_odes - 1)])
@@ -99,18 +107,20 @@ def rk3_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.
         temp__ = [quantities[0] + step_size] + list(quantities[1:] - temp_[0, :] + 2 * temp_[1, :])
         temp_[2, :] = step_size * np.array([odes[j](*temp__) for j in range(num_odes - 1)])
 
-        result = _multi_rk_result(num_odes, quantities, step_size, i, temp_, result, rk_type=3, n_decimal=n_decimal)
+        result = _multi_rk_result(quantities=quantities, num_odes=num_odes,
+                                  temp_=temp_, step_size=step_size, result=result,
+                                  rk_type=3, index=i, n_decimal=n_decimal)
 
     return [result[:, i].tolist() for i in range(num_odes)]
 
 
-@doc_inherit(rk2_multi_ode, style=DOC_STYLE)
+@doc_inherit(parent=rk2_multi_ode, style=DOC_STYLE)
 def rk4_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.1, x_max: IFloat = 1.0,
                   n_decimal: IFloat = 9) -> LList:
     """Solve a system of first-order ordinary differential equations using the Runge-Kutta (RK4) method."""
 
     num_odes = len(odes) + 1
-    num_steps = num_steps_(initial_conditions[0], x_max, step_size)
+    num_steps = num_steps_(x_initial=initial_conditions[0], x_max=x_max, step_size=step_size)
 
     result = np.zeros((num_steps, num_odes))
     result[0] = initial_conditions
@@ -118,20 +128,26 @@ def rk4_multi_ode(odes: LFunc, initial_conditions: FList, step_size: IFloat = 0.
     for i in range(1, num_steps):
         quantities = result[i - 1]
 
-        temp_ = _k_0(num_odes, odes, quantities, step_size, 4)
+        temp_ = _k_0(odes=odes,
+                     quantities=quantities, num_odes=num_odes,
+                     step_size=step_size, rk_type=4)
 
         for k in range(1, 3):
             temp__ = [quantities[0] + step_size / 2] + list(quantities[1:] + temp_[k - 1, :] / 2)
             temp_[k, :] = step_size * np.array([odes[j](*temp__) for j in range(num_odes - 1)])
 
-        temp_ = _k_n(odes, quantities, num_odes, step_size, temp_, 2)
+        temp_ = _k_n(odes=odes,
+                     quantities=quantities, num_odes=num_odes,
+                     step_size=step_size, temp_=temp_, index=2)
 
-        result = _multi_rk_result(num_odes, quantities, step_size, i, temp_, result, rk_type=4, n_decimal=n_decimal)
+        result = _multi_rk_result(quantities=quantities, num_odes=num_odes,
+                                  temp_=temp_, step_size=step_size, result=result,
+                                  rk_type=4, index=i, n_decimal=n_decimal)
 
     return [result[:, i].tolist() for i in range(num_odes)]
 
 
-def _k_0(num_odes: int, odes: LFunc, quantities: NdArray, step_size: IFloat, rk_type: int) -> NdArray:
+def _k_0(odes: LFunc, quantities: NdArray, num_odes: int, step_size: IFloat, rk_type: int) -> NdArray:
     """
     Computes the k0 parameter for RK methods.
 
@@ -158,7 +174,7 @@ def _k_0(num_odes: int, odes: LFunc, quantities: NdArray, step_size: IFloat, rk_
     return k0_
 
 
-@doc_inherit(_k_0, style=DOC_STYLE)
+@doc_inherit(parent=_k_0, style=DOC_STYLE)
 def _k_n(odes: LFunc, quantities: NdArray, num_odes: int, step_size: IFloat, temp_: NdArray, index: int) -> NdArray:
     """
     Compute the kn parameter for RK methods.
@@ -180,8 +196,8 @@ def _k_n(odes: LFunc, quantities: NdArray, num_odes: int, step_size: IFloat, tem
     return temp_
 
 
-def _multi_rk_result(num_odes: int, quantities: np.ndarray, step_size: IFloat, index: int, temp_: np.ndarray,
-                     result: np.ndarray, rk_type: int, n_decimal: int) -> np.ndarray:
+def _multi_rk_result(quantities: np.ndarray, num_odes: int, temp_: np.ndarray, step_size: IFloat,
+                     result: np.ndarray, rk_type: int, index: int, n_decimal: int) -> np.ndarray:
     """
     Returns the RK method results using vectorized operations in NumPy.
 
@@ -209,7 +225,7 @@ def _multi_rk_result(num_odes: int, quantities: np.ndarray, step_size: IFloat, i
     np.ndarray
         The result of RK method calculations.
     """
-    result[index, 0] = np.round(quantities[0] + step_size, n_decimal)
+    result[index, 0] = np.round(a=quantities[0] + step_size, decimals=n_decimal)
 
     if rk_type == 2:
         coefficients = np.array([1 / 2, 1 / 2])
@@ -221,6 +237,6 @@ def _multi_rk_result(num_odes: int, quantities: np.ndarray, step_size: IFloat, i
     for j in range(1, num_odes):
         temp__ = temp_[:, j - 1]
         result[index, j] = quantities[j] + np.sum(coefficients * temp__)
-        result[index, j] = np.round(result[index, j], n_decimal)
+        result[index, j] = np.round(a=result[index, j], decimals=n_decimal)
 
     return result

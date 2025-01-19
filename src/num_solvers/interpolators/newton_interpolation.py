@@ -16,7 +16,7 @@ from .. import DOC_STYLE, FList, IFloat, N_DECIMAL, OptFunc, OptList
 from ..__backend.interpolation_ import BkwInterpolation, DividedInterpolation, FwdInterpolation, Interpolation
 
 
-@doc_inherit(Interpolation.__init__, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation.__init__, style=DOC_STYLE)
 def newton_forward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                                  function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """
@@ -27,23 +27,26 @@ def newton_forward_interpolation(given_values: FList, value_to_approximate: IFlo
         The interpolated result.
     """
 
-    interpolation = FwdInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
+    interpolation = FwdInterpolation(given_values=given_values, value_to_approximate=value_to_approximate,
+                                     function=function, function_values=function_values, n_decimal=n_decimal)
     return interpolation.interpolate()
 
 
-@doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
+@doc_inherit(parent=newton_forward_interpolation, style=DOC_STYLE)
 def newton_backward_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                                   function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """Perform backwards difference interpolation."""
 
-    interpolation = BkwInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
+    interpolation = BkwInterpolation(given_values=given_values, value_to_approximate=value_to_approximate,
+                                     function=function, function_values=function_values, n_decimal=n_decimal)
     return interpolation.interpolate()
 
 
-@doc_inherit(newton_forward_interpolation, style=DOC_STYLE)
+@doc_inherit(parent=newton_forward_interpolation, style=DOC_STYLE)
 def divided_difference_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                                      function_values: OptList = None, n_decimal: int = N_DECIMAL) -> IFloat:
     """Perform divided difference interpolation."""
 
-    interpolation = DividedInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
+    interpolation = DividedInterpolation(given_values=given_values, value_to_approximate=value_to_approximate,
+                                         function=function, function_values=function_values, n_decimal=n_decimal)
     return interpolation.interpolate()

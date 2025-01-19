@@ -19,7 +19,7 @@ GJ_OUTPUT = Union[np.ndarray, Tuple[np.ndarray, List[np.ndarray]]]
 INITIAL_GUESS = Tuple[float, float, float]
 
 
-@doc_inherit(SysEqnSolver.__init__, style=DOC_STYLE)
+@doc_inherit(parent=SysEqnSolver.__init__, style=DOC_STYLE)
 def gauss_jacobi(system_of_equations: LList,
                  solution: FList,
                  n_iter: int = 500,
@@ -48,6 +48,7 @@ def gauss_jacobi(system_of_equations: LList,
     >>> GJ_Solver = gauss_jacobi(equations, solutions)
     """
 
-    gj = GaussJacobi(system_of_equations, solution, n_iter, tolerance, initial_guess, n_decimal)
+    gj = GaussJacobi(system_of_equations=system_of_equations, solution=solution, n_iter=n_iter, tolerance=tolerance,
+                     initial_guess=initial_guess, n_decimal=n_decimal)
 
     return gj.solve() if not get_solution_set else (gj.solve(), gj.solution_set)

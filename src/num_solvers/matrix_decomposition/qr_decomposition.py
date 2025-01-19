@@ -34,16 +34,16 @@ def qr_decomposition(matrix: MatOrLList) -> LMat:
 
     u_matrix = Matrix([[i[j] for i in matrix.elements] for j in range(matrix.n_cols)])
 
-    v_matrix = null_matrix(1, matrix.n_cols).elements
-    q_matrix = null_matrix(1, matrix.n_cols).elements
-    r_matrix = null_matrix(matrix.n_rows, matrix.n_cols)
+    v_matrix = null_matrix(n_rows=1, n_cols=matrix.n_cols).elements
+    q_matrix = null_matrix(n_rows=1, n_cols=matrix.n_cols).elements
+    r_matrix = null_matrix(n_rows=matrix.n_rows, n_cols=matrix.n_cols)
 
     v_matrix[0] = u_matrix[0]
 
     temp_ = []
     for elements in range(1, matrix.n_cols):
         for k in range(elements):
-            dot_ = u_matrix[elements].dot(v_matrix[k]) / vector_mag(v_matrix[k], True)
+            dot_ = u_matrix[elements].dot(v_matrix[k]) / vector_mag(vector=v_matrix[k], squared=True)
             temp_.append(dot_ * v_matrix[k])
         v_matrix[elements] = u_matrix[elements] - sum(temp_)
         temp_ = []

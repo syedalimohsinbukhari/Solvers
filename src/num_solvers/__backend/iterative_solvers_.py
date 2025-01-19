@@ -62,9 +62,9 @@ class SysEqnSolver:
             return abs(val1) >= abs(val2) + abs(val3)
 
         sys_eq = self.system_of_equations
-        cond1 = _auxiliary(sys_eq[0][0], sys_eq[0][1], sys_eq[0][2])
-        cond2 = _auxiliary(sys_eq[1][1], sys_eq[1][0], sys_eq[1][2])
-        cond3 = _auxiliary(sys_eq[2][2], sys_eq[2][0], sys_eq[2][1])
+        cond1 = _auxiliary(val1=sys_eq[0][0], val2=sys_eq[0][1], val3=sys_eq[0][2])
+        cond2 = _auxiliary(val1=sys_eq[1][1], val2=sys_eq[1][0], val3=sys_eq[1][2])
+        cond3 = _auxiliary(val1=sys_eq[2][2], val2=sys_eq[2][0], val3=sys_eq[2][1])
 
         if cond1 and cond2 and cond3:
             pass
@@ -145,7 +145,7 @@ class SysEqnSolver:
             if self.__break_iteration():
                 break
 
-        return round_list_(self.initial_guess, n_decimal)
+        return round_list_(original_list=self.initial_guess, n_decimal=n_decimal)
 
 
 class GaussJacobi(SysEqnSolver):

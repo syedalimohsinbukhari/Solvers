@@ -87,16 +87,17 @@ class SPLINE:
         """Interpolates the spline equations."""
 
 
-@doc_inherit(SPLINE, style=DOC_STYLE)
+@doc_inherit(parent=SPLINE, style=DOC_STYLE)
 class LinearSpline(SPLINE):
     """Implements the linear spline interpolation."""
 
-    @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
+    @doc_inherit(parent=SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                  function_values: OptList = None):
         """Initializes the linear spline interpolation class."""
 
-        super().__init__(given_values, value_to_approximate, function, function_values)
+        super().__init__(given_values=given_values, value_to_approximate=value_to_approximate, function=function,
+                         function_values=function_values)
 
     def _solve(self, give_values: bool = False) -> IFloatOrFList:
         """
@@ -145,18 +146,20 @@ class LinearSpline(SPLINE):
             The interpolated value.
         """
 
-        return _get_solution(self.given_values, self.value_to_approximate, self._solve())
+        return _get_solution(given_values=self.given_values, value_to_approximate=self.value_to_approximate,
+                             solution=self._solve())
 
 
-@doc_inherit(SPLINE, style=DOC_STYLE)
+@doc_inherit(parent=SPLINE, style=DOC_STYLE)
 class QuadraticSpline(SPLINE):
     """Implements the quadratic spline interpolation."""
 
-    @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
+    @doc_inherit(parent=SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, last_equation='first'):
         """Initializes the quadratic spline interpolation class."""
 
-        super().__init__(given_values, value_to_approximate, function, function_values)
+        super().__init__(given_values=given_values, value_to_approximate=value_to_approximate, function=function,
+                         function_values=function_values)
         self.last_equation = last_equation
 
     def _solve(self):
@@ -167,9 +170,11 @@ class QuadraticSpline(SPLINE):
         matrix_a = [[0] * len_mat for _ in range(len_mat)]
         matrix_b = [0] * len_mat
 
-        i_index = _fill_initial_splines(given, fn_values, matrix_a, matrix_b, 0, 2)
-        combined = _generate_middle_point_equations(given, 2)
-        _fill_middle_splines(combined, i_index, matrix_a, n_given, 2)
+        i_index = _fill_initial_splines(given_values=given, function_values=fn_values, matrix_a=matrix_a,
+                                        matrix_b=matrix_b, i_index=0, deg_spline=2)
+        combined = _generate_middle_point_equations(given_values=given, deg_spline=2)
+        _fill_middle_splines(combined_values=combined, i_index1=i_index, matrix_a=matrix_a, n_given=n_given,
+                             deg_spline=2)
 
         if self.last_equation == 'first':
             matrix_a[-1][0] = 1
@@ -178,7 +183,7 @@ class QuadraticSpline(SPLINE):
         else:
             raise WrongBoundaryEquation('Possible values are \'first\' or \'last\'.')
 
-        solution = _matrix_solver(matrix_a, matrix_b, n_given - 1, 2)
+        solution = _matrix_solver(matrix_a=matrix_a, matrix_b=matrix_b, n_given=n_given - 1, deg_spline=2)
 
         return solution
 
@@ -205,7 +210,7 @@ class QuadraticSpline(SPLINE):
         """
 
         approx = self.value_to_approximate
-        solution = _get_solution(self.given_values, approx, self._solve())
+        solution = _get_solution(given_values=self.given_values, value_to_approximate=approx, solution=self._solve())
 
         if n_derivative == 0:
             return solution[0] * approx**2 + solution[1] * approx + solution[2]
@@ -217,15 +222,16 @@ class QuadraticSpline(SPLINE):
             return 0
 
 
-@doc_inherit(SPLINE, style=DOC_STYLE)
+@doc_inherit(parent=SPLINE, style=DOC_STYLE)
 class NaturalCubicSpline(SPLINE):
     """Implements the natural cubic spline interpolation."""
 
-    @doc_inherit(SPLINE.__init__, style=DOC_STYLE)
+    @doc_inherit(parent=SPLINE.__init__, style=DOC_STYLE)
     def __init__(self, given_values, value_to_approximate, function=None, function_values=None, last_equation='first'):
         """Initializes the natural cubic spline interpolation class."""
 
-        super().__init__(given_values, value_to_approximate, function, function_values)
+        super().__init__(given_values=given_values, value_to_approximate=value_to_approximate, function=function,
+                         function_values=function_values)
         self.last_equation = last_equation
 
     def _solve(self):
@@ -236,19 +242,22 @@ class NaturalCubicSpline(SPLINE):
         matrix_a = [[0] * len_mat for _ in range(len_mat)]
         matrix_b = [0] * len_mat
 
-        i_index1 = _fill_initial_splines(given, fn_values, matrix_a, matrix_b, 0, 3)
-        combined = _generate_middle_point_equations(given, 3)
-        combined_der = _generate_middle_point_equations(given, -1)
+        i_index1 = _fill_initial_splines(given_values=given, function_values=fn_values, matrix_a=matrix_a,
+                                         matrix_b=matrix_b, i_index=0, deg_spline=3)
+        combined = _generate_middle_point_equations(given_values=given, deg_spline=3)
+        combined_der = _generate_middle_point_equations(given_values=given, deg_spline=-1)
 
-        i_index1 = _fill_middle_splines(combined, i_index1, matrix_a, n_given, 3)
-        _fill_middle_splines(combined_der, i_index1, matrix_a, n_given, 3)
+        i_index1 = _fill_middle_splines(combined_values=combined, i_index1=i_index1, matrix_a=matrix_a, n_given=n_given,
+                                        deg_spline=3)
+        _fill_middle_splines(combined_values=combined_der, i_index1=i_index1, matrix_a=matrix_a, n_given=n_given,
+                             deg_spline=3)
 
         matrix_a[-2][0] = 6 * matrix_a[0][2]
         matrix_a[-2][1] = 2 * matrix_a[0][3]
         matrix_a[-1][-4] = 6 * matrix_a[2 * (n_given - 1) - 1][-2]
         matrix_a[-1][-3] = 2 * matrix_a[2 * (n_given - 1) - 1][-1]
 
-        solution = _matrix_solver(matrix_a, matrix_b, n_given - 1, 3)
+        solution = _matrix_solver(matrix_a=matrix_a, matrix_b=matrix_b, n_given=n_given - 1, deg_spline=3)
 
         return solution
 
@@ -275,7 +284,7 @@ class NaturalCubicSpline(SPLINE):
         """
 
         approx = self.value_to_approximate
-        solution = _get_solution(self.given_values, approx, self._solve())
+        solution = _get_solution(given_values=self.given_values, value_to_approximate=approx, solution=self._solve())
 
         if n_derivative == 0:
             return solution[0] * approx**3 + solution[1] * approx**2 + solution[2] * approx + solution[3]
@@ -439,9 +448,9 @@ def _matrix_solver(matrix_a: LList, matrix_b: FList, n_given: IFloat, deg_spline
     """
 
     # solve using numpy solver
-    solution = np.linalg.solve(np.array(matrix_a), np.array(matrix_b))
+    solution = np.linalg.solve(a=np.array(matrix_a), b=np.array(matrix_b))
     # reshape according to the data
-    solution = np.reshape(solution, (n_given, deg_spline + 1))
+    solution = np.reshape(a=solution, newshape=(n_given, deg_spline + 1))
     # convert all very small values to 0
     solution[np.abs(solution) < TOLERANCE] = 0
 

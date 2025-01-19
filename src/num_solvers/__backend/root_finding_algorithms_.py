@@ -20,7 +20,7 @@ def div_diff(function: Func, xs_: FList) -> IFloatOrFList:
         a, b = xs_
         return (function(a) - function(b)) / (a - b)
     else:
-        f1 = div_diff(function, xs_[1:])
-        f2 = div_diff(function, xs_[0:-1])
+        f1 = div_diff(function=function, xs_=xs_[1:])
+        f2 = div_diff(function=function, xs_=xs_[0:-1])
 
         return (f1 - f2) / (xs_[-1] - xs_[0])

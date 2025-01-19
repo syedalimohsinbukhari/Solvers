@@ -15,7 +15,7 @@ from .. import DOC_STYLE, FList, IFloat, N_DECIMAL, OptFunc, OptList
 from ..__backend.interpolation_ import Interpolation, LagrangeInterpolation
 
 
-@doc_inherit(Interpolation.__init__, style=DOC_STYLE)
+@doc_inherit(parent=Interpolation.__init__, style=DOC_STYLE)
 def lagrange_interpolation(given_values: FList, value_to_approximate: IFloat, function: OptFunc = None,
                            function_values: OptList = None, n_decimal: int = N_DECIMAL):
     """Performs interpolation via lagrange method.
@@ -25,6 +25,7 @@ def lagrange_interpolation(given_values: FList, value_to_approximate: IFloat, fu
         The interpolated result.
     """
 
-    interpolator = LagrangeInterpolation(given_values, value_to_approximate, function, function_values, n_decimal)
+    interpolator = LagrangeInterpolation(given_values=given_values, value_to_approximate=value_to_approximate,
+                                         function=function, function_values=function_values, n_decimal=n_decimal)
 
     return interpolator.interpolate()

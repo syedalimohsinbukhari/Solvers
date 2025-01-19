@@ -41,10 +41,10 @@ def rayleigh_quotient_method(matrix: MatOrLList, n_iter: int = 50, initial_guess
     https://www-users.cse.umn.edu/~olver/aims_/qr.pdf
     """
 
-    identity_ = identity_matrix(matrix.n_rows, matrix.n_cols)
+    identity_ = identity_matrix(n_rows=matrix.n_rows, n_cols=matrix.n_cols)
 
-    b_matrix = null_matrix(n_iter, 1).elements
-    mu_matrix = null_matrix(n_iter, 1).elements
+    b_matrix = null_matrix(n_rows=n_iter, n_cols=1).elements
+    mu_matrix = null_matrix(n_rows=n_iter, n_cols=1).elements
 
     b_matrix[0], mu_matrix[0] = Matrix([[1]] * matrix.n_rows), initial_guess
 

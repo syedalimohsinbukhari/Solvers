@@ -67,14 +67,14 @@ def gauss_seidel(matrix: Matrix, solution: FList, initial_guess: FList, max_iter
     return initial_guess[-1]
 
 
-@doc_inherit(gauss_seidel, style=DOC_STYLE)
+@doc_inherit(parent=gauss_seidel, style=DOC_STYLE)
 def gauss_jacobi(matrix: Matrix, solution: FList, initial_guess: FList, max_iterations: int = MAX_ITER,
                  tolerance: int = TOLERANCE) -> Matrix:
     """Solves a system of linear equations using the Gauss-Jacobi iterative method."""
 
-    matrix_, solution, initial_guess = gauss_methods_sanity_check(matrix,
-                                                                  solution,
-                                                                  initial_guess)
+    matrix_, solution, initial_guess = gauss_methods_sanity_check(matrix=matrix,
+                                                                  solution=solution,
+                                                                  initial_guess=initial_guess)
 
     matrix_l, matrix_d, matrix_u = upper_diagonal_lower_matrices(matrix_)
 
@@ -98,9 +98,9 @@ def weighted_gauss_jacobi(matrix: Matrix, solution: FList, initial_guess: FList,
                           tolerance: int = TOLERANCE, weight: IFloat = 2 / 3) -> Matrix:
     """Solves a system of linear equations using the weighted Gauss-Jacobi iterative method."""
 
-    matrix_, solution, initial_guess = gauss_methods_sanity_check(matrix,
-                                                                  solution,
-                                                                  initial_guess)
+    matrix_, solution, initial_guess = gauss_methods_sanity_check(matrix=matrix,
+                                                                  solution=solution,
+                                                                  initial_guess=initial_guess)
 
     matrix_l, matrix_d, matrix_u = upper_diagonal_lower_matrices(matrix_)
 

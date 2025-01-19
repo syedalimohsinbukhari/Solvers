@@ -136,10 +136,12 @@ def qr_decomposition_householder(matrix: MatOrLList, overwrite_original: bool = 
 
     for i in range(1, cond):
         f1 = matrix_.n_rows - h_matrices[i].n_rows
-        h_matrices[i] = populate_identity_matrix(h_matrices[i], matrix_.n_rows, matrix_.n_rows, f1, f1)
+        h_matrices[i] = populate_identity_matrix(sub_matrix=h_matrices[i],
+                                                 n_rows=matrix_.n_rows, n_cols=matrix_.n_rows,
+                                                 s_row=f1, s_col=f1)
 
-    q_matrix = reduce(mul, h_matrices)
-    r_matrix = reduce(mul, h_matrices[::-1] + [matrix_])
+    q_matrix = reduce(function=mul, sequence=h_matrices)
+    r_matrix = reduce(function=mul, sequence=h_matrices[::-1] + [matrix_])
 
     q_matrix = reduce_to_zeros(q_matrix)
     r_matrix = reduce_to_zeros(r_matrix)

@@ -30,9 +30,8 @@ from ..__backend.matrix_ import round_matrix_
 # TODO: Something might be wrong with steepest_descent
 
 # taken from https://www.phys.uconn.edu/~rozman/Courses/m3511_18s/downloads/steepest-descent.pdf
-def steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: MatOrLList, n_iterations: int = 10_000,
+def steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: MatOrLList, n_iterations: int = 1_000,
                      tolerance: IFloat = TOLERANCE, n_decimal: int = N_DECIMAL) -> Matrix:
-
     """
     Solve a linear system using the steepest descent method.
 
@@ -78,13 +77,13 @@ def steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: Ma
         temp_ = vector_mag(new_guess[iter_] - new_guess[iter_ - 1])
 
         if temp_ < tolerance:
-            return round_matrix_(new_guess[iter_], n_decimal)
+            return round_matrix_(matrix=new_guess[iter_], n_decimal=n_decimal)
 
-    return round_matrix_(new_guess[-1], n_decimal)
+    return round_matrix_(matrix=new_guess[-1], n_decimal=n_decimal)
 
 
 # direct link: https://d-nb.info/1215094116/34
-@doc_inherit(steepest_descent, style=DOC_STYLE)
+@doc_inherit(parent=steepest_descent, style=DOC_STYLE)
 def modified_steepest_descent(matrix: MatOrLList, solution: MatOrLList, initial_guess: MatOrLList,
                               n_iterations: int = 10_000, tolerance: IFloat = TOLERANCE):
     """Solve a linear system using the modified steepest descent method.
@@ -127,6 +126,6 @@ application to Poisson’s equation." https://doi.org/10.1186/s13662-020-02715-9
         temp_ = vector_mag(new_guess[iter_] - new_guess[iter_ - 1])
 
         if temp_ < tolerance:
-            return round_matrix_(new_guess[iter_], N_DECIMAL)
+            return round_matrix_(matrix=new_guess[iter_], n_decimal=N_DECIMAL)
 
     return new_guess[-1]

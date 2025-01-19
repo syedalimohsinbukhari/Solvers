@@ -64,7 +64,7 @@ def round_list_(original_list: FList or LList, n_decimal: int = N_DECIMAL) -> FL
     """
 
     def _auxiliary_function(list_of_values):
-        return list(map(lambda x: round_value_(x, n_decimal), list_of_values))
+        return list(map(lambda x: round_value_(original_value=x, n_decimal=n_decimal), list_of_values))
 
     if not isinstance(original_list[0], list):
         return _auxiliary_function(original_list)
@@ -108,7 +108,7 @@ def linear_list(start: IFloat, stop: IFloat, n_elements: OptIFloat = None, step_
 
     value = [start + (i * step_size) for i in range(n_elements)]
 
-    return round_list_(value, n_decimal)
+    return round_list_(original_list=value, n_decimal=n_decimal)
 
 
 # TODO: See if num_steps_ can be replaced by `linear_list`
@@ -133,7 +133,7 @@ def num_steps_(x_initial: IFloat, x_max: IFloat, step_size: IFloat, n_decimal: i
         The number of steps required to go from ``x_initial`` to ``x_max``.
     """
 
-    return int(round_value_(((x_max - x_initial) / step_size) + 1, n_decimal))
+    return int(round_value_(original_value=((x_max - x_initial) / step_size) + 1, n_decimal=n_decimal))
 
 
 def filter_similar_values(original_list: FList, tolerance: int = TOLERANCE):

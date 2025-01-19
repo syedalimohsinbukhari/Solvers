@@ -34,7 +34,7 @@ def gauss_elimination(matrix: MatOrLList, tolerance: IFloat = TOLERANCE, modify_
         The modified matrix with Gaussian elimination applied.
     """
 
-    matrix_ = matrix_copy(matrix, modify_original)
+    matrix_ = matrix_copy(matrix=matrix, overwrite=modify_original)
 
     num_rows, num_cols = matrix_.n_rows, matrix.n_cols
 

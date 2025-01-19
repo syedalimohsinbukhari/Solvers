@@ -47,39 +47,44 @@ def trapezoid_rule(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1
         The numerical result of integration.
     """
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'trapezoid')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table,
+                        method='trapezoid')
 
 
-@doc_inherit(trapezoid_rule, style=DOC_STYLE)
+@doc_inherit(parent=trapezoid_rule, style=DOC_STYLE)
 def simpson_13(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:
     """Perform numerical integration using Simpson's 1/3 Rule."""
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'simpson_13')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table,
+                        method='simpson_13')
 
 
-@doc_inherit(trapezoid_rule, style=DOC_STYLE)
+@doc_inherit(parent=trapezoid_rule, style=DOC_STYLE)
 def simpson_38(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:
     """Perform numerical integration using Simpson's 3/8 Rule."""
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'simpson_38')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table,
+                        method='simpson_38')
 
 
-@doc_inherit(trapezoid_rule, style=DOC_STYLE)
+@doc_inherit(parent=trapezoid_rule, style=DOC_STYLE)
 def boole(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:
     """Perform numerical integration using Boole's Rule."""
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'boole')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table, method='boole')
 
 
-@doc_inherit(trapezoid_rule, style=DOC_STYLE)
+@doc_inherit(parent=trapezoid_rule, style=DOC_STYLE)
 def weddle_41h140(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:
     """Perform numerical integration using Weddle 41/140 Rule."""
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'weddle_41h140')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table,
+                        method='weddle_41h140')
 
 
-@doc_inherit(trapezoid_rule, style=DOC_STYLE)
+@doc_inherit(parent=trapezoid_rule, style=DOC_STYLE)
 def weddle_3h10(function: Func, x_0: IFloat, x_n: IFloat, composites: int = 1, get_table: bool = False) -> IFloat:
     """Perform numerical integration using modified Weddle 3/10 Rule."""
 
-    return solve_helper(function, x_0, x_n, composites, get_table, 'weddle_3h10')
+    return solve_helper(function=function, x_0=x_0, x_n=x_n, composites=composites, get_table=get_table,
+                        method='weddle_3h10')

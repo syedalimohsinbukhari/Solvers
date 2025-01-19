@@ -32,7 +32,7 @@ class Polynomial:
         self.polynomial = polynomial
 
     def __repr__(self):
-        r_poly_ = round_list_(self.polynomial, 3)
+        r_poly_ = round_list_(original_list=self.polynomial, n_decimal=3)
 
         terms = [f"{coefficients:+}x^{deg_}"
                  if deg_ > 1 else f"{coefficients:+}x" if deg_ == 1 else f'{coefficients:+}'
@@ -174,7 +174,7 @@ class Polynomial:
 
         eval_ = [coefficient * value**(poly_degree - index) for index, coefficient in enumerate(poly[:-1])]
 
-        return round_value_(sum(eval_ + [poly[-1]]), n_decimal)
+        return round_value_(original_value=sum(eval_ + [poly[-1]]), n_decimal=n_decimal)
 
 
 class InFractions:

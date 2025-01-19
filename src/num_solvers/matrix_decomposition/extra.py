@@ -43,12 +43,12 @@ def faddeev_le_verrier(matrix: MatOrLList) -> FList:
     for i in range(1, matrix.n_rows + 1):
         temp_ = matrix * new_matrix_[i - 1]
         coefficient[i] = (-1 / i) * sum(temp_.diagonal().elements)
-        new_matrix_[i] = temp_ + identity_matrix(matrix.n_rows, value=coefficient[i])
+        new_matrix_[i] = temp_ + identity_matrix(n_rows=matrix.n_rows, value=coefficient[i])
 
     return coefficient
 
 
-@doc_inherit(faddeev_le_verrier, style=DOC_STYLE)
+@doc_inherit(parent=faddeev_le_verrier, style=DOC_STYLE)
 def characteristic_polynomial(matrix: MatOrLList) -> FList:
     return faddeev_le_verrier(matrix)
 
@@ -93,7 +93,7 @@ def eigenvectors_2x2(matrix: MatOrLList) -> LList:
     """
 
     eigenvalues = eigenvalues_2x2(matrix)
-    eigenvectors = [matrix - identity_matrix(2, value=value) for value in eigenvalues[::-1]]
+    eigenvectors = [matrix - identity_matrix(n_rows=2, value=value) for value in eigenvalues[::-1]]
 
     scaled_eigenvectors = [(eigenvector.t[0] / eigenvector.t[0][-1]).elements for eigenvector in eigenvectors]
 

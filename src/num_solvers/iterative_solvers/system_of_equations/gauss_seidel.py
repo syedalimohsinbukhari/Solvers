@@ -42,6 +42,7 @@ def gauss_seidel(system_of_equations: LList,
     >>> GS_Solver = gauss_seidel(equations, solutions)
     """
 
-    gs = GaussSeidel(system_of_equations, solution, n_iter, tolerance, initial_guess, n_decimal)
+    gs = GaussSeidel(system_of_equations=system_of_equations, solution=solution, n_iter=n_iter, tolerance=tolerance,
+                     initial_guess=initial_guess, n_decimal=n_decimal)
 
     return gs.solve() if not get_solution_set else (gs.solve(), gs.solution_set)
