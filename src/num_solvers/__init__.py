@@ -3,9 +3,11 @@
 from typing import Callable, Optional, Union
 
 from numpy.typing import NDArray
+from umatrix.matrix import Matrix
 
-TOLERANCE = 1e-10
-N_DECIMAL = 8
+TOLERANCE = 1e-8
+N_DECIMAL = 6
+MAX_ITER = 500
 
 DOC_STYLE = 'numpy_napoleon_with_merge'
 
@@ -27,4 +29,5 @@ OptFunc = Optional[Func]
 OptList = Optional[FList]
 OptIFloat = Optional[IFloat]
 
-NdArray2 = tuple[NdArray, NdArray]
+MatOrLList = Union[Matrix, LList]
+LMat = list[Matrix]

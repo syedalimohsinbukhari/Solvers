@@ -15,8 +15,8 @@ Created on Dec 20 10:55:46 2023
 from custom_inherit import doc_inherit
 
 from ... import DOC_STYLE, FList, Func, IFloat, LList, N_DECIMAL, OptIFloat
+from ...__backend.core_helpers_ import linear_list, round_value_
 from ...__backend.errors_ import XFindNotDefined
-from ...__backend.extra_ import linear_list, round_value_
 
 
 def trapezoidal_method(ode: Func, x_current: IFloat, y_current: IFloat, x_next: IFloat, y_next: IFloat,

@@ -5,7 +5,7 @@ This module provides functionality to solve diagonally dominant system of equati
 Created on Oct 14 05:46:04 2023
 """
 
-__all__ = ['gauss_jacobi']
+__all__ = ['gauss_seidel']
 
 from custom_inherit import doc_inherit
 

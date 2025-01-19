@@ -1,0 +1,12 @@
+name:
+    solvers
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - numpy==1.26.4
+    - setuptools
+    - pip
+    -   pip:
+            - custom-inherit
+            - umatrix

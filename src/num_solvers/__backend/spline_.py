@@ -24,7 +24,7 @@ __all__ = ['SPLINE', 'LinearSpline', 'QuadraticSpline', 'NaturalCubicSpline']
 import numpy as np
 from custom_inherit import doc_inherit
 
-from .. import DOC_STYLE, FList, FListOrLList, IFloat, IFloatOrFList, LLList, LList, OptFunc, OptList, TOLERANCE
+from .. import DOC_STYLE, FList, FListOrLList, IFloat, IFloatOrFList, LList, LLList, OptFunc, OptList, TOLERANCE
 from ..__backend.errors_ import AtLeastOneParameterRequired, WrongBoundaryEquation
 
 
