@@ -25,11 +25,11 @@ For such uni-variable functions, the root finding methods include,
 Created on Dec 24 12:56:39 2023
 """
 
-__all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', 'secant_method', 'newton_raphson_solver',
-           'generalized_secant_method', 'sidi_method', 'ridder_method', 'steffensen_method', 'muller_method']
+__all__ = ['bisection_method', 'false_position_method', 'regula_falsi_method', 'secant_method',
+           'generalized_secant_method', 'sidi_method', 'ridder_method', 'steffensen_method', 'muller_method',
+           'newton_raphson_method']
 
 from cmath import sqrt
-from math import sqrt
 
 from custom_inherit import doc_inherit
 
@@ -191,10 +191,10 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
 
     def sign_function(functions_to_evaluate, value):
         f1, f2 = functions_to_evaluate
-        return value if f1 - f2 > 0 else -value if f2 - f1 > 0 else 0
+        return value if f1 - f2 > 0 else -value
 
     def is_sane():
-        return True if f(x_start) * f(x_end) < 0 else False
+        return f(x_start) * f(x_end) < 0
 
     f, root_ = function, [x_start, x_end, (x_start + x_end) / 2]
 
@@ -222,17 +222,15 @@ def ridder_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFl
 
 @doc_inherit(bisection_method, style=DOC_STYLE)
 def steffensen_method(function: Func, x_start: IFloat, x_end: IFloat, tolerance: IFloat = TOLERANCE,
-                      get_full_result: bool = True) -> IFloatOrFList:
+                      get_full_result: bool = False) -> IFloatOrFList:
     """Use the Steffensen method to find the root of a given function within a specified interval."""
 
     def is_sane():
-        return True if f(x_start) * f(x_end) < 0 else False
+        return f(x_start) * f(x_end) < 0
 
     f, root_ = function, [x_start, x_end, (x_start + x_end) / 2]
 
-    solve = True if is_sane() else False
-
-    while solve:
+    while is_sane():
         f_mid = f(root_[-1])
         f_mid2 = f(root_[-1] + f_mid)
 
@@ -275,7 +273,7 @@ def newton_raphson_method(function: Func, derivative_of_function: Func, initial_
     if abs(f(x_0)) < tolerance:
         return x_0
     else:
-        return newton_raphson_solver(f, df, x_0 - f(x_0) / df(x_0), tolerance)
+        return newton_raphson_method(f, df, x_0 - f(x_0) / df(x_0), tolerance)
 
 
 def muller_method(function: Func, x_0: IFloat, x_1: IFloat, x_2: IFloat, iterations: int,

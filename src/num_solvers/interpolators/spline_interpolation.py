@@ -58,7 +58,7 @@ def linear_spline_interpolation(given_values: FList, value_to_approximate: IFloa
 @doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
 def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
                                    function: OptFunc = None, function_values: OptList = None,
-                                   show_splines: bool = False) -> IFloat:
+                                   last_equation: str = 'first', show_splines: bool = False) -> IFloat:
     """
     Perform quadratic spline interpolation.
 
@@ -77,7 +77,7 @@ def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IF
                                        function_values=[4, 6, 2, 4, 8, 10])
     """
 
-    quadratic_spline = QuadraticSpline(given_values, value_to_approximate, function, function_values)
+    quadratic_spline = QuadraticSpline(given_values, value_to_approximate, function, function_values, last_equation)
 
     if show_splines:
         quadratic_spline.show_splines()
@@ -88,7 +88,7 @@ def quadratic_spline_interpolation(given_values: FList, value_to_approximate: IF
 @doc_inherit(linear_spline_interpolation, style=DOC_STYLE)
 def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate: IFloat,
                                        function: OptFunc = None, function_values: OptList = None,
-                                       show_splines: bool = False) -> IFloat:
+                                       last_equation: str = 'first', show_splines: bool = False) -> IFloat:
     """
     Perform natural cubic spline interpolation.
 
@@ -107,7 +107,8 @@ def natural_cubic_spline_interpolation(given_values: FList, value_to_approximate
                                            function_values=[4, 6, 2, 4, 8, 10])
     """
 
-    natural_cubic_spline = NaturalCubicSpline(given_values, value_to_approximate, function, function_values)
+    natural_cubic_spline = NaturalCubicSpline(given_values, value_to_approximate, function, function_values,
+                                              last_equation)
 
     if show_splines:
         natural_cubic_spline.show_splines()
