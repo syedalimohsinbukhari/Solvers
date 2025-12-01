@@ -19,7 +19,7 @@ A Python library for basic numerical solvers, providing implementations of vario
 
 ## About the Project
 
-**num_solvers** is an educational numerical methods library developed as part of PhD coursework for **Advance Numerical Techniques** by _**Dr. Umair**_ at the _Institute of Space Technology, Pakistan, Islamabad_.
+**num_solvers** is an educational numerical methods library developed as part of PhD coursework for **Advanced Numerical Techniques** by _**Dr. Umair**_ at the _Institute of Space Technology, Pakistan, Islamabad_.
 
 ### Why another numerical solver library?
 
