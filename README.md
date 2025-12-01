@@ -59,14 +59,6 @@ cd Solvers
 pip install -e .
 ```
 
-### Using conda
-
-```bash
-# Create a conda environment from the provided environment.yml
-conda env create -f environment.yml
-conda activate solvers
-```
-
 ## Quick Start
 
 Here are some examples to get you started:
